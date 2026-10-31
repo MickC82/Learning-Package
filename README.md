@@ -23,3 +23,6 @@ Open the app once while online and wait until the status reads **Ready offline**
 Replace the changed files and push. The app picks up the new version the next time it is opened online.
 
 Progress (ticks, workbook answers) is stored on each device and does not sync between devices.
+
+
+*** Note this entire project is AI generated based on prompts by the end user. The material and Web App was generated with Opus 5.5 as a test case. ***
