@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1F2B33">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}
+.sp-home{position:fixed;left:max(12px,env(safe-area-inset-left,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:50;
+font:500 14px "Bricolage Grotesque",system-ui,sans-serif;background:var(--ink,#1F2B33);color:var(--sheet,#fff);text-decoration:none;padding:9px 14px;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+</style>
+</head>
+<body>
+<a class="sp-home" href="../index.html">← Hub</a>
+<title>Algebra Workbook</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<script>window.MathJax = { svg: { fontCache: 'global' }, startup: { typeset: false }, options: { enableMenu: false } };</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.11.0/math.min.js"></script>
+<style>
+/* Layout: a course workbook. Module index on the left (chips on phones); each module is an exercise sheet ending in a quick check; capstone and mixed practice close the course. */
+:root{
+  --paper:#F4F6F3; --sheet:#FFFFFF; --ink:#1F2B33; --mute:#5E6B72; --rule:#D7DDDC;
+  --ochre:#B07508; --ochre-soft:#F3E6C8; --teal:#2C7A6B; --teal-soft:#DCEDE8; --red:#A8402C; --red-soft:#F5E1DB;
+  --display:"Bricolage Grotesque", "DejaVu Sans", system-ui, sans-serif;
+  --body:"Source Serif 4", Georgia, "Times New Roman", serif;
+  --mono:"IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#141C21; --sheet:#1B252C; --ink:#E9EEED; --mute:#9AA8AE; --rule:#2D3A42;
+  --ochre:#E2A73A; --ochre-soft:#3B2F17; --teal:#62BBA6; --teal-soft:#1D3A34; --red:#E58570; --red-soft:#3D2420; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#141C21; --sheet:#1B252C; --ink:#E9EEED; --mute:#9AA8AE; --rule:#2D3A42;
+  --ochre:#E2A73A; --ochre-soft:#3B2F17; --teal:#62BBA6; --teal-soft:#1D3A34; --red:#E58570; --red-soft:#3D2420; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.55}
+.wrap{max-width:1120px;margin:0 auto;padding-block:28px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header{border-bottom:1px solid var(--rule);padding-bottom:16px}
+.kicker{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ochre)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(30px,5vw,44px);line-height:1.05;margin:4px 0 6px;text-wrap:balance}
+h2{font-family:var(--display);font-weight:700;font-size:24px;margin:0;text-wrap:balance}
+h3{font-family:var(--display);font-weight:500;font-size:18px;margin:18px 0 8px}
+.tag{color:var(--mute);margin:0;max-width:64ch}
+.layout{display:grid;grid-template-columns:230px minmax(0,1fr);gap:28px;margin-top:24px}
+@media (max-width:860px){.layout{grid-template-columns:minmax(0,1fr)}}
+.index{position:sticky;top:calc(env(safe-area-inset-top,0px) + 16px);align-self:start;display:flex;flex-direction:column;gap:2px;max-height:calc(100vh - 32px);overflow-y:auto}
+@media (max-width:860px){.index{position:static;flex-direction:row;flex-wrap:wrap;max-height:none}}
+.index a{display:flex;justify-content:space-between;gap:10px;text-decoration:none;color:var(--ink);font-family:var(--display);font-size:14.5px;padding:7px 10px;border-radius:8px;border:1px solid transparent}
+.index a:hover{border-color:var(--rule)}
+.index .n{font-family:var(--mono);font-size:12px;color:var(--mute);font-variant-numeric:tabular-nums;white-space:nowrap}
+.index .n.full{color:var(--teal)}
+.overall{font-family:var(--mono);font-size:12.5px;color:var(--mute);padding:10px;font-variant-numeric:tabular-nums}
+.bar{height:6px;background:var(--rule);border-radius:3px;overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;background:var(--teal);width:0;transition:width .4s}
+section.mod{margin-bottom:44px;scroll-margin-top:16px}
+.modhead{display:flex;gap:14px;align-items:baseline;margin-bottom:12px}
+.modhead .code{font-family:var(--display);font-weight:700;font-size:28px;color:var(--ochre);line-height:1}
+.card{background:var(--sheet);border:1px solid var(--rule);border-radius:10px;padding:16px 20px;margin-bottom:12px}
+.card.solved{border-color:var(--teal)}
+.chead{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline}
+.pid{font-family:var(--mono);font-size:13px;color:var(--mute)}
+.lvl{font-family:var(--mono);font-size:12px;color:var(--ochre);letter-spacing:2px}
+.q{margin:6px 0}
+.eq{overflow-x:auto;padding:4px 0;font-size:18px}
+.eq mjx-container{margin:6px 0!important;text-align:left!important}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:8px}
+input[type=text]{font:inherit;font-family:var(--mono);font-size:16px;color:var(--ink);background:var(--paper);border:1px solid var(--rule);border-radius:6px;padding:8px 10px;min-width:0;flex:0 1 12em}
+input.wide{flex:1 1 220px}
+.unit{font-family:var(--mono);font-size:14px;color:var(--mute)}
+button{font-family:var(--display);font-weight:500;font-size:15px;cursor:pointer;border-radius:8px;border:1px solid var(--ink);background:var(--ink);color:var(--sheet);padding:8px 15px}
+button.ghost{background:transparent;color:var(--ink);border-color:var(--rule)}
+button.ghost:hover{border-color:var(--ink)}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--ochre);outline-offset:2px}
+.fb{margin-top:8px;font-size:15.5px;min-height:1.2em}
+.fb.good{color:var(--teal)} .fb.bad{color:var(--red)}
+.mc{display:grid;gap:7px;margin-top:6px}
+.mc button{text-align:left;background:var(--paper);color:var(--ink);border:1px solid var(--rule);font-family:var(--body);font-size:15.5px;padding:9px 12px}
+.mc button.right{border-color:var(--teal);background:var(--teal-soft)}
+.mc button.wrong{border-color:var(--red);background:var(--red-soft)}
+.extras{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.sol{margin-top:10px;border-top:1px dashed var(--rule);padding-top:8px;font-size:15.5px}
+.sol ol{margin:0;padding-left:1.3em}
+.sol li{margin-bottom:5px}
+.model{background:var(--teal-soft);border-radius:8px;padding:10px 14px;margin-top:10px;font-size:15.5px}
+.quiz{background:var(--ochre-soft);border-radius:10px;padding:16px 20px}
+.quiz .qq{margin:14px 0 4px;font-weight:600}
+.quiz .score{font-family:var(--mono);font-size:13px;color:var(--ink)}
+.preview{font-size:15px;color:var(--mute);min-height:24px;overflow-x:auto}
+.howto{background:var(--sheet);border:1px solid var(--rule);border-radius:10px;padding:16px 20px;margin-bottom:28px;font-size:15.5px}
+.howto ul{margin:6px 0 0;padding-left:1.2em}
+code{font-family:var(--mono);font-size:.92em;background:var(--paper);padding:1px 5px;border-radius:4px}
+footer{margin-top:24px;font-size:14px;color:var(--mute);border-top:1px solid var(--rule);padding-top:14px}
+</style>
+
+<div class="wrap">
+<header>
+  <div class="kicker">Second Pass · Course 2</div>
+  <h1 id="h1">Algebra Workbook</h1>
+  <p class="tag">Eight problems and a four-question quick check for every module, then the course capstone and a mixed practice set. Answers are checked as you go, with hints and worked solutions on every problem.</p>
+</header>
+<div class="layout">
+  <nav class="index" id="index" aria-label="Modules"></nav>
+  <main id="main">
+    <div class="howto">
+      <b>How answers work.</b> Number answers accept ordinary decimals or scientific notation such as <code>6.67e-11</code>; small rounding differences are fine. Some problems ask you to explain: write your answer on paper, then open the model answer and compare.
+      <ul><li>Try before opening the hint. Use the worked solution to compare method, not just the final number.</li>
+      <li>Your progress is remembered in this browser.</li></ul>
+    </div>
+  </main>
+</div>
+<footer>Pair with the course Theory Reader (audio edition), the Visual Companion and the explorer. The printable PDF workbook has the same problems with space to write.</footer>
+</div>
+
+<script>
+const D = {"n": 2, "name": "Algebra", "modules": [{"id": "2.1", "title": "Expressions and simplifying", "problems": [{"t": "mc", "lv": 1, "q": "Simplify 4x + 3y − x + 2y.", "o": ["3x + 5y", "5x + 5y", "8xy", "3x + y"], "c": 0, "s": ["Collect x terms: 4x − x = 3x.", "Collect y terms: 3y + 2y = 5y."]}, {"t": "mc", "lv": 1, "q": "Expand 5(2x − 3).", "o": ["10x − 3", "10x − 15", "7x − 8", "10x + 15"], "c": 1, "s": ["Multiply each term by 5."]}, {"t": "mc", "lv": 2, "q": "Expand (x + 4)(x − 2).", "o": ["x² + 2x − 8", "x² − 8", "x² + 6x − 8", "x² − 2x + 8"], "c": 0, "s": ["x·x + x·(−2) + 4·x + 4·(−2).", "x² + 2x − 8."]}, {"t": "mc", "lv": 2, "q": "Factorise x² − 7x + 12.", "o": ["(x − 3)(x − 4)", "(x + 3)(x + 4)", "(x − 2)(x − 6)", "(x − 12)(x + 1)"], "c": 0, "s": ["Two numbers with sum −7 and product 12: −3 and −4."]}, {"t": "mc", "lv": 2, "q": "Factorise 9x² − 25.", "o": ["(3x − 5)²", "(3x − 5)(3x + 5)", "(9x − 25)(x + 1)", "Cannot be factorised"], "c": 1, "s": ["Difference of two squares: (3x)² − 5²."]}, {"t": "num", "lv": 2, "q": "Evaluate 8^(2/3).", "a": 4, "s": ["Cube root of 8 is 2.", "2² = 4."]}, {"t": "mc", "lv": 2, "q": "Simplify (x³ × x⁵) ÷ x².", "o": ["x⁶", "x⁸", "x¹⁵/²", "x¹⁰"], "c": 0, "s": ["Multiply: add exponents to get x⁸.", "Divide: subtract to get x⁶."]}, {"t": "num", "lv": 3, "q": "If x = 3 and y = −2, evaluate 2x² − 3xy + y².", "a": 40, "s": ["2(9) − 3(3)(−2) + (−2)².", "18 + 18 + 4 = 40."]}], "quiz": [{"q": "3x and 3x² are", "o": ["like terms", "unlike terms", "equal", "factors"], "c": 1}, {"q": "x⁻² equals", "o": ["−x²", "1/x²", "−2x", "√x"], "c": 1}, {"q": "x² + 5x + 6 factorises as", "o": ["(x + 1)(x + 6)", "(x + 2)(x + 3)", "(x − 2)(x − 3)", "(x + 5)(x + 1)"], "c": 1}, {"q": "x^(1/2) means", "o": ["x/2", "√x", "1/x²", "2x"], "c": 1}]}, {"id": "2.2", "title": "Linear equations and inequalities", "problems": [{"t": "num", "lv": 1, "q": "Solve 4x + 7 = 31.", "a": 6, "s": ["Subtract 7: 4x = 24.", "Divide by 4: x = 6."]}, {"t": "num", "lv": 1, "q": "Solve 3(x − 2) = 15.", "a": 7, "s": ["Expand: 3x − 6 = 15.", "3x = 21, x = 7."]}, {"t": "num", "lv": 2, "q": "Solve x/4 + 2 = x/2 − 1.", "a": 12, "s": ["Multiply everything by 4: x + 8 = 2x − 4.", "12 = x."]}, {"t": "mc", "lv": 2, "q": "Solve 5 − 2x > 11.", "o": ["x > −3", "x < −3", "x > 3", "x < 3"], "c": 1, "s": ["−2x > 6.", "Divide by −2 and flip: x < −3."]}, {"t": "num", "lv": 2, "q": "Find the gradient of the line through (1, 3) and (5, 11).", "a": 2, "s": ["(11 − 3) ÷ (5 − 1) = 8 ÷ 4.", "= 2."]}, {"t": "num", "lv": 2, "q": "A taxi charges a $4 flag fall plus $2.50 per km. How far can you go for $29?", "a": 10, "unit": "km", "s": ["29 = 4 + 2.5d.", "2.5d = 25, d = 10 km."]}, {"t": "mc", "lv": 2, "q": "On a graph of distance (m) against time (s), the gradient represents", "o": ["acceleration", "speed", "distance", "time"], "c": 1, "s": ["Gradient = change in distance ÷ change in time = speed."]}, {"t": "num", "lv": 3, "q": "Temperature in °F is F = 1.8C + 32. At what temperature are Celsius and Fahrenheit equal?", "a": -40, "unit": "°", "s": ["Set F = C: C = 1.8C + 32.", "−0.8C = 32, C = −40."]}], "quiz": [{"q": "Solve 2x = 18 − x.", "o": ["x = 6", "x = 9", "x = 18", "x = 3"], "c": 0}, {"q": "Dividing an inequality by −3", "o": ["keeps its direction", "reverses its direction", "is not allowed", "makes it an equation"], "c": 1}, {"q": "In y = 3x − 5, the intercept is", "o": ["3", "−5", "5", "x"], "c": 1}, {"q": "A line with gradient 0 is", "o": ["vertical", "horizontal", "diagonal", "undefined"], "c": 1}]}, {"id": "2.3", "title": "Rearranging formulas", "problems": [{"t": "expr", "lv": 1, "q": "Final velocity: v = u + at.", "eq": "v = u + at", "target": "a", "vars": ["v", "u", "t"], "ans": "(v-u)/t", "ans_txt": "(v − u)/t", "s": ["Subtract u from both sides.", "Divide by t."]}, {"t": "expr", "lv": 1, "q": "Ideal gas law: PV = nRT.", "eq": "PV = nRT", "target": "T", "vars": ["P", "V", "n", "R"], "ans": "P*V/(n*R)", "ans_txt": "PV/(nR)", "s": ["Divide both sides by nR."]}, {"t": "expr", "lv": 2, "q": "Kinetic energy: E = ½mv². (Type the half as 1/2 if needed.)", "eq": "E = \\frac{1}{2}mv^2", "target": "v", "vars": ["E", "m"], "ans": "sqrt(2*E/m)", "ans_txt": "√(2E/m)", "s": ["Multiply by 2: 2E = mv².", "Divide by m, then take the positive square root."]}, {"t": "expr", "lv": 2, "q": "Pendulum: T = 2π√(L/g).", "eq": "T = 2\\pi\\sqrt{\\frac{L}{g}}", "target": "L", "vars": ["T", "g"], "ans": "g*T^2/(4*pi^2)", "ans_txt": "gT²/(4π²)", "s": ["Divide by 2π.", "Square both sides: T²/4π² = L/g.", "Multiply by g."]}, {"t": "expr", "lv": 2, "q": "Lens equation: 1/f = 1/u + 1/v.", "eq": "\\frac{1}{f} = \\frac{1}{u} + \\frac{1}{v}", "target": "v", "vars": ["f", "u"], "ans": "u*f/(u-f)", "ans_txt": "uf/(u − f)", "dom": {"u": [2, 3], "f": [0.5, 1.5]}, "s": ["Subtract 1/u: 1/v = 1/f − 1/u.", "Combine: (u − f)/(uf).", "Flip both sides."]}, {"t": "expr", "lv": 3, "q": "Solve for x: y = (x + 2)/(x − 3).", "eq": "y = \\frac{x+2}{x-3}", "target": "x", "vars": ["y"], "ans": "(3*y+2)/(y-1)", "ans_txt": "(3y + 2)/(y − 1)", "s": ["Multiply by (x − 3) and expand: xy − 3y = x + 2.", "Collect: xy − x = 3y + 2.", "Factor and divide: x = (3y + 2)/(y − 1)."]}, {"t": "num", "lv": 2, "q": "A pendulum clock must have a period of 2.00 s where g = 9.81 m/s². How long is the pendulum?", "a": 0.9939608115313336, "unit": "m", "s": ["L = gT²/(4π²).", "= 9.81 × 4 ÷ 39.48 ≈ 0.994 m."]}, {"t": "mc", "lv": 2, "q": "From 1/f = 1/u + 1/v, a student writes f = u + v. The mistake is", "o": ["a sign error", "flipping individual terms", "forgetting to square", "nothing"], "c": 1, "s": ["The reciprocal of a sum is not the sum of reciprocals: 1/2 + 1/2 = 1, but 2 + 2 ≠ 1."]}], "quiz": [{"q": "To solve T = 2π√(L/g) for g, the first step is", "o": ["square both sides", "divide by 2π", "multiply by g", "subtract 2π"], "c": 1}, {"q": "If the target appears twice, you should", "o": ["give up", "collect and factor", "square both sides", "flip each term"], "c": 1}, {"q": "v = √(2E/m). If E is quadrupled, v", "o": ["doubles", "quadruples", "halves", "is unchanged"], "c": 0}, {"q": "Taking the reciprocal is allowed", "o": ["term by term", "of a whole side only", "never", "only for integers"], "c": 1}]}, {"id": "2.4", "title": "Functions and graphs", "problems": [{"t": "num", "lv": 1, "q": "If f(x) = 3x² − 2, find f(4).", "a": 46, "s": ["3 × 16 − 2.", "= 46."]}, {"t": "mc", "lv": 1, "q": "What is the domain of f(x) = √(x − 5)?", "o": ["all real x", "x ≥ 5", "x ≥ 0", "x > 5 only"], "c": 1, "s": ["The quantity under the root must be ≥ 0: x − 5 ≥ 0."]}, {"t": "mc", "lv": 2, "q": "The graph of y = (x + 3)² is the graph of y = x² shifted", "o": ["3 right", "3 left", "3 up", "3 down"], "c": 1, "s": ["x − h with h = −3: shift left by 3."]}, {"t": "mc", "lv": 2, "q": "The vertex of y = 2(x − 1)² + 5 is at", "o": ["(1, 5)", "(−1, 5)", "(2, 5)", "(1, −5)"], "c": 0, "s": ["Vertex form a(x − h)² + k has vertex (h, k)."]}, {"t": "num", "lv": 2, "q": "If f(x) = 2x + 1 and g(x) = x², find f(g(3)).", "a": 19, "s": ["g(3) = 9.", "f(9) = 19."]}, {"t": "mc", "lv": 2, "q": "What is the inverse of f(x) = (x − 4)/3?", "o": ["3x + 4", "3x − 4", "(x + 4)/3", "1/(3x − 4)"], "c": 0, "s": ["Write y = (x − 4)/3 and solve for x: x = 3y + 4.", "So f⁻¹(x) = 3x + 4."]}, {"t": "mc", "lv": 2, "q": "Which function has a vertical asymptote at x = 2?", "o": ["y = x − 2", "y = 1/(x − 2)", "y = (x − 2)²", "y = 2ˣ"], "c": 1, "s": ["Division by zero at x = 2."]}, {"t": "show", "lv": 3, "q": "Sketch in words how y = −2(x − 3)² + 4 relates to y = x².", "a": "Shift right 3, stretch vertically by a factor of 2, reflect upside down, then shift up 4. It is an upside-down parabola, narrower than y = x², with its highest point at (3, 4).", "s": ["Read off h, k, and the sign and size of a."]}], "quiz": [{"q": "A function can map one input to", "o": ["several outputs", "exactly one output", "no outputs", "any number"], "c": 1}, {"q": "y = f(x) + 3 is shifted", "o": ["up 3", "right 3", "left 3", "down 3"], "c": 0}, {"q": "y = −f(x) is", "o": ["reflected in the y-axis", "reflected in the x-axis", "shifted down", "unchanged"], "c": 1}, {"q": "The domain of 1/x excludes", "o": ["x = 1", "x = 0", "negative x", "nothing"], "c": 1}]}, {"id": "2.5", "title": "Systems of equations", "problems": [{"t": "mc", "lv": 1, "q": "Solve x + y = 10 and x − y = 4.", "o": ["x = 7, y = 3", "x = 6, y = 4", "x = 3, y = 7", "x = 5, y = 5"], "c": 0, "s": ["Add: 2x = 14, x = 7.", "y = 3."]}, {"t": "num", "lv": 2, "q": "Solve 3x + 2y = 16 and x − y = 2. What is x?", "a": 4, "s": ["From the second, x = y + 2.", "3(y + 2) + 2y = 16 → 5y = 10 → y = 2, x = 4."]}, {"t": "num", "lv": 2, "q": "Solve 2x + 5y = 19 and 3x − 2y = 0. What is y?", "a": 3, "s": ["Multiply first by 3, second by 2: 6x + 15y = 57, 6x − 4y = 0.", "Subtract: 19y = 57, y = 3."]}, {"t": "num", "lv": 2, "q": "Adult tickets cost $15 and child tickets $8. 40 tickets raised $467. How many adult tickets were sold?", "a": 21, "s": ["a + c = 40, 15a + 8c = 467.", "15a + 8(40 − a) = 467 → 7a = 147 → a = 21."]}, {"t": "mc", "lv": 2, "q": "The system y = 2x + 1 and y = 2x − 3 has", "o": ["one solution", "no solution", "infinitely many", "two solutions"], "c": 1, "s": ["Same gradient, different intercepts: parallel lines."]}, {"t": "num", "lv": 2, "q": "How many litres of 10% salt solution must be mixed with 30% solution to make 20 L of 25% solution?", "a": 5, "unit": "L", "s": ["x + y = 20; 0.1x + 0.3y = 5.", "0.1x + 0.3(20 − x) = 5 → −0.2x = −1 → x = 5 L."]}, {"t": "num", "lv": 3, "q": "Solve x² + y = 7 and y = x + 1 for the positive value of x.", "a": 2, "s": ["Substitute: x² + x + 1 = 7 → x² + x − 6 = 0.", "(x + 3)(x − 2) = 0, positive root x = 2."]}, {"t": "show", "lv": 3, "q": "Explain geometrically why two linear equations in two unknowns can have exactly one, none, or infinitely many solutions, but never exactly two.", "a": "Each equation is a straight line. Two distinct straight lines either cross at exactly one point or are parallel and never meet. If they are the same line, every point is shared. Two straight lines cannot cross twice.", "s": ["What can two straight lines do?"]}], "quiz": [{"q": "Elimination works by", "o": ["squaring", "cancelling one variable", "graphing only", "guessing"], "c": 1}, {"q": "Parallel lines give", "o": ["one solution", "no solution", "two solutions", "infinitely many"], "c": 1}, {"q": "Three unknowns generally need", "o": ["one equation", "two equations", "three equations", "four equations"], "c": 2}, {"q": "Solve x = 2y and x + y = 9: y =", "o": ["3", "6", "4.5", "2"], "c": 0}]}, {"id": "2.6", "title": "Quadratics and polynomials", "problems": [{"t": "mc", "lv": 1, "q": "Solve x² − 9x + 20 = 0.", "o": ["4 and 5", "−4 and −5", "2 and 10", "1 and 20"], "c": 0, "s": ["Factorise: (x − 4)(x − 5) = 0."]}, {"t": "num", "lv": 2, "q": "Use the quadratic formula to find the larger root of 2x² − 3x − 5 = 0.", "a": 2.5, "s": ["Δ = 9 + 40 = 49.", "x = (3 ± 7)/4: 2.5 or −1."]}, {"t": "num", "lv": 2, "q": "Find the discriminant of 3x² + 4x + 2.", "a": -8, "s": ["b² − 4ac = 16 − 24.", "= −8, so no real roots."]}, {"t": "num", "lv": 2, "q": "Find the x-coordinate of the vertex of y = x² − 6x + 11.", "a": 3, "s": ["x = −b/2a = 6/2.", "= 3."]}, {"t": "num", "lv": 2, "q": "A ball's height is h = 20t − 5t² metres. After how many seconds does it land?", "a": 4, "unit": "s", "s": ["h = 0: 5t(4 − t) = 0.", "t = 0 (launch) or t = 4 s."]}, {"t": "num", "lv": 2, "q": "For the same ball, h = 20t − 5t², what is the maximum height?", "a": 20, "unit": "m", "s": ["Vertex at t = −20/(2 × −5) = 2 s.", "h = 40 − 20 = 20 m."]}, {"t": "mc", "lv": 2, "q": "p(x) = x³ − 6x² + 11x − 6 and p(1) = 0. Which is a factor?", "o": ["x + 1", "x − 1", "x − 6", "x + 6"], "c": 1, "s": ["Factor theorem: p(1) = 0 means (x − 1) is a factor."]}, {"t": "mc", "lv": 3, "q": "For which value of k does x² + kx + 9 = 0 have exactly one root (k > 0)?", "o": ["3", "6", "9", "18"], "c": 1, "s": ["Δ = k² − 36 = 0.", "k = 6."]}], "quiz": [{"q": "If b² − 4ac < 0, the quadratic has", "o": ["two real roots", "one root", "no real roots", "infinitely many"], "c": 2}, {"q": "A cubic has at most how many real roots?", "o": ["1", "2", "3", "4"], "c": 2}, {"q": "The vertex of y = ax² + bx + c is at x =", "o": ["b/2a", "−b/2a", "−c/a", "b²/4a"], "c": 1}, {"q": "x² − 4 = 0 has roots", "o": ["2 only", "±2", "4", "±4"], "c": 1}]}, {"id": "2.7", "title": "Exponentials and logarithms", "problems": [{"t": "num", "lv": 1, "q": "Evaluate log₁₀ 10 000.", "a": 4, "s": ["10⁴ = 10 000."]}, {"t": "num", "lv": 1, "q": "A sample has a half-life of 6 hours. What fraction remains after 18 hours? Give a decimal.", "a": 0.125, "s": ["18 h = 3 half-lives.", "(½)³ = 0.125."]}, {"t": "num", "lv": 2, "q": "Solve 2ˣ = 50, to 3 significant figures.", "a": 5.643856189774724, "s": ["x = ln 50 ÷ ln 2.", "= 3.912 ÷ 0.693 ≈ 5.64."]}, {"t": "num", "lv": 2, "q": "$1000 is invested at 5% a year compounded annually. What is it worth after 10 years?", "a": 1628.894626777442, "unit": "dollars", "s": ["1000 × 1.05¹⁰.", "≈ $1629."]}, {"t": "num", "lv": 2, "q": "Using the rule of 70, estimate the doubling time for growth of 7% a year.", "a": 10, "unit": "years", "s": ["70 ÷ 7 = 10 years."]}, {"t": "num", "lv": 2, "q": "A substance decays with k = 0.1 per day. What is its half-life?", "a": 6.931471805599452, "unit": "days", "s": ["t½ = ln 2 / k.", "0.693 ÷ 0.1 ≈ 6.93 days."]}, {"t": "num", "lv": 2, "q": "How many times more acidic is a solution of pH 2 than one of pH 5?", "a": 1000, "unit": "×", "s": ["Each pH unit is a factor of 10.", "10³ = 1000."]}, {"t": "mc", "lv": 3, "q": "Simplify ln(e⁵) + log₁₀(100).", "o": ["7", "5", "10", "500"], "c": 0, "s": ["ln e⁵ = 5; log 100 = 2.", "5 + 2 = 7."]}], "quiz": [{"q": "log(ab) equals", "o": ["log a × log b", "log a + log b", "a log b", "log a − log b"], "c": 1}, {"q": "After 2 half-lives, the fraction remaining is", "o": ["½", "¼", "⅛", "0"], "c": 1}, {"q": "ln is the logarithm to base", "o": ["10", "2", "e", "1"], "c": 2}, {"q": "On a log scale, an increase of 2 means", "o": ["×2", "×20", "×100", "+2"], "c": 2}]}, {"id": "2.8", "title": "Calculus intuition", "problems": [{"t": "mc", "lv": 1, "q": "Differentiate y = x⁴.", "o": ["4x³", "x³", "4x⁴", "x⁵/5"], "c": 0, "s": ["Bring down 4, reduce power to 3."]}, {"t": "mc", "lv": 1, "q": "Differentiate y = 3x² + 5x − 7.", "o": ["6x + 5", "3x + 5", "6x − 7", "6x² + 5"], "c": 0, "s": ["3 × 2x + 5 + 0."]}, {"t": "num", "lv": 2, "q": "For y = x³ − 2x, find the gradient at x = 2.", "a": 10, "s": ["dy/dx = 3x² − 2.", "At x = 2: 12 − 2 = 10."]}, {"t": "num", "lv": 2, "q": "A ball's height is h = 30t − 5t². What is its velocity, dh/dt, at t = 1 s?", "a": 20, "unit": "m/s", "s": ["dh/dt = 30 − 10t.", "At t = 1: 20 m/s."]}, {"t": "num", "lv": 2, "q": "For h = 30t − 5t², at what time is the ball at its highest?", "a": 3, "unit": "s", "s": ["Set dh/dt = 0: 30 − 10t = 0.", "t = 3 s."]}, {"t": "num", "lv": 2, "q": "A car's speed rises steadily from 0 to 20 m/s in 10 s. How far does it travel in that time (area under the graph)?", "a": 100, "unit": "m", "s": ["Triangle area = ½ × base × height.", "½ × 10 × 20 = 100 m."]}, {"t": "num", "lv": 2, "q": "Evaluate the integral of 2x from x = 0 to x = 3.", "a": 9, "s": ["Antiderivative: x².", "3² − 0² = 9."]}, {"t": "show", "lv": 3, "q": "Explain in words what dV/dt = −0.5 litres per minute means for a draining tank.", "a": "The volume of water V is changing over time t at a rate of −0.5 litres per minute: the tank is losing half a litre every minute at that moment. The negative sign means volume is decreasing.", "s": ["Read dV/dt as 'rate of change of V with time'."]}], "quiz": [{"q": "The derivative of a constant is", "o": ["the constant", "1", "0", "undefined"], "c": 2}, {"q": "Velocity is the derivative of", "o": ["acceleration", "position", "mass", "force"], "c": 1}, {"q": "The area under a speed-time graph gives", "o": ["acceleration", "distance", "speed", "force"], "c": 1}, {"q": "d/dx(eˣ) =", "o": ["xeˣ⁻¹", "eˣ", "ln x", "1"], "c": 1}]}], "capstone": {"title": "Modelling a cooling cup of coffee", "scenario": "A cup of coffee at 90 °C is left in a 20 °C room. Newton's law of cooling says the temperature difference from the room decays exponentially: T = 20 + 70e^(−kt), with t in minutes. After 10 minutes the coffee is at 60 °C. Use algebra from across the course to build and use the model.", "parts": [{"t": "num", "lv": 2, "q": "Write 60 = 20 + 70e^(−10k) and solve for k (per minute).", "a": 0.055961578793542265, "unit": "per min", "tol": 0.02, "s": ["Subtract 20: 40 = 70e^(−10k).", "Divide: e^(−10k) = 4/7. Take ln: −10k = ln(4/7).", "k = ln(7/4)/10 ≈ 0.056 per min."]}, {"t": "num", "lv": 2, "q": "What is the coffee's temperature after 30 minutes?", "a": 33.06122448979592, "unit": "°C", "tol": 0.02, "s": ["e^(−30k) = (4/7)³ ≈ 0.187.", "T = 20 + 70 × 0.187 ≈ 33 °C."]}, {"t": "num", "lv": 2, "q": "You like coffee at 50 °C. Rearrange to find when it reaches 50 °C (minutes).", "a": 15.14070686806603, "unit": "min", "tol": 0.02, "s": ["30 = 70e^(−kt) → t = ln(70/30)/k.", "= 0.847 ÷ 0.0560 ≈ 15.1 min."]}, {"t": "num", "lv": 3, "q": "Differentiate to find the rate of cooling at t = 0 (degrees per minute, give the size only).", "a": 3.917310515547959, "unit": "°C/min", "tol": 0.02, "s": ["dT/dt = −70k e^(−kt).", "At t = 0: −70k ≈ −3.9 °C per minute."]}, {"t": "mc", "lv": 2, "q": "To check the model against measurements, which graph should be a straight line?", "o": ["T against t", "ln(T − 20) against t", "T against ln t", "1/T against t"], "c": 1, "s": ["T − 20 = 70e^(−kt), so ln(T − 20) = ln 70 − kt: straight line, gradient −k."]}, {"t": "show", "lv": 3, "q": "Name one assumption of the model and one situation where it would fail.", "a": "It assumes the room stays at 20 °C and the rate of heat loss is proportional to the temperature difference. It would fail if the room warmed up, if the cup had a lid added part-way, or if evaporation from very hot coffee made early cooling faster than predicted.", "s": ["What must stay constant for the exponential to hold?"]}]}};
+const KEY = "sp-c" + D.n;
+const $ = s => document.querySelector(s);
+const el = (t, c, x) => { const e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; };
+function tex(node, src, display = true){
+  node.innerHTML = "";
+  if (window.MathJax && MathJax.tex2svg){ try { node.appendChild(MathJax.tex2svg(src, { display })); return; } catch(e){} }
+  node.appendChild(el("code", null, src));
+}
+let solved = {};
+try { solved = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch(e){}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(solved)); } catch(e){} };
+if (window.math){ try { math.import({ ln: x => math.log(x) }, { override:false }); } catch(e){} }
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random()*(i+1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+
+function parseNum(s){
+  s = s.trim().replace(/\s+/g, "").replace(/[−–]/g, "-").replace(/,/g, "");
+  s = s.replace(/[×x\*]10\^?\(?(-?\d+)\)?/i, "e$1").replace(/·10\^?(-?\d+)/, "e$1");
+  if (s.endsWith("%")) s = s.slice(0, -1);
+  const v = Number(s); return isFinite(v) && s !== "" ? v : NaN;
+}
+function fmtNum(x){ if (x === 0) return "0"; const a = Math.abs(x); return (a >= 1e5 || a < 1e-3) ? x.toExponential(3).replace(/\.?0+e/, "e") : String(+x.toPrecision(4)); }
+function checkExpr(p, input){
+  if (!window.math) return { ok:false, msg:"The checker didn't load. Compare with the worked solution." };
+  let node; try { node = math.parse(input.replace(/π/g, "pi").replace(/√/g, "sqrt").replace(/²/g, "^2").replace(/[×·]/g, "*").replace(/−/g, "-")); } catch(e){ return { ok:false, msg:"I couldn't read that. Check brackets and operators." }; }
+  const syms = new Set(node.filter(n => n.isSymbolNode).map(n => n.name));
+  if (syms.has(p.target)) return { ok:false, msg:"Your answer still contains " + p.target + "." };
+  const allowed = new Set([...p.vars, "pi", "e", "sqrt", "cbrt", "ln", "log", "log10", "exp"]);
+  const unk = [...syms].filter(s => !allowed.has(s)); if (unk.length) return { ok:false, msg:"Unknown symbol " + unk.join(", ") + ". Use: " + p.vars.join(", ") + "." };
+  const f = node.compile(), g = math.compile(p.ans); let n = 0;
+  for (let i = 0; i < 14 && n < 6; i++){
+    const sc = {}; p.vars.forEach(v => sc[v] = 0.6 + Math.random()*1.8);
+    if (p.dom) Object.entries(p.dom).forEach(([k, [a, b]]) => sc[k] = a + Math.random()*(b - a));
+    let w, gt; try { w = g.evaluate(sc); gt = f.evaluate(sc); } catch(e){ return { ok:false, msg:"That couldn't be evaluated." }; }
+    if (typeof w !== "number" || !isFinite(w)) continue; n++;
+    if (typeof gt !== "number" || Math.abs(gt - w) > 1e-7*Math.max(1, Math.abs(w))) return { ok:false, msg:"Not equivalent: substituting numbers gives a different value. Try the hint." };
+  }
+  return { ok:true };
+}
+
+function progress(){
+  let tot = 0, done = 0;
+  D.modules.forEach(m => { const d = m.problems.filter((_, i) => solved[m.id + "." + (i+1)]).length; tot += m.problems.length; done += d;
+    const n = document.getElementById("n-" + m.id); n.textContent = d + "/" + m.problems.length; n.classList.toggle("full", d === m.problems.length); });
+  $("#ov-t").textContent = done + " of " + tot + " problems solved"; $("#ov-b").style.width = (100*done/tot) + "%";
+}
+function solveMark(id, card){ if (!id) return; solved[id] = true; save(); card.classList.add("solved"); progress(); }
+
+function problemCard(p, label, id){
+  const c = el("article", "card" + (id && solved[id] ? " solved" : ""));
+  const h = el("div", "chead"); h.appendChild(el("span", "pid", label)); h.appendChild(el("span", "lvl", "●".repeat(p.lv || 2) + "○".repeat(3 - (p.lv || 2)))); c.appendChild(h);
+  c.appendChild(el("p", "q", p.q));
+  if (p.eq){ const e = el("div", "eq"); tex(e, p.eq); c.appendChild(e); }
+  const fb = el("div", "fb"); fb.setAttribute("aria-live", "polite");
+  if (p.t === "num"){
+    const r = el("div", "row"); const inp = el("input"); inp.type = "text"; inp.inputMode = "decimal"; inp.setAttribute("aria-label", "Your answer");
+    r.appendChild(inp); if (p.unit) r.appendChild(el("span", "unit", p.unit));
+    const b = el("button", null, "Check"); r.appendChild(b); c.appendChild(r);
+    const go = () => { const v = parseNum(inp.value); if (isNaN(v)){ fb.className = "fb bad"; fb.textContent = "Enter a number, for example 2.5 or 3e8."; return; }
+      const tol = p.tol || 0.02, ok = p.a === 0 ? Math.abs(v) < 1e-9 : Math.abs(v - p.a) / Math.abs(p.a) <= tol;
+      fb.className = "fb " + (ok ? "good" : "bad"); fb.textContent = ok ? "Correct: " + fmtNum(p.a) + (p.unit ? " " + p.unit : "") + "." : "Not quite. Check units, powers of ten and rounding, or open the hint.";
+      if (ok) solveMark(id, c); };
+    b.onclick = go; inp.addEventListener("keydown", e => { if (e.key === "Enter") go(); });
+  } else if (p.t === "mc"){
+    const box = el("div", "mc");
+    p.o.forEach((o, i) => { const b = el("button", null, o); b.onclick = () => {
+      if (i === p.c){ b.classList.add("right"); [...box.children].forEach(x => x.disabled = true); fb.className = "fb good"; fb.textContent = "Correct."; solveMark(id, c); }
+      else { b.classList.add("wrong"); b.disabled = true; fb.className = "fb bad"; fb.textContent = "Not that one. Try again, or open the worked solution."; } }; box.appendChild(b); });
+    c.appendChild(box);
+  } else if (p.t === "expr"){
+    const r = el("div", "row"); r.appendChild(el("span", "unit", p.target + " ="));
+    const inp = el("input", "wide"); inp.type = "text"; inp.spellcheck = false; inp.autocomplete = "off"; inp.setAttribute("aria-label", "Your expression");
+    r.appendChild(inp); const b = el("button", null, "Check"); r.appendChild(b); c.appendChild(r);
+    const pv = el("div", "preview"); c.appendChild(pv);
+    inp.addEventListener("input", () => { try { tex(pv, p.target + "=" + math.parse(inp.value).toTex({ parenthesis:"auto" }), false); } catch(e){ pv.textContent = ""; } });
+    const go = () => { const res = checkExpr(p, inp.value.trim()); fb.className = "fb " + (res.ok ? "good" : "bad"); fb.textContent = res.ok ? "Correct." : res.msg; if (res.ok) solveMark(id, c); };
+    b.onclick = go; inp.addEventListener("keydown", e => { if (e.key === "Enter") go(); });
+  } else {
+    const b = el("button", null, "I've written my answer: show the model"); const m = el("div", "model"); m.hidden = true; m.textContent = p.a;
+    b.onclick = () => { m.hidden = false; b.hidden = true; const ok = el("button", "ghost", "Mine matched"); ok.onclick = () => { solveMark(id, c); ok.disabled = true; ok.textContent = "Marked as done"; }; c.insertBefore(ok, fb); };
+    c.appendChild(b); c.appendChild(m);
+  }
+  c.appendChild(fb);
+  if (p.s && p.s.length){
+    const ex = el("div", "extras"); const hb = el("button", "ghost", "Hint"), sb = el("button", "ghost", "Worked solution"); ex.appendChild(hb); ex.appendChild(sb); c.appendChild(ex);
+    const hint = el("p", "fb"); hint.hidden = true; hint.style.color = "var(--mute)"; hint.textContent = "Start here: " + p.s[0]; c.appendChild(hint);
+    const sol = el("div", "sol"); sol.hidden = true; const ol = el("ol"); p.s.forEach(s => ol.appendChild(el("li", null, s))); sol.appendChild(ol); c.appendChild(sol);
+    hb.onclick = () => hint.hidden = !hint.hidden; sb.onclick = () => { sol.hidden = !sol.hidden; sb.textContent = sol.hidden ? "Worked solution" : "Hide solution"; };
+  }
+  return c;
+}
+function quizBox(m){
+  const q = el("div", "quiz"); q.appendChild(el("h3", null, "Quick check · Module " + m.id)); q.firstChild.style.marginTop = "0";
+  const sc = el("div", "score"); let right = 0, answered = 0;
+  const upd = () => sc.textContent = answered < m.quiz.length ? answered + " of " + m.quiz.length + " answered" : "Score " + right + " of " + m.quiz.length + (right === m.quiz.length ? ". Module complete." : ". Revisit the reader section for any you missed.");
+  m.quiz.forEach(item => {
+    q.appendChild(el("p", "qq", item.q)); const box = el("div", "mc"); const fb = el("div", "fb"); let first = true;
+    item.o.forEach((o, i) => { const b = el("button", null, o); b.onclick = () => {
+      if (first){ answered++; if (i === item.c) right++; first = false; upd(); }
+      if (i === item.c){ b.classList.add("right"); [...box.children].forEach(x => x.disabled = true); fb.className = "fb good"; fb.textContent = item.w || "Correct."; }
+      else { b.classList.add("wrong"); b.disabled = true; fb.className = "fb bad"; fb.textContent = "Not quite. Try another option."; } }; box.appendChild(b); });
+    q.appendChild(box); q.appendChild(fb);
+  });
+  upd(); q.appendChild(sc); return q;
+}
+function build(){
+  const idx = $("#index"), main = $("#main");
+  D.modules.forEach(m => {
+    const a = el("a"); a.href = "#m-" + m.id.replace(".", "-"); a.appendChild(el("span", null, m.id + " " + m.title)); const n = el("span", "n"); n.id = "n-" + m.id; a.appendChild(n); idx.appendChild(a);
+    const s = el("section", "mod"); s.id = "m-" + m.id.replace(".", "-");
+    const h = el("div", "modhead"); h.appendChild(el("span", "code", m.id)); h.appendChild(el("h2", null, m.title)); s.appendChild(h);
+    m.problems.forEach((p, i) => s.appendChild(problemCard(p, m.id + "." + (i+1), m.id + "." + (i+1))));
+    s.appendChild(quizBox(m)); main.appendChild(s);
+  });
+  // capstone
+  const ca = el("a"); ca.href = "#capstone"; ca.appendChild(el("span", null, "★ Capstone")); idx.appendChild(ca);
+  const cs = el("section", "mod"); cs.id = "capstone";
+  const ch = el("div", "modhead"); ch.appendChild(el("span", "code", "★")); ch.appendChild(el("h2", null, "Capstone: " + D.capstone.title)); cs.appendChild(ch);
+  cs.appendChild(el("p", null, D.capstone.scenario));
+  D.capstone.parts.forEach((p, i) => cs.appendChild(problemCard(p, "Part " + (i+1), null)));
+  main.appendChild(cs);
+  // mixed practice
+  const ma = el("a"); ma.href = "#mixed"; ma.appendChild(el("span", null, "↻ Mixed practice")); idx.appendChild(ma);
+  const ms = el("section", "mod"); ms.id = "mixed";
+  const mh = el("div", "modhead"); mh.appendChild(el("span", "code", "↻")); mh.appendChild(el("h2", null, "Mixed practice")); ms.appendChild(mh);
+  ms.appendChild(el("p", null, "Ten problems drawn at random from across the course. Mixing topics is harder than practising one at a time, and it is the best preparation for remembering long-term."));
+  const holder = el("div"); const gen = el("button", null, "Draw ten problems");
+  gen.onclick = () => { holder.innerHTML = ""; const pool = []; D.modules.forEach(m => m.problems.forEach((p, i) => { if (p.t !== "show") pool.push([p, m.id + "." + (i+1)]); }));
+    shuffle(pool).slice(0, 10).forEach(([p, lab]) => holder.appendChild(problemCard(p, "From " + lab, null))); gen.textContent = "Draw a fresh ten"; };
+  ms.appendChild(gen); ms.appendChild(holder); main.appendChild(ms);
+  const ov = el("div", "overall"); ov.innerHTML = '<span id="ov-t"></span><div class="bar"><i id="ov-b"></i></div>';
+  const rs = el("button", "ghost", "Clear progress"); rs.style.marginTop = "8px"; rs.style.fontSize = "13px";
+  rs.onclick = () => { solved = {}; save(); document.querySelectorAll(".card.solved").forEach(c => c.classList.remove("solved")); progress(); };
+  ov.appendChild(rs); idx.appendChild(ov); progress();
+}
+if (window.MathJax && MathJax.startup && MathJax.startup.promise) MathJax.startup.promise.then(build).catch(build); else build();
+</script>
+
+<script>if("serviceWorker" in navigator) navigator.serviceWorker.register("../sw.js");</script>
+</body>
+</html>

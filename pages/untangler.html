@@ -1,0 +1,591 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1F2B33">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}
+.sp-home{position:fixed;left:max(12px,env(safe-area-inset-left,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:50;
+font:500 14px "Bricolage Grotesque",system-ui,sans-serif;background:var(--ink,#1F2B33);color:var(--sheet,#fff);text-decoration:none;padding:9px 14px;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+</style>
+</head>
+<body>
+<a class="sp-home" href="../index.html">← Hub</a>
+<title>Formula Untangler</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<script>
+window.MathJax = { svg: { fontCache: 'global' }, startup: { typeset: false }, options: { enableMenu: false } };
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.min.js"></script>
+<style>
+/* Layout: a lab-notebook page. One working bench per tab; the equation is the hero of each bench. */
+:root{
+  --paper:#F4F6F3; --sheet:#FFFFFF; --ink:#1F2B33; --mute:#5E6B72; --rule:#D7DDDC;
+  --ochre:#B07508; --ochre-soft:#F3E6C8; --teal:#2C7A6B; --teal-soft:#DCEDE8; --red:#A8402C; --red-soft:#F5E1DB;
+  --grid:#E6EAE8; --l1:#DCE4EA; --l2:#E3EDE9; --l3:#F3E3C0;
+  --display:"Bricolage Grotesque", "DejaVu Sans", system-ui, sans-serif;
+  --body:"Source Serif 4", Georgia, "Times New Roman", serif;
+  --mono:"IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#141C21; --sheet:#1B252C; --ink:#E9EEED; --mute:#9AA8AE; --rule:#2D3A42;
+  --ochre:#E2A73A; --ochre-soft:#3B2F17; --teal:#62BBA6; --teal-soft:#1D3A34; --red:#E58570; --red-soft:#3D2420;
+  --grid:#25313A; --l1:#2B3B48; --l2:#24463F; --l3:#5A4520; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#141C21; --sheet:#1B252C; --ink:#E9EEED; --mute:#9AA8AE; --rule:#2D3A42;
+  --ochre:#E2A73A; --ochre-soft:#3B2F17; --teal:#62BBA6; --teal-soft:#1D3A34; --red:#E58570; --red-soft:#3D2420;
+  --grid:#25313A; --l1:#2B3B48; --l2:#24463F; --l3:#5A4520; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.55}
+.wrap{max-width:1080px;margin:0 auto;padding-block:28px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:12px 24px;border-bottom:1px solid var(--rule);padding-bottom:16px}
+.kicker{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ochre)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(30px,5vw,46px);line-height:1.05;margin:4px 0 0;text-wrap:balance}
+.tag{color:var(--mute);font-style:italic;margin:6px 0 0;max-width:52ch}
+nav{display:flex;gap:4px;flex-wrap:wrap}
+nav a{font-family:var(--display);font-weight:500;font-size:15px;color:var(--mute);text-decoration:none;padding:8px 14px;border-radius:999px;border:1px solid transparent}
+nav a[aria-current="page"]{color:var(--ink);border-color:var(--ink);background:var(--sheet)}
+nav a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--ochre);outline-offset:2px}
+.bench{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:24px;margin-top:24px}
+@media (max-width:820px){.bench{grid-template-columns:minmax(0,1fr)}}
+.sheet{background:var(--sheet);border:1px solid var(--rule);border-radius:10px;padding:22px}
+.aside{display:flex;flex-direction:column;gap:16px;min-width:0}
+.label{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);margin:0 0 8px}
+.practising{border-left:3px solid var(--teal);padding:2px 0 2px 12px;color:var(--ink);font-size:15.5px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+select,input[type=number],input[type=text]{font:inherit;font-size:16px;color:var(--ink);background:var(--paper);border:1px solid var(--rule);border-radius:6px;padding:7px 10px;min-width:0}
+input[type=number]{width:9em;font-family:var(--mono)}
+button{font-family:var(--display);font-weight:500;font-size:15px;cursor:pointer;border-radius:8px;border:1px solid var(--ink);background:var(--ink);color:var(--sheet);padding:9px 16px}
+button.ghost{background:transparent;color:var(--ink)}
+button:disabled{opacity:.45;cursor:default}
+.eq{min-height:92px;display:flex;align-items:center;justify-content:center;font-size:21px;overflow-x:auto;padding:14px 4px;margin:6px 0 4px}
+.eq mjx-container{margin:0!important}
+.target{font-family:var(--mono);font-size:13px;color:var(--mute);text-align:center}
+.target b{color:var(--ochre);font-weight:500}
+.opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:18px}
+@media (max-width:520px){.opts{grid-template-columns:minmax(0,1fr)}}
+.opt{text-align:left;background:var(--paper);color:var(--ink);border:1px solid var(--rule);font-family:var(--body);font-size:15.5px;line-height:1.35;padding:12px 14px}
+.opt:hover:not(:disabled){border-color:var(--ink)}
+.opt.wrong{border-color:var(--red);background:var(--red-soft)}
+.opt.right{border-color:var(--teal);background:var(--teal-soft)}
+.feedback{margin-top:14px;min-height:3em;font-size:15.5px}
+.feedback.bad{color:var(--red)} .feedback.good{color:var(--teal)}
+.tree{display:flex;justify-content:center;padding:6px 0}
+.layer{border:1px solid var(--ink);border-radius:12px;padding:26px 14px 12px;position:relative;transition:opacity .5s, transform .5s;display:flex;justify-content:center}
+.layer .ll{position:absolute;top:5px;left:10px;font-family:var(--mono);font-size:12px;color:var(--ink)}
+.layer.gone{opacity:.0;transform:scale(1.08);border-style:dashed}
+.core{width:46px;height:46px;border-radius:50%;background:var(--ochre);color:var(--sheet);display:flex;align-items:center;justify-content:center;font-family:var(--body);font-style:italic;font-size:22px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-family:var(--mono);font-size:12px;padding:4px 9px;border-radius:999px;border:1px solid var(--rule);color:var(--mute)}
+.chip.on{border-color:var(--ochre);color:var(--ink);background:var(--ochre-soft)}
+.chip.done{border-color:var(--teal);color:var(--teal)}
+ol.log{margin:0;padding-left:1.3em;font-size:15px}
+ol.log li{margin-bottom:4px}
+.debrief{background:var(--teal-soft);border-radius:8px;padding:14px 16px;font-size:15.5px}
+.debrief[hidden]{display:none}
+.stat{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:13px;color:var(--mute)}
+canvas{width:100%;height:auto;display:block;border-radius:6px}
+.fitline{font-family:var(--mono);font-size:13.5px;font-variant-numeric:tabular-nums;margin-top:8px}
+.pill{display:inline-block;font-family:var(--mono);font-size:12px;padding:2px 9px;border-radius:999px}
+.pill.ok{background:var(--teal-soft);color:var(--teal)} .pill.no{background:var(--red-soft);color:var(--red)}
+.scaleq{font-family:var(--display);font-size:22px;line-height:1.35;margin:10px 0 16px;text-wrap:balance}
+.scaleq em{font-style:normal;color:var(--ochre)}
+.small{font-size:14.5px;color:var(--mute)}
+footer{margin-top:40px;font-size:14px;color:var(--mute);border-top:1px solid var(--rule);padding-top:14px}
+@media (prefers-reduced-motion: reduce){.layer{transition:none}}
+</style>
+
+<div class="wrap">
+<header>
+  <div>
+    <div class="kicker">Second Pass · Course 2 · Module 2.3</div>
+    <h1>Formula Untangler</h1>
+    <p class="tag">Three benches for one skill: changing the subject of a formula, predicting how it scales, and straightening it out for a graph.</p>
+  </div>
+  <nav aria-label="Benches">
+    <a href="#untangle" data-tab="untangle">1 · Untangle</a>
+    <a href="#scale" data-tab="scale">2 · Scale</a>
+    <a href="#linearise" data-tab="linearise">3 · Linearise</a>
+  </nav>
+</header>
+
+<!-- ============ BENCH 1 ============ -->
+<section id="v-untangle" class="bench">
+  <div class="sheet">
+    <div class="row" style="justify-content:space-between">
+      <label class="label" for="formula" style="margin:0">Formula</label>
+      <span class="stat" id="u-score"></span>
+    </div>
+    <div class="row" style="margin-top:6px">
+      <select id="formula" style="flex:1"></select>
+      <button class="ghost" id="u-reset">Restart</button>
+    </div>
+    <div class="eq" id="u-eq" aria-live="polite"></div>
+    <div class="target" id="u-target"></div>
+    <div class="opts" id="u-opts"></div>
+    <div class="feedback" id="u-fb" aria-live="polite"></div>
+    <div class="debrief" id="u-debrief" hidden></div>
+  </div>
+  <div class="aside">
+    <div class="sheet">
+      <p class="label">What you're practising</p>
+      <p class="practising" style="margin:0">Choose the inverse of the <b>outermost</b> operation and apply it to both whole sides. Wrong choices explain themselves. Read the explanation before trying again.</p>
+    </div>
+    <div class="sheet">
+      <p class="label" id="tree-label">Build tree</p>
+      <div id="u-tree"></div>
+    </div>
+    <div class="sheet">
+      <p class="label">Your steps</p>
+      <ol class="log" id="u-log"></ol>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BENCH 2 ============ -->
+<section id="v-scale" class="bench" hidden>
+  <div class="sheet">
+    <div class="row" style="justify-content:space-between">
+      <label class="label" for="law" style="margin:0">Law</label>
+      <span class="stat" id="s-streak">Streak 0</span>
+    </div>
+    <select id="law" style="width:100%;margin-top:6px"></select>
+    <div class="eq" id="s-eq"></div>
+    <p class="scaleq" id="s-q"></p>
+    <div class="row">
+      <label for="s-ans" class="small">Output changes by a factor of</label>
+      <input type="number" id="s-ans" step="any" inputmode="decimal" value="">
+      <button id="s-check">Check</button>
+      <button class="ghost" id="s-next">New factor</button>
+    </div>
+    <div class="feedback" id="s-fb" aria-live="polite"></div>
+  </div>
+  <div class="aside">
+    <div class="sheet">
+      <p class="label">What you're practising</p>
+      <p class="practising" style="margin:0">Predict before you calculate. Write the law as a proportionality, isolate the output, then raise the input's factor to the matching power. Decimals are fine: one quarter is 0.25.</p>
+    </div>
+    <div class="sheet">
+      <p class="label">Why this matters</p>
+      <p class="small" style="margin:0">Scaling is the fastest check on any rearrangement (Reader §11, test four), and it answers every "by what factor" exam question in seconds. It is the same reasoning as interpreting an elasticity: a one-per-cent change in input produces an <i>n</i>-per-cent change in output.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BENCH 3 ============ -->
+<section id="v-linearise" class="bench" hidden>
+  <div class="sheet">
+    <div class="row">
+      <label class="label" for="ds" style="margin:0">Dataset</label>
+      <select id="ds" style="flex:1"></select>
+    </div>
+    <div class="row" style="margin-top:12px">
+      <label for="ty" class="small">Vertical axis</label><select id="ty"></select>
+      <label for="tx" class="small">Horizontal axis</label><select id="tx"></select>
+    </div>
+    <canvas id="plot" width="720" height="440" style="margin-top:14px" aria-label="Scatter plot of the transformed data with a fitted line"></canvas>
+    <div class="fitline" id="fit"></div>
+  </div>
+  <div class="aside">
+    <div class="sheet">
+      <p class="label">What you're practising</p>
+      <p class="practising" style="margin:0">Choose transforms for each axis until the points lie on a straight line (R² above 0.999). Then use the gradient to recover the physical constant. Reader §12 and Visual Companion page 4.</p>
+    </div>
+    <div class="sheet">
+      <p class="label">Data</p>
+      <p class="small" id="ds-note" style="margin:0"></p>
+    </div>
+    <div class="sheet" id="task-box">
+      <p class="label">Extract the constant</p>
+      <p id="task-q" style="margin:0 0 10px;font-size:15.5px">Straighten the graph first.</p>
+      <div class="row"><input type="number" id="task-ans" step="any" inputmode="decimal" disabled aria-label="Your value"><button id="task-check" disabled>Check</button></div>
+      <div class="feedback" id="task-fb" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<footer>Pair with the Theory Reader (audio edition), the Visual Companion and the Module 2.3 workbook. Progress is not saved; each visit starts fresh.</footer>
+</div>
+
+<script>
+/* ---------------- math rendering ---------------- */
+function tex(el, src){
+  el.innerHTML = "";
+  if (window.MathJax && MathJax.tex2svg){
+    try { el.appendChild(MathJax.tex2svg(src, {display:true})); return; } catch(e){}
+  }
+  const code = document.createElement("code"); code.textContent = src; code.style.fontFamily = "var(--mono)"; el.appendChild(code);
+}
+function ready(fn){
+  if (window.MathJax && MathJax.startup && MathJax.startup.promise) MathJax.startup.promise.then(fn).catch(fn);
+  else fn();
+}
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]] = [a[j],a[i]]; } return a; };
+
+/* ---------------- bench 1 data ----------------
+   Each step: eq (current state), options [text, correct, feedback]. peel = layers removed after this step. */
+const F = [
+ { name:"Pendulum: solve for g", target:"g", layers:["2\\pi \\times \\bigcirc","\\sqrt{\\bigcirc}","\\dfrac{L}{\\bigcirc}"],
+   steps:[
+    { eq:"T = 2\\pi\\sqrt{\\dfrac{L}{g}}", opts:[
+      ["Divide both sides by 2π", true, "2π multiplies the root, and it is the outermost layer. Dividing by it leaves the root alone on the right."],
+      ["Subtract 2π from both sides", false, "2π is multiplying, not adding. Subtraction undoes addition only."],
+      ["Multiply both sides by g", false, "g is trapped inside the root and the fraction. Multiplying outside the root does not reach it."],
+      ["Take the reciprocal of each term", false, "Reciprocals apply to a whole side, never term by term, and they would not free g here anyway."]]},
+    { eq:"\\dfrac{T}{2\\pi} = \\sqrt{\\dfrac{L}{g}}", opts:[
+      ["Square both sides", true, "Squaring undoes the square root. The left side becomes T² over 4π²."],
+      ["Divide both sides by L", false, "L is inside the root. You must remove the root before you can reach L or g."],
+      ["Take the square root of both sides", false, "That adds another root rather than removing one. Undo a root with its inverse, squaring."],
+      ["Subtract the root from both sides", false, "That gives zero on the right and loses g entirely."]]},
+    { eq:"\\dfrac{T^2}{4\\pi^2} = \\dfrac{L}{g}", opts:[
+      ["Take the reciprocal of both sides", true, "Each side is a single fraction, so flipping both is legal. g moves to the numerator."],
+      ["Subtract L from both sides", false, "L is not added to anything; it is divided by g."],
+      ["Take the square root of both sides", false, "That simply undoes your previous step."],
+      ["Multiply both sides by L", false, "L is already on top. Multiplying gives L²/g, which makes things worse."]]},
+    { eq:"\\dfrac{4\\pi^2}{T^2} = \\dfrac{g}{L}", opts:[
+      ["Multiply both sides by L", true, "g is divided by L, so multiplying by L leaves g alone."],
+      ["Divide both sides by L", false, "g is already divided by L. Dividing again gives g over L squared."],
+      ["Add L to both sides", false, "L divides g; it is not subtracted from it."],
+      ["Take reciprocals again", false, "That puts g back in the denominator."]]}],
+   final:"g = \\dfrac{4\\pi^2 L}{T^2}",
+   debrief:"Read it aloud: g equals four pi squared L over T squared. Check by scaling: a longer pendulum (bigger L) at the same period would need stronger gravity. Check units: metres over seconds squared, an acceleration. This is how undergraduate labs measure g." },
+
+ { name:"Thin lens: solve for v", target:"v", layers:["\\dfrac{1}{u} + \\bigcirc","\\dfrac{1}{\\bigcirc}"],
+   steps:[
+    { eq:"\\dfrac{1}{f} = \\dfrac{1}{u} + \\dfrac{1}{v}", opts:[
+      ["Subtract 1/u from both sides", true, "That isolates the term containing v."],
+      ["Flip every term: f = u + v", false, "The reciprocal trap. 1/2 + 1/2 = 1, but 2 + 2 is not 1. The reciprocal of a sum is not the sum of the reciprocals."],
+      ["Multiply both sides by v", false, "Legal, but v then appears in two places and you must collect it later. Isolating the 1/v term is cleaner."],
+      ["Subtract u from both sides", false, "The term is 1/u, not u. Remove exactly what is there."]]},
+    { eq:"\\dfrac{1}{v} = \\dfrac{1}{f} - \\dfrac{1}{u}", opts:[
+      ["Combine the right side into one fraction", true, "Common denominator uf: (u − f)/uf. Now each side is a single fraction."],
+      ["Flip both sides now: v = f − u", false, "The right side is still two fractions. The reciprocal of a difference is not the difference of reciprocals."],
+      ["Subtract 1/f from both sides", false, "That undoes progress and leaves v no freer."],
+      ["Square both sides", false, "Nothing here is a root. Squaring adds complexity."]]},
+    { eq:"\\dfrac{1}{v} = \\dfrac{u - f}{uf}", opts:[
+      ["Take the reciprocal of both sides", true, "Both sides are single fractions, so flipping is legal."],
+      ["Multiply both sides by uf", false, "That clears the right denominator but leaves v in the left one."],
+      ["Subtract (u − f) from both sides", false, "(u − f) is a numerator, divided by uf; it is not added."],
+      ["Flip only the right side", false, "Whatever you do to one side, you must do to the other."]]}],
+   final:"v = \\dfrac{uf}{u - f}",
+   debrief:"Limiting case: as the object moves far away (u huge), v approaches f, because distant objects focus at the focal point. If u equals f, the denominator is zero: no image forms, the rays leave parallel." },
+
+ { name:"Radioactive decay: solve for t", target:"t", layers:["N_0 \\times \\bigcirc","e^{\\bigcirc}","-k \\times \\bigcirc"],
+   steps:[
+    { eq:"N = N_0\\, e^{-kt}", opts:[
+      ["Divide both sides by N₀", true, "N₀ multiplies the exponential, the outermost layer. Now the exponential stands alone."],
+      ["Subtract N₀ from both sides", false, "N₀ multiplies; it is not added."],
+      ["Divide both sides by e", false, "e is raised to a power, not multiplying. Dividing by e does not touch the exponent."],
+      ["Divide both sides by −k", false, "−k is inside the exponent, the innermost layer. Peel from the outside."]]},
+    { eq:"\\dfrac{N}{N_0} = e^{-kt}", opts:[
+      ["Take the natural log of both sides", true, "ln undoes e-to-the-power, bringing −kt down."],
+      ["Divide both sides by −k", false, "−k is still in the exponent. Bring the exponent down first."],
+      ["Take the square root of both sides", false, "Nothing is squared. Exponentials are undone by logarithms."],
+      ["Multiply both sides by e", false, "That changes the exponent to 1 − kt. It does not free t."]]},
+    { eq:"\\ln\\!\\left(\\dfrac{N}{N_0}\\right) = -kt", opts:[
+      ["Divide both sides by −k", true, "t is multiplied by −k, the last layer."],
+      ["Raise e to the power of both sides", false, "That undoes your last step."],
+      ["Add k to both sides", false, "k multiplies t; it is not subtracted from it."],
+      ["Take the log of both sides again", false, "There is no exponential left to undo."]]},
+    { eq:"t = -\\dfrac{1}{k}\\ln\\!\\left(\\dfrac{N}{N_0}\\right)", opts:[
+      ["Flip the fraction inside the log to absorb the minus sign", true, "ln(a/b) = −ln(b/a). This tidies the answer; it is optional but conventional."],
+      ["Square both sides to remove the minus", false, "Squaring changes t to t². Never square to get rid of a sign."],
+      ["Drop the minus sign; time is positive", false, "The sign is real. ln(N/N₀) is negative because N is smaller than N₀; the two minuses make t positive."],
+      ["Multiply both sides by −1", false, "That gives −t on the left. Use the log law instead."]]}],
+   final:"t = \\dfrac{1}{k}\\ln\\!\\left(\\dfrac{N_0}{N}\\right)",
+   debrief:"Sanity check: when N = N₀, ln 1 = 0, so t = 0, as it should. When half remains, t = ln 2 / k: the half-life. Radiocarbon dating is this formula." },
+
+ { name:"Kinetic energy: solve for v", target:"v", layers:["\\tfrac{1}{2}m \\times \\bigcirc","\\bigcirc^{2}"],
+   steps:[
+    { eq:"E = \\tfrac{1}{2} m v^2", opts:[
+      ["Multiply both sides by 2", true, "This removes the half. You could equally divide by ½m in one step."],
+      ["Subtract ½m from both sides", false, "½m multiplies v²; it is not added."],
+      ["Divide both sides by v", false, "Dividing by the target leaves it on both sides."],
+      ["Take the square root first", false, "Legal, but the root would split across ½m. Peel the multiplier first."]]},
+    { eq:"2E = m v^2", opts:[
+      ["Divide both sides by m", true, "Now v² stands alone."],
+      ["Subtract m from both sides", false, "m multiplies; subtracting it does nothing useful."],
+      ["Halve both sides", false, "That undoes your last step."],
+      ["Square both sides", false, "That gives v⁴. Undo a square with a root, not another square."]]},
+    { eq:"\\dfrac{2E}{m} = v^2", opts:[
+      ["Take the square root, keeping the positive root", true, "Speed cannot be negative, so the positive root is the physical answer."],
+      ["Halve both sides", false, "v is squared, not doubled."],
+      ["Square both sides", false, "That makes v⁴."],
+      ["Divide both sides by v", false, "Leaves v on both sides."]]}],
+   final:"v = \\sqrt{\\dfrac{2E}{m}}",
+   debrief:"Scaling: four times the energy gives twice the speed. Equivalently, doubling speed quadruples kinetic energy, which is why braking distance grows so fast with speed." },
+
+ { name:"Inverse function: solve for x (appears twice)", target:"x", routine:true,
+   steps:[
+    { eq:"y = \\dfrac{x + 2}{x - 3}", r:0, opts:[
+      ["Multiply both sides by (x − 3)", true, "Clear the fraction first. x now appears on both sides, which the routine will handle."],
+      ["Cancel the x's", false, "You can cancel common factors, never terms. (x + 2)/(x − 3) does not simplify."],
+      ["Subtract 2 from both sides", false, "The 2 is inside a numerator. It is not added to the whole right side."],
+      ["Take reciprocals of each term", false, "Reciprocals apply to whole sides only."]]},
+    { eq:"y(x - 3) = x + 2", r:1, opts:[
+      ["Expand the bracket", true, "xy − 3y = x + 2."],
+      ["Divide both sides by y", false, "Legal, but x still appears on both sides. Expand so you can collect."],
+      ["Subtract x from the bracket", false, "There is no such operation. Expand first."],
+      ["Divide by (x − 3)", false, "That undoes your last step."]]},
+    { eq:"xy - 3y = x + 2", r:2, opts:[
+      ["Collect x-terms on the left: subtract x, add 3y", true, "xy − x = 3y + 2. Every x is now on one side."],
+      ["Divide both sides by x", false, "That gives y − 3y/x on the left: x still twice."],
+      ["Subtract y from both sides", false, "y is not a term on its own; it multiplies x and 3."],
+      ["Factor x out now", false, "x is not yet only on one side. Collect first."]]},
+    { eq:"xy - x = 3y + 2", r:3, opts:[
+      ["Factor out x", true, "x(y − 1) = 3y + 2. x appears exactly once."],
+      ["Divide both sides by y", false, "That gives x − x/y: still twice."],
+      ["Cancel x with −x", false, "xy and x are different terms; they do not cancel."],
+      ["Subtract 3y", false, "That reverses your collecting step."]]},
+    { eq:"x(y - 1) = 3y + 2", r:4, opts:[
+      ["Divide both sides by (y − 1)", true, "Allowed when y is not 1. Done."],
+      ["Subtract (y − 1)", false, "(y − 1) multiplies x; it is not added."],
+      ["Divide by y", false, "The factor is (y − 1), not y."],
+      ["Expand again", false, "That undoes the factoring."]]}],
+   final:"x = \\dfrac{3y + 2}{y - 1}",
+   debrief:"The excluded value y = 1 is real information: the original function never reaches 1 however large x gets. It is the horizontal asymptote of the graph." },
+
+ { name:"Compound growth: solve for t", target:"t", layers:["P \\times \\bigcirc","(1+r)^{\\bigcirc}"],
+   steps:[
+    { eq:"A = P(1 + r)^t", opts:[
+      ["Divide both sides by P", true, "P multiplies the power. Now the exponential is alone."],
+      ["Subtract P from both sides", false, "P multiplies; it is not added."],
+      ["Take the t-th root of both sides", false, "t is the unknown, so you cannot root by it. Exponents are undone by logs."],
+      ["Divide both sides by (1 + r)", false, "(1 + r) is raised to the power t, not multiplied once."]]},
+    { eq:"\\dfrac{A}{P} = (1 + r)^t", opts:[
+      ["Take the log of both sides", true, "The log of a power brings the exponent down: ln(A/P) = t · ln(1 + r)."],
+      ["Divide both sides by (1 + r)", false, "It is raised to a power, not multiplying."],
+      ["Subtract 1 from both sides", false, "The 1 is inside the bracket that is raised to t."],
+      ["Square both sides", false, "Squaring does nothing to free an exponent."]]},
+    { eq:"\\ln\\!\\left(\\dfrac{A}{P}\\right) = t\\,\\ln(1 + r)", opts:[
+      ["Divide both sides by ln(1 + r)", true, "ln(1 + r) is just a number multiplying t."],
+      ["Subtract ln(1 + r) from both sides", false, "It multiplies t; it is not added."],
+      ["Raise e to both sides", false, "That undoes your last step."],
+      ["Cancel the lns", false, "ln(A/P) / ln(1 + r) is not ln(A/P ÷ (1 + r)). Logs do not cancel like that."]]}],
+   final:"t = \\dfrac{\\ln(A/P)}{\\ln(1 + r)}",
+   debrief:"Doubling at 2% a year: t = ln 2 / ln 1.02 ≈ 35 years. The rule of 70 (70 ÷ 2 = 35) is this formula with ln(1 + r) approximated by r." }
+];
+const ROUTINE = ["clear fractions","expand","collect","factor","divide"];
+
+/* ---------------- bench 1 logic ---------------- */
+const $ = id => document.getElementById(id);
+let cur = 0, stepI = 0, tries = 0, firstTry = 0;
+const sel = $("formula");
+F.forEach((f, i) => { const o = document.createElement("option"); o.value = i; o.textContent = f.name; sel.appendChild(o); });
+
+function drawTree(){
+  const f = F[cur], box = $("u-tree");
+  box.innerHTML = "";
+  if (f.routine){
+    $("tree-label").textContent = "Routine: target appears twice";
+    const c = document.createElement("div"); c.className = "chips";
+    ROUTINE.forEach((r, i) => { const s = document.createElement("span"); s.className = "chip" + (i < stepI ? " done" : i === stepI ? " on" : ""); s.textContent = (i+1) + " " + r; c.appendChild(s); });
+    box.appendChild(c);
+    const p = document.createElement("p"); p.className = "small"; p.style.margin = "10px 0 0";
+    p.textContent = "Peeling fails when the target appears in two places. Clear, expand, collect, factor until it appears once, then divide.";
+    box.appendChild(p); return;
+  }
+  $("tree-label").textContent = "Build tree: peel from the outside";
+  // layers removed so far: count correct steps, capped at layers length
+  const removed = Math.min(stepI, f.layers.length);
+  const t = document.createElement("div"); t.className = "tree";
+  let inner = document.createElement("div"); inner.className = "core"; inner.textContent = f.target;
+  for (let i = f.layers.length - 1; i >= 0; i--){
+    const L = document.createElement("div"); L.className = "layer";
+    L.style.background = ["var(--l1)","var(--l2)","var(--l3)"][Math.min(i, 2)];
+    if (i < removed) L.classList.add("gone");
+    const lab = document.createElement("span"); lab.className = "ll"; lab.textContent = "";
+    const m = document.createElement("span"); m.className = "ll"; tex(m, f.layers[i]); m.style.transform = "scale(.72)"; m.style.transformOrigin = "left top"; m.style.top = "-2px";
+    L.appendChild(m); L.appendChild(inner); inner = L;
+  }
+  t.appendChild(inner); box.appendChild(t);
+}
+
+function renderStep(){
+  const f = F[cur];
+  $("u-fb").textContent = ""; $("u-fb").className = "feedback";
+  if (stepI >= f.steps.length){
+    tex($("u-eq"), f.final);
+    $("u-target").innerHTML = "<b>" + f.target + "</b> stands alone";
+    $("u-opts").innerHTML = "";
+    const d = $("u-debrief"); d.hidden = false;
+    d.innerHTML = "<b>Solved.</b> " + firstTry + " of " + f.steps.length + " steps right first time.<br>" + f.debrief +
+      '<div class="row" style="margin-top:12px"><button id="u-next">Next formula</button></div>';
+    $("u-next").onclick = () => { sel.value = (cur + 1) % F.length; load(); };
+    drawTree(); return;
+  }
+  $("u-debrief").hidden = true;
+  const s = f.steps[stepI];
+  tex($("u-eq"), s.eq);
+  $("u-target").innerHTML = "Target: <b>" + f.target + "</b> · step " + (stepI + 1) + " of " + f.steps.length + " · choose the next move";
+  const box = $("u-opts"); box.innerHTML = ""; tries = 0;
+  shuffle(s.opts).forEach(([txt, ok, fb]) => {
+    const b = document.createElement("button"); b.className = "opt"; b.textContent = txt;
+    b.onclick = () => {
+      tries++;
+      if (ok){
+        b.classList.add("right"); [...box.children].forEach(x => x.disabled = true);
+        if (tries === 1) firstTry++;
+        $("u-fb").className = "feedback good"; $("u-fb").textContent = fb;
+        const li = document.createElement("li"); li.textContent = txt; $("u-log").appendChild(li);
+        setTimeout(() => { stepI++; drawTree(); renderStep(); }, 1400);
+      } else {
+        b.classList.add("wrong"); b.disabled = true;
+        $("u-fb").className = "feedback bad"; $("u-fb").textContent = fb;
+      }
+    };
+    box.appendChild(b);
+  });
+  drawTree();
+}
+function load(){ cur = +sel.value; stepI = 0; firstTry = 0; $("u-log").innerHTML = ""; renderStep(); }
+sel.onchange = load; $("u-reset").onclick = load;
+
+/* ---------------- bench 2: scaling ---------------- */
+const LAWS = [
+  { name:"Pendulum: period and length", eq:"T = 2\\pi\\sqrt{L/g}\\quad\\Rightarrow\\quad T \\propto L^{1/2}", inp:"the length L", out:"the period T", n:0.5 },
+  { name:"Gravity: force and separation", eq:"F = \\dfrac{G m_1 m_2}{r^2}\\quad\\Rightarrow\\quad F \\propto r^{-2}", inp:"the separation r", out:"the force F", n:-2 },
+  { name:"Kepler: period and orbit size", eq:"T^2 \\propto a^3\\quad\\Rightarrow\\quad T \\propto a^{3/2}", inp:"the orbital radius a", out:"the period T", n:1.5 },
+  { name:"Kinetic energy and speed", eq:"E = \\tfrac{1}{2}mv^2\\quad\\Rightarrow\\quad E \\propto v^2", inp:"the speed v", out:"the kinetic energy E", n:2 },
+  { name:"Speed from kinetic energy", eq:"v = \\sqrt{2E/m}\\quad\\Rightarrow\\quad v \\propto E^{1/2}", inp:"the energy E", out:"the speed v", n:0.5 },
+  { name:"Sphere: volume and radius", eq:"V = \\tfrac{4}{3}\\pi r^3\\quad\\Rightarrow\\quad V \\propto r^3", inp:"the radius r", out:"the volume V", n:3 },
+  { name:"Sphere: radius from volume", eq:"r = \\sqrt[3]{3V/4\\pi}\\quad\\Rightarrow\\quad r \\propto V^{1/3}", inp:"the volume V", out:"the radius r", n:1/3 },
+  { name:"Light intensity and distance", eq:"I = \\dfrac{P}{4\\pi d^2}\\quad\\Rightarrow\\quad I \\propto d^{-2}", inp:"the distance d", out:"the intensity I", n:-2 }
+];
+const FACTORS = { "0.5":[4,9,16,100,0.25], "-2":[2,3,4,10,0.5], "1.5":[4,9,16,0.25], "2":[2,3,10,0.5], "3":[2,3,10,0.5], "0.3333333333333333":[8,27,1000,0.125] };
+const lawSel = $("law"); let k = 4, streak = 0;
+LAWS.forEach((l, i) => { const o = document.createElement("option"); o.value = i; o.textContent = l.name; lawSel.appendChild(o); });
+const fmt = x => Number.isInteger(x) ? String(x) : (Math.abs(x) < 1 ? x.toPrecision(3).replace(/0+$/,"") : x.toFixed(3).replace(/\.?0+$/,""));
+const frac = n => ({0.5:"1/2","-2":"−2",1.5:"3/2",2:"2",3:"3"})[n] || (Math.abs(n - 1/3) < 1e-9 ? "1/3" : String(n));
+function newScale(){
+  const L = LAWS[+lawSel.value];
+  const opts = FACTORS[String(L.n)] || [2,3,4];
+  let nk; do { nk = opts[Math.floor(Math.random()*opts.length)]; } while (nk === k && opts.length > 1);
+  k = nk;
+  tex($("s-eq"), L.eq);
+  $("s-q").innerHTML = "Multiply " + L.inp + " by <em>" + fmt(k) + "</em>. What happens to " + L.out + "?";
+  $("s-ans").value = ""; $("s-fb").textContent = ""; $("s-fb").className = "feedback";
+}
+$("s-check").onclick = () => {
+  const L = LAWS[+lawSel.value], truth = Math.pow(k, L.n), v = parseFloat($("s-ans").value);
+  if (isNaN(v)){ $("s-fb").className = "feedback bad"; $("s-fb").textContent = "Type a number first, for example 2 or 0.25."; return; }
+  const ok = Math.abs(v - truth) / truth < 0.01;
+  if (ok) streak++; else streak = 0;
+  $("s-streak").textContent = "Streak " + streak;
+  $("s-fb").className = "feedback " + (ok ? "good" : "bad");
+  $("s-fb").textContent = (ok ? "Right. " : "Not quite. ") + "The output goes as the input to the power " + frac(L.n) + ", so the factor is " + fmt(k) + " to the power " + frac(L.n) + " = " + fmt(+truth.toPrecision(6)) + "." +
+    (L.n < 0 ? " A negative power means the output shrinks when the input grows." : "");
+};
+$("s-next").onclick = newScale; lawSel.onchange = newScale;
+$("s-ans").addEventListener("keydown", e => { if (e.key === "Enter") $("s-check").click(); });
+
+/* ---------------- bench 3: linearisation ---------------- */
+function noisy(seed){ let s = seed; return () => { s = (s * 16807) % 2147483647; return (s / 2147483647 - 0.5); }; }
+const r1 = noisy(7), r2 = noisy(11);
+const DS = [
+  { name:"Pendulum: period against length", xn:"L (m)", yn:"T (s)",
+    pts:[0.20,0.35,0.50,0.65,0.80,0.95,1.10,1.25,1.40].map(L => [L, 2*Math.PI*Math.sqrt(L/9.81)*(1 + 0.008*r1())]),
+    note:"Nine timed pendulum lengths with about 1% timing noise, of the kind a student lab produces. Simulated with g = 9.81 m/s².",
+    want:{y:"sq", x:"id"}, q:"The graph of T² against L has gradient 4π²/g. Rearrange and enter g in m/s².", truth:9.81, tol:0.03,
+    explain: m => "g = 4π² ÷ gradient = 39.48 ÷ " + m.toFixed(3) + " = " + (4*Math.PI*Math.PI/m).toFixed(2) + " m/s²." },
+  { name:"Radioactive decay: counts against time", xn:"t (min)", yn:"N (counts)",
+    pts:[0,2,4,6,8,10,12,14,16].map(t => [t, 2000*Math.exp(-0.173*t)*(1 + 0.02*r2())]),
+    note:"Counts from a short-lived source, recorded every two minutes with 2% counting noise. Simulated with k = 0.173 per minute (half-life about 4 minutes).",
+    want:{y:"ln", x:"id"}, q:"ln N against t has gradient −k. Enter k, in per minute.", truth:0.173, tol:0.05,
+    explain: m => "k = −gradient = " + (-m).toFixed(3) + " per minute; half-life = ln 2 ÷ k ≈ " + (Math.log(2)/(-m)).toFixed(1) + " min." },
+  { name:"The planets: orbital period against distance", xn:"a (AU)", yn:"T (years)",
+    pts:[[0.387,0.241],[0.723,0.615],[1.000,1.000],[1.524,1.881],[5.203,11.86],[9.537,29.46],[19.19,84.01],[30.07,164.8]],
+    note:"Real data: semi-major axis in astronomical units and period in years for the eight planets, Mercury to Neptune. Kepler found the pattern in 1619 without a calculator.",
+    want:{y:"ln", x:"ln"}, q:"On log–log axes the gradient is the exponent n in T ∝ aⁿ. Enter n.", truth:1.5, tol:0.01,
+    explain: m => "n = " + m.toFixed(3) + ": T ∝ a^1.5, so T² ∝ a³. That is Kepler's third law, which you will derive in Course 5." }
+];
+const TR = { id:["x", v => v], sq:["x²", v => v*v], sqrt:["√x", v => Math.sqrt(v)], ln:["ln x", v => Math.log(v)], inv:["1/x", v => 1/v] };
+const dsSel = $("ds"), ty = $("ty"), tx = $("tx");
+DS.forEach((d, i) => { const o = document.createElement("option"); o.value = i; o.textContent = d.name; dsSel.appendChild(o); });
+function fillAxes(){
+  const d = DS[+dsSel.value];
+  [[ty, d.yn], [tx, d.xn]].forEach(([s, nm]) => {
+    s.innerHTML = "";
+    const base = nm.split(" ")[0];
+    Object.entries(TR).forEach(([k2, [lab]]) => { const o = document.createElement("option"); o.value = k2; o.textContent = lab.replace("x", base); s.appendChild(o); });
+    s.value = "id";
+  });
+  $("ds-note").textContent = d.note;
+  $("task-ans").value = ""; $("task-fb").textContent = "";
+}
+function fit(P){
+  const n = P.length, mx = P.reduce((a,p)=>a+p[0],0)/n, my = P.reduce((a,p)=>a+p[1],0)/n;
+  let sxy = 0, sxx = 0, syy = 0;
+  P.forEach(([x,y]) => { sxy += (x-mx)*(y-my); sxx += (x-mx)**2; syy += (y-my)**2; });
+  const m = sxy/sxx, c = my - m*mx; return { m, c, r2: (sxy*sxy)/(sxx*syy) };
+}
+let lastFit = null;
+function css(v){ return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
+function draw(){
+  const d = DS[+dsSel.value], fy = TR[ty.value][1], fx = TR[tx.value][1];
+  const P = d.pts.map(([x,y]) => [fx(x), fy(y)]).filter(p => isFinite(p[0]) && isFinite(p[1]));
+  const cv = $("plot"), g = cv.getContext("2d"), W = cv.width, H = cv.height;
+  const pad = { l:64, r:18, t:18, b:52 };
+  g.clearRect(0, 0, W, H); g.fillStyle = css("--sheet"); g.fillRect(0, 0, W, H);
+  let x0 = Math.min(...P.map(p=>p[0])), x1 = Math.max(...P.map(p=>p[0])), y0 = Math.min(...P.map(p=>p[1])), y1 = Math.max(...P.map(p=>p[1]));
+  const ex = (x1-x0)*0.08 || 1, ey = (y1-y0)*0.1 || 1; x0 -= ex; x1 += ex; y0 -= ey; y1 += ey;
+  if (x0 > 0 && x0 < (x1-x0)*0.6) x0 = 0; if (y0 > 0 && y0 < (y1-y0)*0.6) y0 = 0;
+  const X = x => pad.l + (x-x0)/(x1-x0)*(W-pad.l-pad.r), Y = y => H - pad.b - (y-y0)/(y1-y0)*(H-pad.t-pad.b);
+  // grid + ticks
+  g.strokeStyle = css("--grid"); g.lineWidth = 1; g.fillStyle = css("--mute"); g.font = "13px " + css("--mono");
+  const nice = (a, b) => { const s = Math.pow(10, Math.floor(Math.log10((b-a)/5))); const st = [1,2,5,10].map(q=>q*s).find(q => (b-a)/q <= 7); const out = []; for (let v = Math.ceil(a/st)*st; v <= b + 1e-12; v += st) out.push(+v.toPrecision(10)); return out; };
+  nice(x0, x1).forEach(v => { g.beginPath(); g.moveTo(X(v), pad.t); g.lineTo(X(v), H-pad.b); g.stroke(); g.textAlign = "center"; g.fillText(+v.toPrecision(4), X(v), H-pad.b+18); });
+  nice(y0, y1).forEach(v => { g.beginPath(); g.moveTo(pad.l, Y(v)); g.lineTo(W-pad.r, Y(v)); g.stroke(); g.textAlign = "right"; g.fillText(+v.toPrecision(4), pad.l-8, Y(v)+4); });
+  g.strokeStyle = css("--mute"); g.beginPath(); g.moveTo(pad.l, pad.t); g.lineTo(pad.l, H-pad.b); g.lineTo(W-pad.r, H-pad.b); g.stroke();
+  // axis labels
+  g.fillStyle = css("--ink"); g.font = "14px " + css("--mono"); g.textAlign = "center";
+  g.fillText(tx.options[tx.selectedIndex].text, (pad.l + W - pad.r)/2, H - 12);
+  g.save(); g.translate(16, (pad.t + H - pad.b)/2); g.rotate(-Math.PI/2); g.fillText(ty.options[ty.selectedIndex].text, 0, 0); g.restore();
+  // fit
+  const f = fit(P); lastFit = f;
+  const straight = f.r2 > 0.999;
+  g.strokeStyle = straight ? css("--teal") : css("--mute"); g.lineWidth = 2; g.setLineDash(straight ? [] : [6, 6]);
+  g.beginPath(); g.moveTo(X(x0), Y(f.m*x0 + f.c)); g.lineTo(X(x1), Y(f.m*x1 + f.c)); g.stroke(); g.setLineDash([]);
+  // residual whiskers make curvature visible
+  g.strokeStyle = css("--red"); g.lineWidth = 1;
+  if (!straight) P.forEach(([x,y]) => { g.beginPath(); g.moveTo(X(x), Y(y)); g.lineTo(X(x), Y(f.m*x + f.c)); g.stroke(); });
+  P.forEach(([x,y]) => { g.beginPath(); g.arc(X(x), Y(y), 5.5, 0, Math.PI*2); g.fillStyle = css("--ochre"); g.fill(); g.lineWidth = 1.5; g.strokeStyle = css("--sheet"); g.stroke(); });
+  $("fit").innerHTML = (straight ? '<span class="pill ok">straight</span>' : '<span class="pill no">curved</span>') +
+    " &nbsp;gradient " + f.m.toPrecision(4) + " · intercept " + f.c.toPrecision(4) + " · R² " + f.r2.toFixed(5) +
+    (straight ? "" : '<br><span class="small">Red whiskers are residuals. A pattern in them (positive at the ends, negative in the middle) means the relationship is curved on these axes.</span>');
+  const isWanted = ty.value === d.want.y && tx.value === d.want.x;
+  $("task-ans").disabled = !isWanted; $("task-check").disabled = !isWanted;
+  $("task-q").textContent = isWanted ? d.q : (straight ? "That line is straight, but use the transform that matches the law in the Reader so the gradient has a clear meaning. Hint: try " + TR[d.want.y][0].replace("x", d.yn.split(" ")[0]) + " against " + TR[d.want.x][0].replace("x", d.xn.split(" ")[0]) + "." : "Straighten the graph first: change the axis transforms until R² exceeds 0.999.");
+}
+$("task-check").onclick = () => {
+  const d = DS[+dsSel.value], v = parseFloat($("task-ans").value), fb = $("task-fb");
+  if (isNaN(v)){ fb.className = "feedback bad"; fb.textContent = "Enter a number."; return; }
+  const ok = Math.abs(v - d.truth)/d.truth < d.tol;
+  fb.className = "feedback " + (ok ? "good" : "bad");
+  fb.textContent = (ok ? "Yes. " : "Not yet. ") + d.explain(lastFit.m);
+};
+dsSel.onchange = () => { fillAxes(); draw(); }; ty.onchange = draw; tx.onchange = draw;
+
+/* ---------------- tabs + theme ---------------- */
+const TABS = ["untangle","scale","linearise"];
+function route(){
+  const h = location.hash.replace("#","");
+  const t = TABS.includes(h) ? h : "untangle";
+  TABS.forEach(n => { $("v-" + n).hidden = n !== t; document.querySelector('[data-tab="' + n + '"]').setAttribute("aria-current", n === t ? "page" : "false"); });
+  if (t === "linearise") draw();
+}
+window.addEventListener("hashchange", route);
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", draw);
+new MutationObserver(draw).observe(document.documentElement, { attributes:true, attributeFilter:["data-theme"] });
+
+ready(() => { load(); newScale(); fillAxes(); route(); draw(); });
+</script>
+
+<script>if("serviceWorker" in navigator) navigator.serviceWorker.register("../sw.js");</script>
+</body>
+</html>

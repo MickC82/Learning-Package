@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1F2B33">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}
+.sp-home{position:fixed;left:max(12px,env(safe-area-inset-left,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:50;
+font:500 14px "Bricolage Grotesque",system-ui,sans-serif;background:var(--ink,#1F2B33);color:var(--sheet,#fff);text-decoration:none;padding:9px 14px;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+</style>
+</head>
+<body>
+<a class="sp-home" href="../index.html">← Hub</a>
+<title>Biology Workbook</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<script>window.MathJax = { svg: { fontCache: 'global' }, startup: { typeset: false }, options: { enableMenu: false } };</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.11.0/math.min.js"></script>
+<style>
+/* Layout: a course workbook. Module index on the left (chips on phones); each module is an exercise sheet ending in a quick check; capstone and mixed practice close the course. */
+:root{
+  --paper:#F4F6F3; --sheet:#FFFFFF; --ink:#1F2B33; --mute:#5E6B72; --rule:#D7DDDC;
+  --ochre:#B07508; --ochre-soft:#F3E6C8; --teal:#2C7A6B; --teal-soft:#DCEDE8; --red:#A8402C; --red-soft:#F5E1DB;
+  --display:"Bricolage Grotesque", "DejaVu Sans", system-ui, sans-serif;
+  --body:"Source Serif 4", Georgia, "Times New Roman", serif;
+  --mono:"IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#141C21; --sheet:#1B252C; --ink:#E9EEED; --mute:#9AA8AE; --rule:#2D3A42;
+  --ochre:#E2A73A; --ochre-soft:#3B2F17; --teal:#62BBA6; --teal-soft:#1D3A34; --red:#E58570; --red-soft:#3D2420; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#141C21; --sheet:#1B252C; --ink:#E9EEED; --mute:#9AA8AE; --rule:#2D3A42;
+  --ochre:#E2A73A; --ochre-soft:#3B2F17; --teal:#62BBA6; --teal-soft:#1D3A34; --red:#E58570; --red-soft:#3D2420; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.55}
+.wrap{max-width:1120px;margin:0 auto;padding-block:28px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header{border-bottom:1px solid var(--rule);padding-bottom:16px}
+.kicker{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ochre)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(30px,5vw,44px);line-height:1.05;margin:4px 0 6px;text-wrap:balance}
+h2{font-family:var(--display);font-weight:700;font-size:24px;margin:0;text-wrap:balance}
+h3{font-family:var(--display);font-weight:500;font-size:18px;margin:18px 0 8px}
+.tag{color:var(--mute);margin:0;max-width:64ch}
+.layout{display:grid;grid-template-columns:230px minmax(0,1fr);gap:28px;margin-top:24px}
+@media (max-width:860px){.layout{grid-template-columns:minmax(0,1fr)}}
+.index{position:sticky;top:calc(env(safe-area-inset-top,0px) + 16px);align-self:start;display:flex;flex-direction:column;gap:2px;max-height:calc(100vh - 32px);overflow-y:auto}
+@media (max-width:860px){.index{position:static;flex-direction:row;flex-wrap:wrap;max-height:none}}
+.index a{display:flex;justify-content:space-between;gap:10px;text-decoration:none;color:var(--ink);font-family:var(--display);font-size:14.5px;padding:7px 10px;border-radius:8px;border:1px solid transparent}
+.index a:hover{border-color:var(--rule)}
+.index .n{font-family:var(--mono);font-size:12px;color:var(--mute);font-variant-numeric:tabular-nums;white-space:nowrap}
+.index .n.full{color:var(--teal)}
+.overall{font-family:var(--mono);font-size:12.5px;color:var(--mute);padding:10px;font-variant-numeric:tabular-nums}
+.bar{height:6px;background:var(--rule);border-radius:3px;overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;background:var(--teal);width:0;transition:width .4s}
+section.mod{margin-bottom:44px;scroll-margin-top:16px}
+.modhead{display:flex;gap:14px;align-items:baseline;margin-bottom:12px}
+.modhead .code{font-family:var(--display);font-weight:700;font-size:28px;color:var(--ochre);line-height:1}
+.card{background:var(--sheet);border:1px solid var(--rule);border-radius:10px;padding:16px 20px;margin-bottom:12px}
+.card.solved{border-color:var(--teal)}
+.chead{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline}
+.pid{font-family:var(--mono);font-size:13px;color:var(--mute)}
+.lvl{font-family:var(--mono);font-size:12px;color:var(--ochre);letter-spacing:2px}
+.q{margin:6px 0}
+.eq{overflow-x:auto;padding:4px 0;font-size:18px}
+.eq mjx-container{margin:6px 0!important;text-align:left!important}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:8px}
+input[type=text]{font:inherit;font-family:var(--mono);font-size:16px;color:var(--ink);background:var(--paper);border:1px solid var(--rule);border-radius:6px;padding:8px 10px;min-width:0;flex:0 1 12em}
+input.wide{flex:1 1 220px}
+.unit{font-family:var(--mono);font-size:14px;color:var(--mute)}
+button{font-family:var(--display);font-weight:500;font-size:15px;cursor:pointer;border-radius:8px;border:1px solid var(--ink);background:var(--ink);color:var(--sheet);padding:8px 15px}
+button.ghost{background:transparent;color:var(--ink);border-color:var(--rule)}
+button.ghost:hover{border-color:var(--ink)}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--ochre);outline-offset:2px}
+.fb{margin-top:8px;font-size:15.5px;min-height:1.2em}
+.fb.good{color:var(--teal)} .fb.bad{color:var(--red)}
+.mc{display:grid;gap:7px;margin-top:6px}
+.mc button{text-align:left;background:var(--paper);color:var(--ink);border:1px solid var(--rule);font-family:var(--body);font-size:15.5px;padding:9px 12px}
+.mc button.right{border-color:var(--teal);background:var(--teal-soft)}
+.mc button.wrong{border-color:var(--red);background:var(--red-soft)}
+.extras{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.sol{margin-top:10px;border-top:1px dashed var(--rule);padding-top:8px;font-size:15.5px}
+.sol ol{margin:0;padding-left:1.3em}
+.sol li{margin-bottom:5px}
+.model{background:var(--teal-soft);border-radius:8px;padding:10px 14px;margin-top:10px;font-size:15.5px}
+.quiz{background:var(--ochre-soft);border-radius:10px;padding:16px 20px}
+.quiz .qq{margin:14px 0 4px;font-weight:600}
+.quiz .score{font-family:var(--mono);font-size:13px;color:var(--ink)}
+.preview{font-size:15px;color:var(--mute);min-height:24px;overflow-x:auto}
+.howto{background:var(--sheet);border:1px solid var(--rule);border-radius:10px;padding:16px 20px;margin-bottom:28px;font-size:15.5px}
+.howto ul{margin:6px 0 0;padding-left:1.2em}
+code{font-family:var(--mono);font-size:.92em;background:var(--paper);padding:1px 5px;border-radius:4px}
+footer{margin-top:24px;font-size:14px;color:var(--mute);border-top:1px solid var(--rule);padding-top:14px}
+</style>
+
+<div class="wrap">
+<header>
+  <div class="kicker">Second Pass · Course 6</div>
+  <h1 id="h1">Biology Workbook</h1>
+  <p class="tag">Eight problems and a four-question quick check for every module, then the course capstone and a mixed practice set. Answers are checked as you go, with hints and worked solutions on every problem.</p>
+</header>
+<div class="layout">
+  <nav class="index" id="index" aria-label="Modules"></nav>
+  <main id="main">
+    <div class="howto">
+      <b>How answers work.</b> Number answers accept ordinary decimals or scientific notation such as <code>6.67e-11</code>; small rounding differences are fine. Some problems ask you to explain: write your answer on paper, then open the model answer and compare.
+      <ul><li>Try before opening the hint. Use the worked solution to compare method, not just the final number.</li>
+      <li>Your progress is remembered in this browser.</li></ul>
+    </div>
+  </main>
+</div>
+<footer>Pair with the course Theory Reader (audio edition), the Visual Companion and the explorer. The printable PDF workbook has the same problems with space to write.</footer>
+</div>
+
+<script>
+const D = {"n": 6, "name": "Biology", "modules": [{"id": "6.1", "title": "The chemistry of life", "problems": [{"t": "mc", "lv": 1, "q": "Proteins are polymers of", "o": ["sugars", "amino acids", "fatty acids", "nucleotides"], "c": 1, "s": ["Twenty kinds of amino acid."]}, {"t": "mc", "lv": 1, "q": "Which molecule forms cell membranes?", "o": ["starch", "phospholipid", "DNA", "glucose"], "c": 1, "s": ["Lipids with a water-loving head and water-avoiding tails."]}, {"t": "mc", "lv": 2, "q": "Why does an enzyme stop working at high temperature?", "o": ["it is used up", "its shape changes and the active site no longer fits", "it becomes a carbohydrate", "substrates evaporate"], "c": 1, "s": ["Denaturation."]}, {"t": "mc", "lv": 2, "q": "Why does a lake freeze from the top down, protecting fish?", "o": ["ice is denser than water", "ice is less dense than water and floats", "the bottom is warmer from the core", "fish produce heat"], "c": 1, "s": ["Hydrogen bonding gives ice an open structure."]}, {"t": "num", "lv": 2, "q": "Using v = Vmax[S]/(Km + [S]), find v when [S] = Km and Vmax = 10 units.", "a": 5, "unit": "units", "s": ["v = 10 × Km/(2Km) = 5: half the maximum."]}, {"t": "mc", "lv": 2, "q": "Breaking starch into glucose during digestion is", "o": ["condensation", "hydrolysis", "oxidation", "fusion"], "c": 1, "s": ["Water is used to split the bonds."]}, {"t": "mc", "lv": 2, "q": "At very high substrate concentration, enzyme rate levels off because", "o": ["the enzyme denatures", "all active sites are occupied", "products block it", "substrate runs out"], "c": 1, "s": ["Saturation."]}, {"t": "show", "lv": 3, "q": "Explain how an enzyme's specificity follows from its structure.", "a": "An enzyme is a protein chain folded into a precise three-dimensional shape. The active site is a pocket whose shape and pattern of charges match particular substrate molecules. Only substrates that fit and interact correctly can bind and react, so each enzyme catalyses one reaction or a small family of reactions.", "s": ["Think about shape and the active site."]}], "quiz": [{"q": "Enzymes are mostly", "o": ["lipids", "proteins", "sugars", "minerals"], "c": 1}, {"q": "Water dissolves many substances because it is", "o": ["non-polar", "polar", "acidic", "large"], "c": 1}, {"q": "DNA and RNA are", "o": ["proteins", "nucleic acids", "lipids", "carbohydrates"], "c": 1}, {"q": "Human enzyme optimum temperature is about", "o": ["0 °C", "20 °C", "37 °C", "80 °C"], "c": 2}]}, {"id": "6.2", "title": "Cells", "problems": [{"t": "mc", "lv": 1, "q": "Which cells lack a nucleus?", "o": ["plant cells", "animal cells", "bacteria", "fungal cells"], "c": 2, "s": ["Prokaryotes have no nucleus."]}, {"t": "mc", "lv": 1, "q": "Where in the cell is aerobic respiration carried out?", "o": ["nucleus", "mitochondrion", "ribosome", "cell wall"], "c": 1, "s": ["The powerhouse."]}, {"t": "num", "lv": 2, "q": "A cell 20 μm across appears 8 mm across in a micrograph. What is the magnification?", "a": 400, "unit": "×", "s": ["8 mm = 8000 μm.", "8000 ÷ 20 = 400."]}, {"t": "num", "lv": 2, "q": "What is the surface-area-to-volume ratio of a cube-shaped cell with sides 2 μm? (μm⁻¹)", "a": 3, "s": ["6/L = 6/2 = 3 μm⁻¹."]}, {"t": "num", "lv": 2, "q": "And for sides of 10 μm?", "a": 0.6, "s": ["6/10 = 0.6 μm⁻¹: five times smaller."]}, {"t": "mc", "lv": 2, "q": "A red blood cell is placed in pure water. What happens?", "o": ["it shrinks", "water enters by osmosis and it swells, possibly bursting", "nothing", "it divides"], "c": 1, "s": ["Water moves towards the higher solute concentration inside the cell."]}, {"t": "mc", "lv": 2, "q": "Which process needs energy from the cell?", "o": ["diffusion", "osmosis", "active transport", "all of these"], "c": 2, "s": ["Moving substances against a gradient."]}, {"t": "show", "lv": 3, "q": "What evidence suggests mitochondria were once free-living bacteria?", "a": "Mitochondria have their own circular DNA, like bacteria; they have their own bacteria-like ribosomes; they divide by splitting, as bacteria do; and they are surrounded by a double membrane, consistent with being engulfed. Gene sequences show their closest relatives are a group of bacteria.", "s": ["Compare mitochondria with bacteria."]}], "quiz": [{"q": "Cell theory says cells come from", "o": ["non-living matter", "other cells", "the nucleus", "proteins"], "c": 1}, {"q": "Plant cells have, but animal cells lack,", "o": ["mitochondria", "a cell wall", "a nucleus", "ribosomes"], "c": 1}, {"q": "Osmosis is the movement of", "o": ["any molecule", "water", "proteins", "ions only"], "c": 1}, {"q": "As a cell grows, its SA:V ratio", "o": ["increases", "decreases", "stays the same", "doubles"], "c": 1}]}, {"id": "6.3", "title": "Metabolism", "problems": [{"t": "mc", "lv": 1, "q": "Which gas is released by photosynthesis?", "o": ["carbon dioxide", "oxygen", "nitrogen", "methane"], "c": 1, "s": ["Water is split, releasing O₂."]}, {"t": "mc", "lv": 1, "q": "What is the cell's main energy currency?", "o": ["glucose", "ATP", "DNA", "starch"], "c": 1, "s": ["Adenosine triphosphate."]}, {"t": "num", "lv": 2, "q": "How many molecules of O₂ are needed to respire one molecule of glucose?", "a": 6, "s": ["From the balanced equation."]}, {"t": "num", "lv": 2, "q": "Glucose has M = 180 g/mol. How many moles of CO₂ are produced when 90 g of glucose is fully respired?", "a": 3, "unit": "mol", "s": ["90 g = 0.5 mol glucose.", "× 6 = 3 mol CO₂."]}, {"t": "num", "lv": 2, "q": "Aerobic respiration gives about 30 ATP per glucose; anaerobic gives 2. How many times more ATP does aerobic give?", "a": 15, "unit": "×", "s": ["30 ÷ 2."]}, {"t": "mc", "lv": 2, "q": "During a sprint, muscle cells short of oxygen produce", "o": ["ethanol", "lactate", "glucose", "oxygen"], "c": 1, "s": ["Anaerobic respiration in animals."]}, {"t": "mc", "lv": 2, "q": "Why do leaves look green?", "o": ["chlorophyll absorbs green light", "chlorophyll reflects green light while absorbing red and blue", "they contain green sugar", "water is green"], "c": 1, "s": ["Green is the colour least absorbed."]}, {"t": "show", "lv": 3, "q": "Explain why oxygen is essential for producing most of a cell's ATP.", "a": "In aerobic respiration, electrons from glucose pass along the electron transport chain in the mitochondria, releasing energy used to make most of the ATP. Oxygen is the final electron acceptor at the end of the chain, combining with electrons and hydrogen to form water. Without oxygen the chain backs up and stops, leaving only the 2 ATP from glycolysis.", "s": ["What is oxygen's role in the electron transport chain?"]}], "quiz": [{"q": "Photosynthesis takes place in", "o": ["mitochondria", "chloroplasts", "ribosomes", "the nucleus"], "c": 1}, {"q": "Respiration releases", "o": ["oxygen", "carbon dioxide", "glucose", "chlorophyll"], "c": 1}, {"q": "Yeast fermentation produces", "o": ["lactate", "ethanol and CO₂", "oxygen", "starch"], "c": 1}, {"q": "ATP → ADP releases", "o": ["energy", "oxygen", "glucose", "DNA"], "c": 0}]}, {"id": "6.4", "title": "DNA, genes and protein synthesis", "problems": [{"t": "mc", "lv": 1, "q": "Which base pairs with guanine in DNA?", "o": ["adenine", "thymine", "cytosine", "uracil"], "c": 2, "s": ["G–C."]}, {"t": "mc", "lv": 1, "q": "Write the complementary strand to 5′-ATGCCT-3′ (reading the partner 3′ to 5′).", "o": ["TACGGA", "ATGCCT", "UACGGA", "GCATTC"], "c": 0, "s": ["A→T, T→A, G→C, C→G."]}, {"t": "num", "lv": 2, "q": "A DNA sample is 30% adenine. What percentage is guanine?", "a": 20, "unit": "%", "s": ["A = T = 30%, so A + T = 60%.", "G + C = 40%, G = 20%."]}, {"t": "num", "lv": 2, "q": "How many amino acids are coded by an mRNA sequence of 300 bases (ignoring stop codons)?", "a": 100, "s": ["3 bases per codon: 300 ÷ 3."]}, {"t": "mc", "lv": 2, "q": "In transcription, thymine in DNA is matched in RNA by", "o": ["adenine", "uracil", "thymine", "cytosine"], "c": 0, "s": ["The RNA base opposite a DNA T is A. (RNA uses U in place of T, opposite DNA's A.)"]}, {"t": "mc", "lv": 2, "q": "Why can a mutation have no effect on the protein?", "o": ["mutations never change DNA", "the new codon may code for the same amino acid", "proteins ignore DNA", "ribosomes fix all errors"], "c": 1, "s": ["The code is redundant."]}, {"t": "mc", "lv": 2, "q": "Semi-conservative replication means each new DNA molecule has", "o": ["two new strands", "two old strands", "one old and one new strand", "random mixtures"], "c": 2, "s": ["Confirmed by Meselson and Stahl in 1958."]}, {"t": "show", "lv": 3, "q": "Why is the near-universal genetic code evidence for common ancestry?", "a": "The assignment of codons to amino acids is largely arbitrary chemically; many other codes would work. Yet bacteria, plants, fungi and animals almost all use the same one. The simplest explanation is that all life inherited it from a common ancestor, just as shared quirks in languages point to a common origin.", "s": ["Is there a chemical reason the code must be this one?"]}], "quiz": [{"q": "A codon is", "o": ["one base", "three bases", "one gene", "one protein"], "c": 1}, {"q": "Translation happens at", "o": ["the nucleus", "ribosomes", "mitochondria", "the membrane"], "c": 1}, {"q": "RNA uses which base instead of thymine?", "o": ["adenine", "uracil", "guanine", "cytosine"], "c": 1}, {"q": "Whose X-ray images were crucial to the DNA structure?", "o": ["Marie Curie", "Rosalind Franklin", "Lynn Margulis", "Barbara McClintock"], "c": 1}]}, {"id": "6.5", "title": "Inheritance and genetics", "problems": [{"t": "num", "lv": 1, "q": "Two Aa parents. What fraction of offspring are expected to be aa? Give a decimal.", "a": 0.25, "s": ["One square in four."]}, {"t": "num", "lv": 1, "q": "AA × aa. What fraction of offspring are heterozygous? Give a decimal.", "a": 1, "s": ["Every offspring gets A from one parent and a from the other."]}, {"t": "num", "lv": 2, "q": "Aa × aa. What fraction show the dominant phenotype? Give a decimal.", "a": 0.5, "s": ["Offspring: Aa, Aa, aa, aa."]}, {"t": "num", "lv": 2, "q": "Two carriers of cystic fibrosis (recessive) have three children. What is the probability none are affected? Give a decimal.", "a": 0.421875, "s": ["Each child: 3/4 unaffected.", "(3/4)³ ≈ 0.42."]}, {"t": "mc", "lv": 2, "q": "A woman who is a carrier of colour blindness (XᴮXᵇ) has children with a man with normal vision. What fraction of their sons are expected to be colour blind?", "o": ["0", "1/4", "1/2", "all"], "c": 2, "s": ["Sons get Y from father and one X from mother: half get Xᵇ."]}, {"t": "num", "lv": 2, "q": "A recessive allele has frequency q = 0.1. Using Hardy–Weinberg, what fraction of the population is homozygous recessive? Give a decimal.", "a": 0.01, "s": ["q² = 0.01."]}, {"t": "num", "lv": 3, "q": "Using Hardy–Weinberg with q = 0.1, what fraction of the population are carriers (heterozygous)? Give a decimal.", "a": 0.18000000000000002, "s": ["2pq = 2 × 0.9 × 0.1 = 0.18."]}, {"t": "show", "lv": 3, "q": "Why do siblings with the same parents look different?", "a": "Each parent's sex cells are made by meiosis. Independent assortment of 23 chromosome pairs gives over 8 million combinations, and crossing over shuffles alleles within chromosomes. Each child comes from a different egg and sperm, so siblings (except identical twins) inherit different combinations of their parents' alleles.", "s": ["What does meiosis do to allele combinations?"]}], "quiz": [{"q": "An organism with two different alleles is", "o": ["homozygous", "heterozygous", "recessive", "a mutant"], "c": 1}, {"q": "Aa × Aa gives a phenotype ratio of", "o": ["1:1", "3:1", "1:2:1", "all dominant"], "c": 1}, {"q": "Meiosis produces cells with", "o": ["double the chromosomes", "half the chromosomes", "the same number", "no chromosomes"], "c": 1}, {"q": "X-linked recessive traits are commoner in", "o": ["females", "males", "neither", "plants only"], "c": 1}]}, {"id": "6.6", "title": "Evolution and natural selection", "problems": [{"t": "mc", "lv": 1, "q": "Which three things are needed for natural selection?", "o": ["mutation, migration, mating", "variation, inheritance, differential reproduction", "need, effort, change", "size, speed, strength"], "c": 1, "s": ["Darwin's core logic."]}, {"t": "mc", "lv": 1, "q": "Antibiotic resistance in bacteria is an example of", "o": ["Lamarckism", "natural selection", "genetic drift only", "spontaneous generation"], "c": 1, "s": ["Resistant variants survive and reproduce."]}, {"t": "num", "lv": 2, "q": "An allele has frequency 0.5 and a 10% advantage (s = 0.1). Using p′ = p(1+s)/[p(1+s) + (1 − p)], what is its frequency next generation?", "a": 0.5238095238095238, "s": ["p(1 + s) = 0.55.", "0.55 ÷ (0.55 + 0.5) ≈ 0.524."]}, {"t": "mc", "lv": 2, "q": "A human arm, a bat's wing and a whale's flipper share the same bone pattern. These are", "o": ["analogous structures", "homologous structures", "vestigial structures", "coincidences"], "c": 1, "s": ["Same structure from a common ancestor."]}, {"t": "mc", "lv": 2, "q": "Genetic drift has the biggest effect in", "o": ["large populations", "small populations", "all populations equally", "no populations"], "c": 1, "s": ["Chance fluctuations matter more when numbers are small."]}, {"t": "mc", "lv": 2, "q": "A giraffe stretching its neck to reach leaves will", "o": ["pass on a longer neck", "not change its offspring's neck length", "become a new species", "evolve during its life"], "c": 1, "s": ["Acquired characteristics are not inherited."]}, {"t": "mc", "lv": 2, "q": "What usually starts the formation of a new species?", "o": ["a single mutation", "separation of populations so they diverge", "a change in diet", "climate warming alone"], "c": 1, "s": ["Isolation then divergence."]}, {"t": "show", "lv": 3, "q": "Explain why finishing a course of antibiotics matters, using natural selection.", "a": "A bacterial population varies in susceptibility. Antibiotics kill the most susceptible first. Stopping early leaves the hardiest survivors, which multiply and pass on their resistance genes, so the next infection is harder to treat. A full course aims to kill the whole population before resistant variants take over.", "s": ["Which bacteria survive a short course?"]}], "quiz": [{"q": "Evolution happens to", "o": ["individuals", "populations", "single cells only", "species names"], "c": 1}, {"q": "Darwin and Wallace published in", "o": ["1758", "1858", "1958", "1908"], "c": 1}, {"q": "Fitness in biology means", "o": ["strength", "reproductive success", "speed", "intelligence"], "c": 1}, {"q": "A scientific 'theory' is", "o": ["a guess", "a well-tested explanation", "unproven", "an opinion"], "c": 1}]}, {"id": "6.7", "title": "Human body systems", "problems": [{"t": "num", "lv": 1, "q": "A resting heart beats 70 times a minute with a stroke volume of 70 mL. What is the cardiac output in litres per minute?", "a": 4.9, "unit": "L/min", "s": ["70 × 70 = 4900 mL/min."]}, {"t": "mc", "lv": 1, "q": "Where in the lungs does gas exchange occur?", "o": ["trachea", "bronchi", "alveoli", "diaphragm"], "c": 2, "s": ["Thin-walled air sacs."]}, {"t": "mc", "lv": 2, "q": "Which hormone lowers blood glucose?", "o": ["glucagon", "adrenaline", "insulin", "thyroxine"], "c": 2, "s": ["Insulin, from the pancreas."]}, {"t": "mc", "lv": 2, "q": "Sweating when hot is an example of", "o": ["positive feedback", "negative feedback", "a reflex arc only", "digestion"], "c": 1, "s": ["The response counters the change."]}, {"t": "num", "lv": 2, "q": "During exercise, heart rate rises to 150 beats/min and stroke volume to 110 mL. What is cardiac output, in L/min?", "a": 16.5, "unit": "L/min", "s": ["150 × 110 = 16 500 mL/min."]}, {"t": "num", "lv": 2, "q": "A nerve impulse travels at 80 m/s. How long does it take to travel 1.6 m from toe to brain, in milliseconds?", "a": 20, "unit": "ms", "s": ["t = 1.6/80 = 0.02 s."]}, {"t": "mc", "lv": 2, "q": "Compared with nervous signals, hormonal signals are generally", "o": ["faster and briefer", "slower and longer-lasting", "electrical", "only local"], "c": 1, "s": ["They travel in the blood."]}, {"t": "show", "lv": 3, "q": "Explain how the body corrects a fall in core temperature.", "a": "Temperature receptors detect the drop and the hypothalamus triggers responses: blood vessels in the skin narrow (vasoconstriction) so less heat is lost; muscles shiver, releasing heat from respiration; hair erects slightly. As temperature returns to normal, the responses switch off: negative feedback.", "s": ["Detect, respond, switch off."]}], "quiz": [{"q": "The organ that releases insulin is the", "o": ["liver", "pancreas", "kidney", "heart"], "c": 1}, {"q": "Homeostasis mostly uses", "o": ["positive feedback", "negative feedback", "no feedback", "random change"], "c": 1}, {"q": "Alveoli are adapted by having", "o": ["thick walls", "a large surface area", "few capillaries", "no moisture"], "c": 1}, {"q": "The heart is best described as", "o": ["a single pump", "a double pump", "a filter", "a gland"], "c": 1}]}, {"id": "6.8", "title": "Microbes, immunity and disease", "problems": [{"t": "num", "lv": 1, "q": "A bacterium divides every 20 minutes. Starting from one cell, how many are there after 2 hours?", "a": 64, "s": ["2 hours = 6 doublings.", "2⁶ = 64."]}, {"t": "mc", "lv": 1, "q": "Antibiotics are effective against", "o": ["viruses", "bacteria", "both", "neither"], "c": 1, "s": ["They target bacterial structures."]}, {"t": "num", "lv": 2, "q": "Measles has R₀ ≈ 15. What is the herd immunity threshold, as a percentage?", "a": 93.33333333333333, "unit": "%", "s": ["1 − 1/15 ≈ 0.933.", "About 93%."]}, {"t": "num", "lv": 2, "q": "A disease has R₀ = 3. What percentage must be immune for herd immunity?", "a": 66.66666666666667, "unit": "%", "s": ["1 − 1/3 ≈ 67%."]}, {"t": "num", "lv": 2, "q": "With R₀ = 4 and 60% of people immune, what is R_eff?", "a": 1.6, "s": ["Susceptible fraction 0.4.", "4 × 0.4 = 1.6: still spreading."]}, {"t": "mc", "lv": 2, "q": "Vaccines work by", "o": ["killing all microbes in the body", "creating immune memory without causing the disease", "acting as antibiotics", "replacing white blood cells"], "c": 1, "s": ["They train the adaptive immune system."]}, {"t": "mc", "lv": 2, "q": "Antibodies are made by", "o": ["red blood cells", "B cells", "platelets", "neurons"], "c": 1, "s": ["B lymphocytes."]}, {"t": "show", "lv": 3, "q": "Why can a person who is not vaccinated still be protected by others' vaccination?", "a": "If enough of the population is immune, each infected person meets too few susceptible people to pass the infection on to more than one other on average (R_eff below 1). Chains of transmission die out before reaching the unvaccinated, who are shielded indirectly. This is herd immunity.", "s": ["Think about R_eff."]}], "quiz": [{"q": "Viruses reproduce", "o": ["by dividing", "only inside host cells", "in soil", "by photosynthesis"], "c": 1}, {"q": "Immune memory means the second response is", "o": ["slower", "faster and stronger", "absent", "identical"], "c": 1}, {"q": "If R_eff < 1, an epidemic", "o": ["grows", "declines", "stays level", "doubles"], "c": 1}, {"q": "Germ theory was established by", "o": ["Darwin and Wallace", "Pasteur and Koch", "Watson and Crick", "Newton"], "c": 1}]}, {"id": "6.9", "title": "Ecology and ecosystems", "problems": [{"t": "num", "lv": 1, "q": "Producers in an ecosystem capture 20 000 kJ. About how much energy reaches the carnivores that eat herbivores?", "a": 200, "unit": "kJ", "s": ["Two steps at 10%: 20 000 → 2000 → 200."]}, {"t": "mc", "lv": 1, "q": "Which process removes CO₂ from the atmosphere?", "o": ["respiration", "combustion", "photosynthesis", "decomposition"], "c": 2, "s": ["Plants fix carbon."]}, {"t": "mc", "lv": 2, "q": "Why are there fewer top predators than herbivores?", "o": ["predators breed slowly only", "energy is lost at each trophic level", "predators are larger", "herbivores hide"], "c": 1, "s": ["Only about 10% passes up each level."]}, {"t": "num", "lv": 2, "q": "In the logistic model, what is dN/dt when N = K/2, r = 0.4 per year and K = 1000?", "a": 100.0, "unit": "per year", "s": ["dN/dt = rN(1 − N/K) = 0.4 × 500 × 0.5.", "= 100 per year (the fastest growth)."]}, {"t": "num", "lv": 2, "q": "And what is dN/dt when N = K?", "a": 0, "unit": "per year", "s": ["1 − N/K = 0, so growth stops."]}, {"t": "num", "lv": 2, "q": "Atmospheric CO₂ rose from 280 ppm to 420 ppm. What percentage increase is that?", "a": 50, "unit": "%", "s": ["(420 − 280)/280 = 0.5."]}, {"t": "mc", "lv": 2, "q": "In predator–prey cycles, predator population peaks typically", "o": ["come before prey peaks", "follow prey peaks", "coincide with them", "never occur"], "c": 1, "s": ["Predators respond to food supply with a lag."]}, {"t": "show", "lv": 3, "q": "Explain why eating lower on the food chain can feed more people from the same land.", "a": "Only about 10% of the energy in plants ends up in the animals that eat them. Feeding crops directly to people uses that energy at the first step, while feeding them to livestock loses about 90% before it reaches people as meat. So the same crop area supports roughly ten times as many people eating plants as eating meat from those plants.", "s": ["Apply the 10% rule."]}], "quiz": [{"q": "Energy in ecosystems", "o": ["cycles", "flows one way", "is created by plants", "stays constant at every level"], "c": 1}, {"q": "Carrying capacity is", "o": ["the starting population", "the maximum sustainable population", "the growth rate", "the death rate"], "c": 1}, {"q": "Decomposers", "o": ["produce oxygen", "break down dead matter", "are top predators", "photosynthesise"], "c": 1}, {"q": "Pre-industrial CO₂ was about", "o": ["180 ppm", "280 ppm", "420 ppm", "1000 ppm"], "c": 1}]}], "capstone": {"title": "Tracking an outbreak", "scenario": "A new bacterial infection appears in a town of 20 000 people. Health officials use biology from this course to understand and control it. Work through their analysis.", "parts": [{"t": "num", "lv": 2, "q": "In the lab, the bacterium doubles every 30 minutes. Starting from 100 cells, how many are there after 4 hours?", "a": 25600, "s": ["8 doublings.", "100 × 2⁸ = 25 600."]}, {"t": "num", "lv": 2, "q": "Each case infects 2.5 others in a susceptible population (R₀ = 2.5). What vaccination coverage gives herd immunity, as a percentage?", "a": 60, "unit": "%", "s": ["1 − 1/2.5 = 0.6."]}, {"t": "num", "lv": 2, "q": "If 50% of the town is immune, what is R_eff?", "a": 1.25, "s": ["2.5 × 0.5 = 1.25: still above 1."]}, {"t": "mc", "lv": 2, "q": "A patient asks for antibiotics for a cold during the outbreak. The best response is", "o": ["prescribe them as a precaution", "explain that colds are viral and antibiotics won't help, and overuse breeds resistance", "give a double dose", "use antiviral antibiotics"], "c": 1, "s": ["Antibiotics don't act on viruses."]}, {"t": "num", "lv": 2, "q": "The bacterium's toxin gene has a 300-base coding sequence. How many amino acids long is the toxin protein (ignoring the stop codon)?", "a": 100, "s": ["300 ÷ 3."]}, {"t": "show", "lv": 3, "q": "Some isolates are now resistant to the first-choice antibiotic. Explain how this happened and suggest two ways to slow it.", "a": "Within the bacterial population there was variation, including a few cells with resistance genes (from mutation or gene transfer). Antibiotic use killed susceptible cells and left resistant ones to multiply, so resistance became common: natural selection. To slow it: prescribe antibiotics only when needed and complete full courses; use infection control (handwashing, isolation) so fewer infections need treatment; rotate or combine drugs; monitor resistance.", "s": ["Variation, selection, inheritance."]}]}};
+const KEY = "sp-c" + D.n;
+const $ = s => document.querySelector(s);
+const el = (t, c, x) => { const e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; };
+function tex(node, src, display = true){
+  node.innerHTML = "";
+  if (window.MathJax && MathJax.tex2svg){ try { node.appendChild(MathJax.tex2svg(src, { display })); return; } catch(e){} }
+  node.appendChild(el("code", null, src));
+}
+let solved = {};
+try { solved = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch(e){}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(solved)); } catch(e){} };
+if (window.math){ try { math.import({ ln: x => math.log(x) }, { override:false }); } catch(e){} }
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random()*(i+1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+
+function parseNum(s){
+  s = s.trim().replace(/\s+/g, "").replace(/[−–]/g, "-").replace(/,/g, "");
+  s = s.replace(/[×x\*]10\^?\(?(-?\d+)\)?/i, "e$1").replace(/·10\^?(-?\d+)/, "e$1");
+  if (s.endsWith("%")) s = s.slice(0, -1);
+  const v = Number(s); return isFinite(v) && s !== "" ? v : NaN;
+}
+function fmtNum(x){ if (x === 0) return "0"; const a = Math.abs(x); return (a >= 1e5 || a < 1e-3) ? x.toExponential(3).replace(/\.?0+e/, "e") : String(+x.toPrecision(4)); }
+function checkExpr(p, input){
+  if (!window.math) return { ok:false, msg:"The checker didn't load. Compare with the worked solution." };
+  let node; try { node = math.parse(input.replace(/π/g, "pi").replace(/√/g, "sqrt").replace(/²/g, "^2").replace(/[×·]/g, "*").replace(/−/g, "-")); } catch(e){ return { ok:false, msg:"I couldn't read that. Check brackets and operators." }; }
+  const syms = new Set(node.filter(n => n.isSymbolNode).map(n => n.name));
+  if (syms.has(p.target)) return { ok:false, msg:"Your answer still contains " + p.target + "." };
+  const allowed = new Set([...p.vars, "pi", "e", "sqrt", "cbrt", "ln", "log", "log10", "exp"]);
+  const unk = [...syms].filter(s => !allowed.has(s)); if (unk.length) return { ok:false, msg:"Unknown symbol " + unk.join(", ") + ". Use: " + p.vars.join(", ") + "." };
+  const f = node.compile(), g = math.compile(p.ans); let n = 0;
+  for (let i = 0; i < 14 && n < 6; i++){
+    const sc = {}; p.vars.forEach(v => sc[v] = 0.6 + Math.random()*1.8);
+    if (p.dom) Object.entries(p.dom).forEach(([k, [a, b]]) => sc[k] = a + Math.random()*(b - a));
+    let w, gt; try { w = g.evaluate(sc); gt = f.evaluate(sc); } catch(e){ return { ok:false, msg:"That couldn't be evaluated." }; }
+    if (typeof w !== "number" || !isFinite(w)) continue; n++;
+    if (typeof gt !== "number" || Math.abs(gt - w) > 1e-7*Math.max(1, Math.abs(w))) return { ok:false, msg:"Not equivalent: substituting numbers gives a different value. Try the hint." };
+  }
+  return { ok:true };
+}
+
+function progress(){
+  let tot = 0, done = 0;
+  D.modules.forEach(m => { const d = m.problems.filter((_, i) => solved[m.id + "." + (i+1)]).length; tot += m.problems.length; done += d;
+    const n = document.getElementById("n-" + m.id); n.textContent = d + "/" + m.problems.length; n.classList.toggle("full", d === m.problems.length); });
+  $("#ov-t").textContent = done + " of " + tot + " problems solved"; $("#ov-b").style.width = (100*done/tot) + "%";
+}
+function solveMark(id, card){ if (!id) return; solved[id] = true; save(); card.classList.add("solved"); progress(); }
+
+function problemCard(p, label, id){
+  const c = el("article", "card" + (id && solved[id] ? " solved" : ""));
+  const h = el("div", "chead"); h.appendChild(el("span", "pid", label)); h.appendChild(el("span", "lvl", "●".repeat(p.lv || 2) + "○".repeat(3 - (p.lv || 2)))); c.appendChild(h);
+  c.appendChild(el("p", "q", p.q));
+  if (p.eq){ const e = el("div", "eq"); tex(e, p.eq); c.appendChild(e); }
+  const fb = el("div", "fb"); fb.setAttribute("aria-live", "polite");
+  if (p.t === "num"){
+    const r = el("div", "row"); const inp = el("input"); inp.type = "text"; inp.inputMode = "decimal"; inp.setAttribute("aria-label", "Your answer");
+    r.appendChild(inp); if (p.unit) r.appendChild(el("span", "unit", p.unit));
+    const b = el("button", null, "Check"); r.appendChild(b); c.appendChild(r);
+    const go = () => { const v = parseNum(inp.value); if (isNaN(v)){ fb.className = "fb bad"; fb.textContent = "Enter a number, for example 2.5 or 3e8."; return; }
+      const tol = p.tol || 0.02, ok = p.a === 0 ? Math.abs(v) < 1e-9 : Math.abs(v - p.a) / Math.abs(p.a) <= tol;
+      fb.className = "fb " + (ok ? "good" : "bad"); fb.textContent = ok ? "Correct: " + fmtNum(p.a) + (p.unit ? " " + p.unit : "") + "." : "Not quite. Check units, powers of ten and rounding, or open the hint.";
+      if (ok) solveMark(id, c); };
+    b.onclick = go; inp.addEventListener("keydown", e => { if (e.key === "Enter") go(); });
+  } else if (p.t === "mc"){
+    const box = el("div", "mc");
+    p.o.forEach((o, i) => { const b = el("button", null, o); b.onclick = () => {
+      if (i === p.c){ b.classList.add("right"); [...box.children].forEach(x => x.disabled = true); fb.className = "fb good"; fb.textContent = "Correct."; solveMark(id, c); }
+      else { b.classList.add("wrong"); b.disabled = true; fb.className = "fb bad"; fb.textContent = "Not that one. Try again, or open the worked solution."; } }; box.appendChild(b); });
+    c.appendChild(box);
+  } else if (p.t === "expr"){
+    const r = el("div", "row"); r.appendChild(el("span", "unit", p.target + " ="));
+    const inp = el("input", "wide"); inp.type = "text"; inp.spellcheck = false; inp.autocomplete = "off"; inp.setAttribute("aria-label", "Your expression");
+    r.appendChild(inp); const b = el("button", null, "Check"); r.appendChild(b); c.appendChild(r);
+    const pv = el("div", "preview"); c.appendChild(pv);
+    inp.addEventListener("input", () => { try { tex(pv, p.target + "=" + math.parse(inp.value).toTex({ parenthesis:"auto" }), false); } catch(e){ pv.textContent = ""; } });
+    const go = () => { const res = checkExpr(p, inp.value.trim()); fb.className = "fb " + (res.ok ? "good" : "bad"); fb.textContent = res.ok ? "Correct." : res.msg; if (res.ok) solveMark(id, c); };
+    b.onclick = go; inp.addEventListener("keydown", e => { if (e.key === "Enter") go(); });
+  } else {
+    const b = el("button", null, "I've written my answer: show the model"); const m = el("div", "model"); m.hidden = true; m.textContent = p.a;
+    b.onclick = () => { m.hidden = false; b.hidden = true; const ok = el("button", "ghost", "Mine matched"); ok.onclick = () => { solveMark(id, c); ok.disabled = true; ok.textContent = "Marked as done"; }; c.insertBefore(ok, fb); };
+    c.appendChild(b); c.appendChild(m);
+  }
+  c.appendChild(fb);
+  if (p.s && p.s.length){
+    const ex = el("div", "extras"); const hb = el("button", "ghost", "Hint"), sb = el("button", "ghost", "Worked solution"); ex.appendChild(hb); ex.appendChild(sb); c.appendChild(ex);
+    const hint = el("p", "fb"); hint.hidden = true; hint.style.color = "var(--mute)"; hint.textContent = "Start here: " + p.s[0]; c.appendChild(hint);
+    const sol = el("div", "sol"); sol.hidden = true; const ol = el("ol"); p.s.forEach(s => ol.appendChild(el("li", null, s))); sol.appendChild(ol); c.appendChild(sol);
+    hb.onclick = () => hint.hidden = !hint.hidden; sb.onclick = () => { sol.hidden = !sol.hidden; sb.textContent = sol.hidden ? "Worked solution" : "Hide solution"; };
+  }
+  return c;
+}
+function quizBox(m){
+  const q = el("div", "quiz"); q.appendChild(el("h3", null, "Quick check · Module " + m.id)); q.firstChild.style.marginTop = "0";
+  const sc = el("div", "score"); let right = 0, answered = 0;
+  const upd = () => sc.textContent = answered < m.quiz.length ? answered + " of " + m.quiz.length + " answered" : "Score " + right + " of " + m.quiz.length + (right === m.quiz.length ? ". Module complete." : ". Revisit the reader section for any you missed.");
+  m.quiz.forEach(item => {
+    q.appendChild(el("p", "qq", item.q)); const box = el("div", "mc"); const fb = el("div", "fb"); let first = true;
+    item.o.forEach((o, i) => { const b = el("button", null, o); b.onclick = () => {
+      if (first){ answered++; if (i === item.c) right++; first = false; upd(); }
+      if (i === item.c){ b.classList.add("right"); [...box.children].forEach(x => x.disabled = true); fb.className = "fb good"; fb.textContent = item.w || "Correct."; }
+      else { b.classList.add("wrong"); b.disabled = true; fb.className = "fb bad"; fb.textContent = "Not quite. Try another option."; } }; box.appendChild(b); });
+    q.appendChild(box); q.appendChild(fb);
+  });
+  upd(); q.appendChild(sc); return q;
+}
+function build(){
+  const idx = $("#index"), main = $("#main");
+  D.modules.forEach(m => {
+    const a = el("a"); a.href = "#m-" + m.id.replace(".", "-"); a.appendChild(el("span", null, m.id + " " + m.title)); const n = el("span", "n"); n.id = "n-" + m.id; a.appendChild(n); idx.appendChild(a);
+    const s = el("section", "mod"); s.id = "m-" + m.id.replace(".", "-");
+    const h = el("div", "modhead"); h.appendChild(el("span", "code", m.id)); h.appendChild(el("h2", null, m.title)); s.appendChild(h);
+    m.problems.forEach((p, i) => s.appendChild(problemCard(p, m.id + "." + (i+1), m.id + "." + (i+1))));
+    s.appendChild(quizBox(m)); main.appendChild(s);
+  });
+  // capstone
+  const ca = el("a"); ca.href = "#capstone"; ca.appendChild(el("span", null, "★ Capstone")); idx.appendChild(ca);
+  const cs = el("section", "mod"); cs.id = "capstone";
+  const ch = el("div", "modhead"); ch.appendChild(el("span", "code", "★")); ch.appendChild(el("h2", null, "Capstone: " + D.capstone.title)); cs.appendChild(ch);
+  cs.appendChild(el("p", null, D.capstone.scenario));
+  D.capstone.parts.forEach((p, i) => cs.appendChild(problemCard(p, "Part " + (i+1), null)));
+  main.appendChild(cs);
+  // mixed practice
+  const ma = el("a"); ma.href = "#mixed"; ma.appendChild(el("span", null, "↻ Mixed practice")); idx.appendChild(ma);
+  const ms = el("section", "mod"); ms.id = "mixed";
+  const mh = el("div", "modhead"); mh.appendChild(el("span", "code", "↻")); mh.appendChild(el("h2", null, "Mixed practice")); ms.appendChild(mh);
+  ms.appendChild(el("p", null, "Ten problems drawn at random from across the course. Mixing topics is harder than practising one at a time, and it is the best preparation for remembering long-term."));
+  const holder = el("div"); const gen = el("button", null, "Draw ten problems");
+  gen.onclick = () => { holder.innerHTML = ""; const pool = []; D.modules.forEach(m => m.problems.forEach((p, i) => { if (p.t !== "show") pool.push([p, m.id + "." + (i+1)]); }));
+    shuffle(pool).slice(0, 10).forEach(([p, lab]) => holder.appendChild(problemCard(p, "From " + lab, null))); gen.textContent = "Draw a fresh ten"; };
+  ms.appendChild(gen); ms.appendChild(holder); main.appendChild(ms);
+  const ov = el("div", "overall"); ov.innerHTML = '<span id="ov-t"></span><div class="bar"><i id="ov-b"></i></div>';
+  const rs = el("button", "ghost", "Clear progress"); rs.style.marginTop = "8px"; rs.style.fontSize = "13px";
+  rs.onclick = () => { solved = {}; save(); document.querySelectorAll(".card.solved").forEach(c => c.classList.remove("solved")); progress(); };
+  ov.appendChild(rs); idx.appendChild(ov); progress();
+}
+if (window.MathJax && MathJax.startup && MathJax.startup.promise) MathJax.startup.promise.then(build).catch(build); else build();
+</script>
+
+<script>if("serviceWorker" in navigator) navigator.serviceWorker.register("../sw.js");</script>
+</body>
+</html>

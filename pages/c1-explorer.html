@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1F2B33">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}
+.sp-home{position:fixed;left:max(12px,env(safe-area-inset-left,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:50;
+font:500 14px "Bricolage Grotesque",system-ui,sans-serif;background:var(--ink,#1F2B33);color:var(--sheet,#fff);text-decoration:none;padding:9px 14px;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+</style>
+</head>
+<body>
+<a class="sp-home" href="../index.html">← Hub</a>
+<title>Maths Workbench</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a lab bench per tab. The live canvas is the hero; controls sit beneath; the aside states the learning aim and holds the challenge. */
+
+:root{
+  --paper:#F4F6F3; --sheet:#FFFFFF; --ink:#1F2B33; --mute:#5E6B72; --rule:#D7DDDC; --grid:#E6EAE8;
+  --ochre:#B07508; --ochre-soft:#F3E6C8; --teal:#2C7A6B; --teal-soft:#DCEDE8; --red:#A8402C; --red-soft:#F5E1DB; --blue:#3C6E91; --blue-soft:#DDE8F0;
+  --display:"Bricolage Grotesque", "DejaVu Sans", system-ui, sans-serif;
+  --body:"Source Serif 4", Georgia, "Times New Roman", serif;
+  --mono:"IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#141C21; --sheet:#1B252C; --ink:#E9EEED; --mute:#9AA8AE; --rule:#2D3A42; --grid:#25313A;
+  --ochre:#E2A73A; --ochre-soft:#3B2F17; --teal:#62BBA6; --teal-soft:#1D3A34; --red:#E58570; --red-soft:#3D2420; --blue:#7FB0D3; --blue-soft:#1E3343; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#141C21; --sheet:#1B252C; --ink:#E9EEED; --mute:#9AA8AE; --rule:#2D3A42; --grid:#25313A;
+  --ochre:#E2A73A; --ochre-soft:#3B2F17; --teal:#62BBA6; --teal-soft:#1D3A34; --red:#E58570; --red-soft:#3D2420; --blue:#7FB0D3; --blue-soft:#1E3343; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.55}
+.wrap{max-width:1080px;margin:0 auto;padding-block:28px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:12px 24px;border-bottom:1px solid var(--rule);padding-bottom:16px}
+.kicker{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ochre)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(30px,5vw,46px);line-height:1.05;margin:4px 0 0;text-wrap:balance}
+.tag{color:var(--mute);font-style:italic;margin:6px 0 0;max-width:56ch}
+nav{display:flex;gap:4px;flex-wrap:wrap}
+nav a{font-family:var(--display);font-weight:500;font-size:15px;color:var(--mute);text-decoration:none;padding:8px 14px;border-radius:999px;border:1px solid transparent}
+nav a[aria-current="page"]{color:var(--ink);border-color:var(--ink);background:var(--sheet)}
+a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--ochre);outline-offset:2px}
+.bench{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:24px;margin-top:24px}
+@media (max-width:820px){.bench{grid-template-columns:minmax(0,1fr)}}
+.sheet{background:var(--sheet);border:1px solid var(--rule);border-radius:10px;padding:20px}
+.aside{display:flex;flex-direction:column;gap:16px;min-width:0}
+.label{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);margin:0 0 8px}
+.practising{border-left:3px solid var(--teal);padding:2px 0 2px 12px;font-size:15.5px;margin:0}
+.row{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center}
+.ctrl{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px 18px;margin-top:12px}
+.ctrl label{font-family:var(--mono);font-size:12.5px;color:var(--mute);display:flex;flex-direction:column;gap:4px}
+.ctrl label b{color:var(--ink);font-weight:500}
+input[type=range]{width:100%;accent-color:var(--ochre)}
+select,input[type=number],input[type=text]{font:inherit;font-size:15px;color:var(--ink);background:var(--paper);border:1px solid var(--rule);border-radius:6px;padding:6px 9px;min-width:0}
+input[type=number],input[type=text]{width:8.5em;font-family:var(--mono)}
+button{font-family:var(--display);font-weight:500;font-size:15px;cursor:pointer;border-radius:8px;border:1px solid var(--ink);background:var(--ink);color:var(--sheet);padding:8px 15px}
+button.ghost{background:transparent;color:var(--ink);border-color:var(--rule)}
+button.ghost:hover{border-color:var(--ink)}
+canvas{width:100%;display:block;border-radius:6px;touch-action:none}
+.read{font-family:var(--mono);font-size:13.5px;font-variant-numeric:tabular-nums;margin-top:10px;line-height:1.7}
+.read b{color:var(--ochre);font-weight:500}
+.fb{margin-top:10px;font-size:15.5px;min-height:1.3em}
+.fb.good{color:var(--teal)} .fb.bad{color:var(--red)}
+.pill{display:inline-block;font-family:var(--mono);font-size:12px;padding:2px 9px;border-radius:999px}
+.pill.ok{background:var(--teal-soft);color:var(--teal)} .pill.no{background:var(--red-soft);color:var(--red)} .pill.mid{background:var(--ochre-soft);color:var(--ochre)}
+.small{font-size:14.5px;color:var(--mute)}
+.task{background:var(--ochre-soft);border-radius:8px;padding:12px 14px;font-size:15.5px}
+footer{margin-top:40px;font-size:14px;color:var(--mute);border-top:1px solid var(--rule);padding-top:14px}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+
+</style>
+<div class="wrap">
+<header>
+  <div><div class="kicker">Second Pass · Course 1 · Explorer</div><h1>Maths Workbench</h1><p class="tag">Three benches for Course 1: the unit circle and the sine wave, chance and the law of large numbers, and vectors.</p></div>
+  <nav aria-label="Benches"><a href="#circle" data-tab="circle">1 · Unit circle</a>
+<a href="#chance" data-tab="chance">2 · Chance</a>
+<a href="#vectors" data-tab="vectors">3 · Vectors</a></nav>
+</header>
+<section id="v-circle" class="bench">
+<div class="sheet">
+<canvas id="uc" aria-label="Unit circle with the angle drawn and the sine wave traced alongside"></canvas>
+<div class="ctrl"><label for="ang">Angle θ <b id="angv">35°</b><input type="range" id="ang" min="0" max="360" step="1" value="35"></label>
+<label for="unit">Show angle in<select id="unit"><option value="deg">degrees</option><option value="rad">radians</option></select></label></div>
+<div class="read" id="ucr"></div></div>
+<div class="aside">
+<div class="sheet"><p class="label">What you're practising</p><p class="practising">The unit circle defines sine and cosine for every angle: cos θ is the horizontal coordinate, sin θ the vertical. Drag the angle and watch the wave being drawn. Notice where each one is positive, negative or zero. Reader §1.4.</p></div>
+<div class="sheet"><p class="label">Challenge</p><p id="ucq" style="margin:0 0 10px">…</p><div class="row"><input type="text" id="uca" inputmode="decimal" aria-label="Your prediction"><button id="ucc">Check</button><button class="ghost" id="ucn">New angle</button></div><div class="fb" id="ucf"></div><p class="small" style="margin:8px 0 0">Predict first, then move the slider to that angle to see why.</p></div>
+
+</div>
+</section>
+<section id="v-chance" class="bench" hidden>
+<div class="sheet">
+<canvas id="dc" aria-label="Running fraction of dice rolls showing the chosen face, with the expected value and a band of two standard errors"></canvas>
+<div class="row" style="margin-top:12px"><label for="face" class="small">Track face</label><select id="face"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option selected>6</option></select>
+<button id="r10">Roll 10</button><button id="r100">Roll 100</button><button id="r1000">Roll 1000</button><button class="ghost" id="rclr">Clear</button></div>
+<div class="read" id="dr"></div></div>
+<div class="aside">
+<div class="sheet"><p class="label">What you're practising</p><p class="practising">The law of large numbers: the observed fraction wanders at first, then settles towards the true probability. The shaded band is ±2 standard errors, which shrinks as 1/√n. Quadrupling the rolls only halves the band. Reader §1.5.</p></div>
+<div class="sheet"><p class="label">Challenge</p><p style="margin:0 0 10px">Before rolling 1000 times: within what range do you expect the fraction of sixes to land about 95% of the time? Enter the half-width (for example 0.05).</p><div class="row"><input type="text" id="dpa" inputmode="decimal" aria-label="Half-width"><button id="dpc">Check</button></div><div class="fb" id="dpf"></div></div>
+
+</div>
+</section>
+<section id="v-vectors" class="bench" hidden>
+<div class="sheet">
+<canvas id="vc" aria-label="Two vectors added tip to tail with their resultant"></canvas>
+<div class="ctrl">
+<label for="am">a: magnitude <b id="amv">5</b><input type="range" id="am" min="0" max="10" step="0.5" value="5"></label>
+<label for="aa">a: angle <b id="aav">20°</b><input type="range" id="aa" min="0" max="360" step="5" value="20"></label>
+<label for="bm">b: magnitude <b id="bmv">4</b><input type="range" id="bm" min="0" max="10" step="0.5" value="4"></label>
+<label for="ba">b: angle <b id="bav">130°</b><input type="range" id="ba" min="0" max="360" step="5" value="130"></label></div>
+<div class="read" id="vr"></div></div>
+<div class="aside">
+<div class="sheet"><p class="label">What you're practising</p><p class="practising">Vectors add tip to tail, and the components simply add. The dot product a·b = |a||b|cos θ is zero when the vectors are perpendicular and negative when they point more than 90° apart. Reader §1.6.</p></div>
+<div class="sheet"><p class="label">Challenge</p><p style="margin:0 0 6px" id="vtask"></p><div class="fb" id="vf"></div><button class="ghost" id="vnext" style="margin-top:6px">Next challenge</button></div>
+
+</div>
+</section>
+<footer>Pair with the Course 1 Theory Reader, Visual Companion and Workbook.</footer>
+</div>
+<script>
+
+const $ = id => document.getElementById(id);
+const tok = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const REDRAW = [];
+function setupCanvas(c, ratio){
+  const dpr = window.devicePixelRatio || 1, w = c.clientWidth || 600, h = Math.round(w * ratio);
+  if (c.width !== Math.round(w*dpr) || c.height !== Math.round(h*dpr)){ c.width = Math.round(w*dpr); c.height = Math.round(h*dpr); c.style.height = h + "px"; }
+  const g = c.getContext("2d"); g.setTransform(dpr, 0, 0, dpr, 0, 0); return { g, W:w, H:h };
+}
+function niceTicks(a, b, n = 6){ const span = b - a || 1, s = Math.pow(10, Math.floor(Math.log10(span/n))); const st = [1, 2, 5, 10].map(q => q*s).find(q => span/q <= n + 1) || s*10; const out = []; for (let v = Math.ceil(a/st)*st; v <= b + 1e-9*span; v += st) out.push(+v.toPrecision(10)); return out; }
+function frame(g, W, H, xr, yr, o = {}){
+  const p = Object.assign({ l:56, r:14, t:14, b:42 }, o.pad || {});
+  const X = x => p.l + (x - xr[0])/(xr[1] - xr[0])*(W - p.l - p.r), Y = y => H - p.b - (y - yr[0])/(yr[1] - yr[0])*(H - p.t - p.b);
+  g.fillStyle = tok("--sheet"); g.fillRect(0, 0, W, H);
+  g.strokeStyle = tok("--grid"); g.lineWidth = 1; g.font = "12px " + tok("--mono"); g.fillStyle = tok("--mute");
+  (o.xt || niceTicks(xr[0], xr[1])).forEach(v => { g.beginPath(); g.moveTo(X(v), p.t); g.lineTo(X(v), H - p.b); g.stroke(); g.textAlign = "center"; g.fillText(o.xf ? o.xf(v) : +v.toPrecision(4), X(v), H - p.b + 16); });
+  (o.yt || niceTicks(yr[0], yr[1])).forEach(v => { g.beginPath(); g.moveTo(p.l, Y(v)); g.lineTo(W - p.r, Y(v)); g.stroke(); g.textAlign = "right"; g.fillText(o.yf ? o.yf(v) : +v.toPrecision(4), p.l - 6, Y(v) + 4); });
+  g.strokeStyle = tok("--mute"); g.beginPath(); g.moveTo(p.l, p.t); g.lineTo(p.l, H - p.b); g.lineTo(W - p.r, H - p.b); g.stroke();
+  g.fillStyle = tok("--ink"); g.font = "13px " + tok("--mono"); g.textAlign = "center";
+  if (o.xl) g.fillText(o.xl, (p.l + W - p.r)/2, H - 8);
+  if (o.yl){ g.save(); g.translate(14, (p.t + H - p.b)/2); g.rotate(-Math.PI/2); g.fillText(o.yl, 0, 0); g.restore(); }
+  return { X, Y, p, W, H };
+}
+function clip(g, fr){ g.save(); g.beginPath(); g.rect(fr.p.l, fr.p.t, fr.W - fr.p.l - fr.p.r, fr.H - fr.p.t - fr.p.b); g.clip(); }
+function line(g, pts, color, w = 2, dash){ g.strokeStyle = color; g.lineWidth = w; g.setLineDash(dash || []); g.beginPath(); pts.forEach(([x, y], i) => i ? g.lineTo(x, y) : g.moveTo(x, y)); g.stroke(); g.setLineDash([]); }
+function dot(g, x, y, r, color){ g.fillStyle = color; g.beginPath(); g.arc(x, y, r, 0, 2*Math.PI); g.fill(); }
+function txt(g, s, x, y, color, size = 13, align = "left", font = "--mono"){ g.fillStyle = color; g.font = size + "px " + tok(font); g.textAlign = align; g.fillText(s, x, y); }
+function arrow(g, x1, y1, x2, y2, color, w = 2.5){ const a = Math.atan2(y2 - y1, x2 - x1), hl = 10; g.strokeStyle = color; g.fillStyle = color; g.lineWidth = w; g.beginPath(); g.moveTo(x1, y1); g.lineTo(x2 - hl*0.6*Math.cos(a), y2 - hl*0.6*Math.sin(a)); g.stroke(); g.beginPath(); g.moveTo(x2, y2); g.lineTo(x2 - hl*Math.cos(a - 0.4), y2 - hl*Math.sin(a - 0.4)); g.lineTo(x2 - hl*Math.cos(a + 0.4), y2 - hl*Math.sin(a + 0.4)); g.closePath(); g.fill(); }
+const fmt = (x, p = 3) => { if (!isFinite(x)) return "—"; const a = Math.abs(x); return a !== 0 && (a >= 1e5 || a < 1e-3) ? x.toExponential(p - 1) : String(+x.toPrecision(p)); };
+const bind = (ids, fn) => ids.forEach(id => $(id).addEventListener("input", fn));
+const near = (a, b, tol) => Math.abs(a - b) <= tol * Math.max(1e-12, Math.abs(b));
+function feedback(el, ok, msg){ el.className = "fb " + (ok ? "good" : "bad"); el.textContent = msg; }
+function route(tabs){
+  const h = location.hash.replace("#", ""), t = tabs.includes(h) ? h : tabs[0];
+  tabs.forEach(n => { $("v-" + n).hidden = n !== t; document.querySelector('[data-tab="' + n + '"]').setAttribute("aria-current", n === t ? "page" : "false"); });
+  requestAnimationFrame(() => REDRAW.forEach(f => f()));
+}
+function redrawAll(){ REDRAW.forEach(f => f()); }
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", redrawAll);
+new MutationObserver(redrawAll).observe(document.documentElement, { attributes:true, attributeFilter:["data-theme"] });
+window.addEventListener("resize", () => { clearTimeout(window.__rz); window.__rz = setTimeout(redrawAll, 120); });
+
+
+/* ---------- unit circle ---------- */
+let ucTarget = 150;
+function drawUC(){
+  const c = $("uc"), { g, W, H } = setupCanvas(c, 0.45), th = +$("ang").value, r = th*Math.PI/180;
+  g.fillStyle = tok("--sheet"); g.fillRect(0, 0, W, H);
+  const R = Math.min(H*0.4, W*0.18), cx = R + 24, cy = H/2;
+  g.strokeStyle = tok("--grid"); g.lineWidth = 1; g.beginPath(); g.moveTo(cx - R - 12, cy); g.lineTo(cx + R + 12, cy); g.moveTo(cx, cy - R - 12); g.lineTo(cx, cy + R + 12); g.stroke();
+  g.strokeStyle = tok("--mute"); g.beginPath(); g.arc(cx, cy, R, 0, 2*Math.PI); g.stroke();
+  const px = cx + R*Math.cos(r), py = cy - R*Math.sin(r);
+  g.fillStyle = tok("--ochre-soft"); g.beginPath(); g.moveTo(cx, cy); g.arc(cx, cy, R*0.25, 0, -r, true); g.closePath(); g.fill();
+  line(g, [[cx, cy], [px, py]], tok("--ink"), 1.6); line(g, [[px, cy], [px, py]], tok("--ochre"), 3); line(g, [[cx, cy], [px, cy]], tok("--teal"), 3); dot(g, px, py, 5, tok("--ink"));
+  const x0 = cx + R + 40, x1 = W - 14, X = d => x0 + d/360*(x1 - x0);
+  line(g, [[x0, cy], [x1, cy]], tok("--grid"), 1);
+  [90, 180, 270, 360].forEach(d => { line(g, [[X(d), cy - R - 6], [X(d), cy + R + 6]], tok("--grid"), 1); txt(g, d + "°", X(d), cy + R + 20, tok("--mute"), 11, "center"); });
+  const sinPts = [], cosPts = [], sinDone = [];
+  for (let d = 0; d <= 360; d += 2){ sinPts.push([X(d), cy - R*Math.sin(d*Math.PI/180)]); cosPts.push([X(d), cy - R*Math.cos(d*Math.PI/180)]); if (d <= th) sinDone.push(sinPts[sinPts.length - 1]); }
+  line(g, sinPts, tok("--ochre-soft"), 2); line(g, cosPts, tok("--teal-soft"), 2); line(g, sinDone, tok("--ochre"), 2.5);
+  dot(g, X(th), cy - R*Math.sin(r), 5, tok("--ochre")); line(g, [[px, py], [X(th), py]], tok("--ochre"), 1, [4, 4]);
+  txt(g, "sin θ", x1 - 4, 18, tok("--ochre"), 12, "right"); txt(g, "cos θ", x1 - 4, 34, tok("--teal"), 12, "right");
+  const rad = $("unit").value === "rad";
+  $("angv").textContent = rad ? (r).toFixed(3) + " rad" : th + "°";
+  const t = Math.tan(r);
+  $("ucr").innerHTML = "θ = " + th + "° = " + (th/180).toFixed(3) + "π rad<br>cos θ = <b>" + Math.cos(r).toFixed(3) + "</b> &nbsp; sin θ = <b>" + Math.sin(r).toFixed(3) + "</b> &nbsp; tan θ = <b>" + (Math.abs(Math.cos(r)) < 1e-9 ? "undefined" : t.toFixed(3)) + "</b><br>sin²θ + cos²θ = " + (Math.sin(r)**2 + Math.cos(r)**2).toFixed(3);
+}
+function newUC(){ const opts = [30, 45, 60, 90, 120, 135, 150, 180, 210, 240, 270, 300, 330]; ucTarget = opts[Math.floor(Math.random()*opts.length)]; const f = Math.random() < 0.5 ? "sin" : "cos"; $("ucq").dataset.f = f; $("ucq").textContent = "Predict " + f + " " + ucTarget + "° as a decimal (to 2 places)."; $("uca").value = ""; $("ucf").textContent = ""; }
+$("ucc").onclick = () => { const f = $("ucq").dataset.f, v = parseFloat($("uca").value), tr = (f === "sin" ? Math.sin : Math.cos)(ucTarget*Math.PI/180);
+  if (isNaN(v)) return feedback($("ucf"), false, "Enter a number between −1 and 1.");
+  const ok = Math.abs(v - tr) < 0.02; feedback($("ucf"), ok, (ok ? "Right: " : "Not quite: ") + f + " " + ucTarget + "° = " + tr.toFixed(3) + (ok ? "." : ". Move the slider there and look at the " + (f === "sin" ? "vertical (ochre)" : "horizontal (teal)") + " line."));
+  $("ang").value = ucTarget; drawUC(); };
+$("ucn").onclick = newUC; bind(["ang", "unit"], drawUC); REDRAW.push(drawUC); newUC();
+
+/* ---------- dice ---------- */
+let rolls = [];
+function drawDice(){
+  const c = $("dc"), { g, W, H } = setupCanvas(c, 0.5), face = +$("face").value, p = 1/6, n = rolls.length;
+  const N = Math.max(10, n), fr = frame(g, W, H, [1, N], [0, 0.6], { xl:"number of rolls", yl:"fraction showing " + face });
+  const band = []; for (let k = 1; k <= N; k += Math.max(1, Math.floor(N/200))) band.push(k);
+  g.fillStyle = tok("--teal-soft"); g.beginPath();
+  band.forEach((k, i) => { const se = Math.sqrt(p*(1 - p)/k); const y = fr.Y(Math.min(0.6, p + 2*se)); i ? g.lineTo(fr.X(k), y) : g.moveTo(fr.X(k), y); });
+  band.slice().reverse().forEach(k => { const se = Math.sqrt(p*(1 - p)/k); g.lineTo(fr.X(k), fr.Y(Math.max(0, p - 2*se))); }); g.closePath(); g.fill();
+  line(g, [[fr.X(1), fr.Y(p)], [fr.X(N), fr.Y(p)]], tok("--teal"), 1.5, [6, 4]);
+  let hits = 0; const pts = []; rolls.forEach((r, i) => { if (r === face) hits++; if (i % Math.max(1, Math.floor(n/400)) === 0 || i === n - 1) pts.push([fr.X(i + 1), fr.Y(Math.min(0.6, hits/(i + 1)))]); });
+  if (pts.length) line(g, pts, tok("--ochre"), 2);
+  const f = n ? hits/n : 0;
+  $("dr").innerHTML = "rolls <b>" + n + "</b> &nbsp; " + face + "s <b>" + hits + "</b> &nbsp; fraction <b>" + (n ? f.toFixed(4) : "—") + "</b> &nbsp; true 1/6 = 0.1667<br>standard error now √(p(1−p)/n) = " + (n ? Math.sqrt(p*(1 - p)/n).toFixed(4) : "—");
+}
+const roll = k => { for (let i = 0; i < k; i++) rolls.push(1 + Math.floor(Math.random()*6)); drawDice(); };
+$("r10").onclick = () => roll(10); $("r100").onclick = () => roll(100); $("r1000").onclick = () => roll(1000); $("rclr").onclick = () => { rolls = []; drawDice(); };
+$("face").onchange = drawDice; REDRAW.push(drawDice);
+$("dpc").onclick = () => { const v = parseFloat($("dpa").value), tr = 2*Math.sqrt((1/6)*(5/6)/1000);
+  if (isNaN(v)) return feedback($("dpf"), false, "Enter a number such as 0.02.");
+  const ok = Math.abs(v - tr)/tr < 0.25; feedback($("dpf"), ok, (ok ? "Good estimate. " : "Compare: ") + "2 × √(⅙ × ⅚ ÷ 1000) ≈ " + tr.toFixed(3) + ". So expect roughly 0.167 ± 0.024. Now press Roll 1000 and see."); };
+
+/* ---------- vectors ---------- */
+const VT = [
+  { q:"Make a + b point straight up (90°) with a magnitude of 6, give or take 0.3.", ok:(r, d, a, b) => Math.abs(r.m - 6) < 0.3 && Math.abs(((r.ang - 90 + 540) % 360) - 180) < 4 },
+  { q:"Make the dot product a·b exactly zero, with both vectors non-zero. What angle is between them?", ok:(r, d, a, b) => Math.abs(d) < 0.05 && a.m > 0 && b.m > 0 },
+  { q:"Make the resultant zero: a + b = 0, with a non-zero.", ok:(r, d, a, b) => r.m < 0.05 && a.m > 0 },
+  { q:"Make a·b negative while both vectors are longer than 3.", ok:(r, d, a, b) => d < -0.5 && a.m > 3 && b.m > 3 }
+];
+let vt = 0;
+function drawVec(){
+  const c = $("vc"), { g, W, H } = setupCanvas(c, 0.6);
+  const a = { m:+$("am").value, t:+$("aa").value*Math.PI/180 }, b = { m:+$("bm").value, t:+$("ba").value*Math.PI/180 };
+  const ax = a.m*Math.cos(a.t), ay = a.m*Math.sin(a.t), bx = b.m*Math.cos(b.t), by = b.m*Math.sin(b.t), rx = ax + bx, ry = ay + by;
+  const L = 11, fr = frame(g, W, H, [-L*W/H*0.9, L*W/H*0.9], [-L, L], { pad:{ l:36, b:28, t:10, r:10 } });
+  const O = [fr.X(0), fr.Y(0)];
+  line(g, [[fr.X(0), fr.Y(-L)], [fr.X(0), fr.Y(L)]], tok("--mute"), 1); line(g, [[fr.X(-L*2), fr.Y(0)], [fr.X(L*2), fr.Y(0)]], tok("--mute"), 1);
+  arrow(g, O[0], O[1], fr.X(ax), fr.Y(ay), tok("--teal")); arrow(g, fr.X(ax), fr.Y(ay), fr.X(rx), fr.Y(ry), tok("--ochre")); if (Math.hypot(rx, ry) > 0.05) arrow(g, O[0], O[1], fr.X(rx), fr.Y(ry), tok("--ink"), 3);
+  line(g, [[O[0], O[1]], [fr.X(bx), fr.Y(by)]], tok("--ochre"), 1, [4, 4]);
+  txt(g, "a", fr.X(ax/2) + 6, fr.Y(ay/2) - 6, tok("--teal"), 14); txt(g, "b", fr.X(ax + bx/2) + 6, fr.Y(ay + by/2) - 6, tok("--ochre"), 14); txt(g, "a + b", fr.X(rx) + 6, fr.Y(ry) - 6, tok("--ink"), 13);
+  const rm = Math.hypot(rx, ry), rang = (Math.atan2(ry, rx)*180/Math.PI + 360) % 360, d = ax*bx + ay*by, between = Math.abs(((+$("ba").value - +$("aa").value + 540) % 360) - 180);
+  ["am", "aa", "bm", "ba"].forEach(id => $(id + "v").textContent = $(id).value + (id.endsWith("a") ? "°" : ""));
+  $("vr").innerHTML = "a = (" + ax.toFixed(2) + ", " + ay.toFixed(2) + ") &nbsp; b = (" + bx.toFixed(2) + ", " + by.toFixed(2) + ")<br>a + b = (<b>" + rx.toFixed(2) + ", " + ry.toFixed(2) + "</b>) &nbsp; |a + b| = <b>" + rm.toFixed(2) + "</b> at " + rang.toFixed(0) + "°<br>a · b = <b>" + d.toFixed(2) + "</b> = |a||b|cos " + between.toFixed(0) + "°";
+  const T = VT[vt], ok = T.ok({ m:rm, ang:rang }, d, a, b);
+  $("vf").className = "fb " + (ok ? "good" : ""); $("vf").textContent = ok ? "Done. " + (vt === 1 ? "They are perpendicular: 90° apart." : vt === 2 ? "Equal size, opposite direction." : vt === 3 ? "More than 90° apart gives a negative cosine." : "Its components are (0, 6).") : "";
+}
+function setTask(){ $("vtask").textContent = VT[vt].q; drawVec(); }
+$("vnext").onclick = () => { vt = (vt + 1) % VT.length; setTask(); };
+bind(["am", "aa", "bm", "ba"], drawVec); REDRAW.push(drawVec); setTask();
+
+const TABS = ["circle","chance","vectors"];
+window.addEventListener("hashchange", () => route(TABS));
+route(TABS);
+</script>
+
+<script>if("serviceWorker" in navigator) navigator.serviceWorker.register("../sw.js");</script>
+</body>
+</html>

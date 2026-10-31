@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1F2B33">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}
+.sp-home{position:fixed;left:max(12px,env(safe-area-inset-left,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:50;
+font:500 14px "Bricolage Grotesque",system-ui,sans-serif;background:var(--ink,#1F2B33);color:var(--sheet,#fff);text-decoration:none;padding:9px 14px;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+</style>
+</head>
+<body>
+<a class="sp-home" href="../index.html">← Hub</a>
+<title>Rearranging Formulas Workbook</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<script>window.MathJax = { svg: { fontCache: 'global' }, startup: { typeset: false }, options: { enableMenu: false } };</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.11.0/math.min.js"></script>
+<style>
+/* Layout: a workbook. Set index on the left (chips on phones), problem cards stacked like exercise sheets. */
+:root{
+  --paper:#F4F6F3; --sheet:#FFFFFF; --ink:#1F2B33; --mute:#5E6B72; --rule:#D7DDDC;
+  --ochre:#B07508; --ochre-soft:#F3E6C8; --teal:#2C7A6B; --teal-soft:#DCEDE8; --red:#A8402C; --red-soft:#F5E1DB;
+  --display:"Bricolage Grotesque", "DejaVu Sans", system-ui, sans-serif;
+  --body:"Source Serif 4", Georgia, "Times New Roman", serif;
+  --mono:"IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#141C21; --sheet:#1B252C; --ink:#E9EEED; --mute:#9AA8AE; --rule:#2D3A42;
+  --ochre:#E2A73A; --ochre-soft:#3B2F17; --teal:#62BBA6; --teal-soft:#1D3A34; --red:#E58570; --red-soft:#3D2420; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#141C21; --sheet:#1B252C; --ink:#E9EEED; --mute:#9AA8AE; --rule:#2D3A42;
+  --ochre:#E2A73A; --ochre-soft:#3B2F17; --teal:#62BBA6; --teal-soft:#1D3A34; --red:#E58570; --red-soft:#3D2420; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.55}
+.wrap{max-width:1120px;margin:0 auto;padding-block:28px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header{border-bottom:1px solid var(--rule);padding-bottom:16px}
+.kicker{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ochre)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(30px,5vw,44px);line-height:1.05;margin:4px 0 6px;text-wrap:balance}
+h2{font-family:var(--display);font-weight:700;font-size:24px;margin:0;text-wrap:balance}
+.tag{color:var(--mute);margin:0;max-width:64ch}
+.layout{display:grid;grid-template-columns:220px minmax(0,1fr);gap:28px;margin-top:24px}
+@media (max-width:860px){.layout{grid-template-columns:minmax(0,1fr)}}
+.index{position:sticky;top:calc(env(safe-area-inset-top,0px) + 16px);align-self:start;display:flex;flex-direction:column;gap:4px}
+@media (max-width:860px){.index{position:static;flex-direction:row;flex-wrap:wrap}}
+.index a{display:flex;justify-content:space-between;gap:10px;text-decoration:none;color:var(--ink);font-family:var(--display);font-size:15px;padding:8px 12px;border-radius:8px;border:1px solid transparent}
+.index a:hover{border-color:var(--rule)}
+.index .n{font-family:var(--mono);font-size:12px;color:var(--mute);font-variant-numeric:tabular-nums}
+.index .n.full{color:var(--teal)}
+.overall{font-family:var(--mono);font-size:12.5px;color:var(--mute);padding:10px 12px;font-variant-numeric:tabular-nums}
+.bar{height:6px;background:var(--rule);border-radius:3px;overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;background:var(--teal);width:0;transition:width .4s}
+section.set{margin-bottom:40px;scroll-margin-top:16px}
+.sethead{display:flex;gap:14px;align-items:baseline;margin-bottom:6px}
+.sethead .code{font-family:var(--display);font-weight:700;font-size:30px;color:var(--ochre);line-height:1}
+.setintro{color:var(--mute);margin:0 0 16px;max-width:66ch}
+.card{background:var(--sheet);border:1px solid var(--rule);border-radius:10px;padding:18px 20px;margin-bottom:14px}
+.card.solved{border-color:var(--teal)}
+.chead{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline}
+.pid{font-family:var(--mono);font-size:13px;color:var(--mute)}
+.pid b{color:var(--ink);font-weight:500}
+.lvl{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
+.lvl i{font-style:normal;color:var(--ochre);letter-spacing:2px}
+.q{margin:8px 0 4px}
+.eq{overflow-x:auto;padding:8px 0;font-size:19px;min-height:52px}
+.eq mjx-container{margin:6px 0!important;text-align:left!important}
+.task{font-size:16px;margin:2px 0 10px}
+.task b{font-family:var(--mono);font-weight:500;color:var(--ochre)}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+input[type=text],input[type=number]{font:inherit;font-family:var(--mono);font-size:16px;color:var(--ink);background:var(--paper);border:1px solid var(--rule);border-radius:6px;padding:8px 10px;min-width:0}
+input[type=text]{flex:1 1 220px}
+input[type=number]{width:10em}
+.unit{font-family:var(--mono);font-size:14px;color:var(--mute)}
+button{font-family:var(--display);font-weight:500;font-size:15px;cursor:pointer;border-radius:8px;border:1px solid var(--ink);background:var(--ink);color:var(--sheet);padding:8px 15px}
+button.ghost{background:transparent;color:var(--ink);border-color:var(--rule)}
+button.ghost:hover{border-color:var(--ink)}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--ochre);outline-offset:2px}
+.preview{font-size:16px;color:var(--mute);min-height:30px;overflow-x:auto;margin-top:6px}
+.preview mjx-container{margin:0!important;text-align:left!important}
+.note{font-size:14px;color:var(--mute);margin:6px 0 0}
+.fb{margin-top:10px;font-size:15.5px;min-height:1.2em}
+.fb.good{color:var(--teal)} .fb.bad{color:var(--red)}
+.mc{display:grid;gap:8px;margin-top:4px}
+.mc button{text-align:left;background:var(--paper);color:var(--ink);border:1px solid var(--rule);font-family:var(--body);font-size:15.5px;padding:10px 12px}
+.mc button.right{border-color:var(--teal);background:var(--teal-soft)}
+.mc button.wrong{border-color:var(--red);background:var(--red-soft)}
+.extras{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.sol{margin-top:12px;border-top:1px dashed var(--rule);padding-top:10px}
+.sol ol{margin:0;padding-left:1.3em}
+.sol li{margin-bottom:6px;font-size:15.5px}
+.sol .eq{min-height:0;padding:2px 0;font-size:17px}
+.howto{background:var(--sheet);border:1px solid var(--rule);border-radius:10px;padding:16px 20px;margin-bottom:28px;font-size:15.5px}
+.howto ul{margin:6px 0 0;padding-left:1.2em}
+code{font-family:var(--mono);font-size:.92em;background:var(--paper);padding:1px 5px;border-radius:4px}
+footer{margin-top:24px;font-size:14px;color:var(--mute);border-top:1px solid var(--rule);padding-top:14px}
+</style>
+
+<div class="wrap">
+<header>
+  <div class="kicker">Second Pass · Course 2 · Module 2.3</div>
+  <h1>Rearranging Formulas Workbook</h1>
+  <p class="tag">Thirty-eight problems in seven sets, from one-step rearrangements to linearising real data. Answers are checked by substituting random numbers, so any algebraically correct form is accepted.</p>
+</header>
+
+<div class="layout">
+  <nav class="index" id="index" aria-label="Problem sets"></nav>
+  <main id="main">
+    <div class="howto">
+      <b>How to type answers.</b> Use <code>*</code> for multiply (or leave a space), <code>/</code> for divide, <code>^</code> for powers, <code>sqrt( )</code>, <code>cbrt( )</code>, <code>ln( )</code>, <code>log10( )</code> and <code>pi</code>. Subscripts become plain names: N-nought is <code>N0</code>, R-one is <code>R1</code>. A preview under the box shows how your expression was read; if it looks wrong, add brackets.
+      <ul>
+        <li>Try each problem before opening the hint. Use the worked solution to compare method, not just answer.</li>
+        <li>Suggested pacing at four hours a week: Sets A–C in session one, D–E in session two, F–G and a review of anything you missed in session three.</li>
+      </ul>
+    </div>
+  </main>
+</div>
+<footer>The printable PDF workbook contains the same problems with space to write and full solutions at the back. Progress is remembered in this browser only.</footer>
+</div>
+
+<script>
+const BANK = {"sets": [{"code": "A", "name": "Single occurrence, linear", "intro": "The target appears once and is only added, subtracted, multiplied or divided. Undo in reverse order."}, {"code": "B", "name": "Powers, roots and reciprocals", "intro": "The target sits inside a square, a root or a fraction. Isolate the wrapper, then apply its inverse."}, {"code": "C", "name": "Target in more than one place", "intro": "Gather every term containing the target on one side, factor it out, then divide."}, {"code": "D", "name": "Exponentials and logarithms", "intro": "Isolate the exponential first, then take a logarithm. Logs undo exponents and exponents undo logs."}, {"code": "E", "name": "Numbers and units", "intro": "Rearrange symbolically first, substitute numbers last, and carry units the whole way."}, {"code": "F", "name": "Linearisation and scaling", "intro": "Rearrange a law into the shape y = mx + c to read constants off a graph, or to predict how one quantity scales with another."}, {"code": "G", "name": "Spot the error", "intro": "Each worked attempt contains one mistake. Find it."}], "problems": [{"id": "A1", "set": "A", "level": 1, "ctx": "Kinematics: final velocity", "eq": "v = u + at", "target": "a", "vars": ["v", "u", "t"], "ans": "(v-u)/t", "ans_tex": "a = \\frac{v-u}{t}", "steps": [["Subtract u from both sides to remove the added term.", "v - u = at"], ["Divide both sides by t.", "a = \\frac{v-u}{t}"]]}, {"id": "A2", "set": "A", "level": 1, "ctx": "Straight line", "eq": "y = mx + c", "target": "x", "vars": ["y", "m", "c"], "ans": "(y-c)/m", "ans_tex": "x = \\frac{y-c}{m}", "steps": [["Subtract c from both sides.", "y - c = mx"], ["Divide by m.", "x = \\frac{y-c}{m}"]]}, {"id": "A3", "set": "A", "level": 1, "ctx": "Perimeter of a rectangle", "eq": "P = 2l + 2w", "target": "w", "vars": ["P", "l"], "ans": "(P-2*l)/2", "ans_tex": "w = \\frac{P-2l}{2}", "steps": [["Subtract 2l from both sides.", "P - 2l = 2w"], ["Divide by 2.", "w = \\frac{P-2l}{2}"]]}, {"id": "A4", "set": "A", "level": 1, "ctx": "Temperature conversion", "eq": "F = \\frac{9}{5}C + 32", "target": "C", "vars": ["F"], "ans": "5*(F-32)/9", "ans_tex": "C = \\frac{5(F-32)}{9}", "steps": [["Subtract 32 (the last thing done to C).", "F - 32 = \\frac{9}{5}C"], ["Multiply by five-ninths, the reciprocal of nine-fifths.", "C = \\frac{5(F-32)}{9}"]]}, {"id": "A5", "set": "A", "level": 2, "ctx": "Distance under uniform acceleration", "eq": "s = \\frac{(u+v)t}{2}", "target": "u", "vars": ["s", "v", "t"], "ans": "2*s/t - v", "ans_tex": "u = \\frac{2s}{t} - v", "steps": [["Multiply both sides by 2.", "2s = (u+v)t"], ["Divide by t.", "\\frac{2s}{t} = u + v"], ["Subtract v.", "u = \\frac{2s}{t} - v"]]}, {"id": "A6", "set": "A", "level": 1, "ctx": "Ideal gas law", "eq": "PV = nRT", "target": "T", "vars": ["P", "V", "n", "R"], "ans": "P*V/(n*R)", "ans_tex": "T = \\frac{PV}{nR}", "steps": [["T is multiplied by n and R. Divide both sides by nR.", "T = \\frac{PV}{nR}"]]}, {"id": "B1", "set": "B", "level": 1, "ctx": "Kinetic energy", "eq": "E = \\frac{1}{2}mv^2", "target": "v", "vars": ["E", "m"], "ans": "sqrt(2*E/m)", "ans_tex": "v = \\sqrt{\\frac{2E}{m}}", "steps": [["Multiply both sides by 2.", "2E = mv^2"], ["Divide by m.", "\\frac{2E}{m} = v^2"], ["Take the square root. Speed is positive here, so keep the positive root.", "v = \\sqrt{\\frac{2E}{m}}"]]}, {"id": "B2", "set": "B", "level": 2, "ctx": "Simple pendulum", "eq": "T = 2\\pi\\sqrt{\\frac{L}{g}}", "target": "g", "vars": ["T", "L"], "ans": "4*pi^2*L/T^2", "ans_tex": "g = \\frac{4\\pi^2 L}{T^2}", "steps": [["Divide by 2 pi to isolate the root.", "\\frac{T}{2\\pi} = \\sqrt{\\frac{L}{g}}"], ["Square both sides.", "\\frac{T^2}{4\\pi^2} = \\frac{L}{g}"], ["Take reciprocals of both sides so g is on top.", "\\frac{4\\pi^2}{T^2} = \\frac{g}{L}"], ["Multiply by L.", "g = \\frac{4\\pi^2 L}{T^2}"]]}, {"id": "B3", "set": "B", "level": 2, "ctx": "Newtonian gravity", "eq": "F = \\frac{G m_1 m_2}{r^2}", "target": "r", "vars": ["F", "G", "m1", "m2"], "ans": "sqrt(G*m1*m2/F)", "ans_tex": "r = \\sqrt{\\frac{G m_1 m_2}{F}}", "steps": [["Multiply both sides by r squared.", "F r^2 = G m_1 m_2"], ["Divide by F.", "r^2 = \\frac{G m_1 m_2}{F}"], ["Take the positive square root (r is a distance).", "r = \\sqrt{\\frac{G m_1 m_2}{F}}"]], "note": "Type m1 and m2 as m1 and m2."}, {"id": "B4", "set": "B", "level": 1, "ctx": "Area of a circle", "eq": "A = \\pi r^2", "target": "r", "vars": ["A"], "ans": "sqrt(A/pi)", "ans_tex": "r = \\sqrt{\\frac{A}{\\pi}}", "steps": [["Divide by pi.", "\\frac{A}{\\pi} = r^2"], ["Take the positive square root.", "r = \\sqrt{\\frac{A}{\\pi}}"]]}, {"id": "B5", "set": "B", "level": 3, "ctx": "Thin lens equation", "eq": "\\frac{1}{f} = \\frac{1}{u} + \\frac{1}{v}", "target": "v", "vars": ["f", "u"], "ans": "u*f/(u-f)", "ans_tex": "v = \\frac{uf}{u-f}", "steps": [["Subtract one over u to isolate the v term.", "\\frac{1}{v} = \\frac{1}{f} - \\frac{1}{u}"], ["Combine the right side over the common denominator uf.", "\\frac{1}{v} = \\frac{u-f}{uf}"], ["Take the reciprocal of both sides. This is allowed only once each side is a single fraction.", "v = \\frac{uf}{u-f}"]]}, {"id": "B6", "set": "B", "level": 2, "ctx": "Volume of a sphere", "eq": "V = \\frac{4}{3}\\pi r^3", "target": "r", "vars": ["V"], "ans": "cbrt(3*V/(4*pi))", "ans_tex": "r = \\sqrt[3]{\\frac{3V}{4\\pi}}", "steps": [["Multiply by 3 and divide by 4 pi.", "\\frac{3V}{4\\pi} = r^3"], ["Take the cube root. Cube roots have only one real value, so no sign choice is needed.", "r = \\sqrt[3]{\\frac{3V}{4\\pi}}"]], "note": "Type a cube root as cbrt(...) or as (...)^(1/3)."}, {"id": "B7", "set": "B", "level": 3, "ctx": "Kepler's third law (Newton's form)", "eq": "T^2 = \\frac{4\\pi^2}{GM}a^3", "target": "M", "vars": ["T", "G", "a"], "ans": "4*pi^2*a^3/(G*T^2)", "ans_tex": "M = \\frac{4\\pi^2 a^3}{G T^2}", "steps": [["Multiply both sides by GM to clear the denominator.", "G M T^2 = 4\\pi^2 a^3"], ["Divide by G T squared.", "M = \\frac{4\\pi^2 a^3}{G T^2}"]]}, {"id": "C1", "set": "C", "level": 1, "ctx": "Unknown on both sides", "eq": "ax + b = cx + d", "target": "x", "vars": ["a", "b", "c", "d"], "ans": "(d-b)/(a-c)", "ans_tex": "x = \\frac{d-b}{a-c}", "steps": [["Move every x term to the left and every other term to the right.", "ax - cx = d - b"], ["Factor out x.", "x(a-c) = d - b"], ["Divide by a minus c (valid when a is not equal to c).", "x = \\frac{d-b}{a-c}"]]}, {"id": "C2", "set": "C", "level": 2, "ctx": "Inverting a rational function", "eq": "y = \\frac{x+2}{x-3}", "target": "x", "vars": ["y"], "ans": "(3*y+2)/(y-1)", "ans_tex": "x = \\frac{3y+2}{y-1}", "steps": [["Multiply both sides by x minus 3.", "y(x-3) = x + 2"], ["Expand.", "xy - 3y = x + 2"], ["Collect x terms on the left.", "xy - x = 3y + 2"], ["Factor out x.", "x(y-1) = 3y + 2"], ["Divide by y minus 1.", "x = \\frac{3y+2}{y-1}"]]}, {"id": "C3", "set": "C", "level": 2, "ctx": "Two resistors in parallel", "eq": "R = \\frac{R_1 R_2}{R_1 + R_2}", "target": "R_2", "vars": ["R", "R1"], "ans": "R*R1/(R1-R)", "ans_tex": "R_2 = \\frac{R R_1}{R_1 - R}", "steps": [["Multiply by the denominator.", "R(R_1 + R_2) = R_1 R_2"], ["Expand.", "R R_1 + R R_2 = R_1 R_2"], ["Collect R2 terms on one side.", "R R_1 = R_1 R_2 - R R_2"], ["Factor out R2.", "R R_1 = R_2(R_1 - R)"], ["Divide.", "R_2 = \\frac{R R_1}{R_1 - R}"]], "note": "Type R1 for the first resistance."}, {"id": "C4", "set": "C", "level": 3, "ctx": "Doppler effect, moving source", "eq": "f' = \\frac{f v}{v - v_s}", "target": "v_s", "vars": ["fp", "f", "v"], "ans": "v*(fp-f)/fp", "ans_tex": "v_s = \\frac{v(f'-f)}{f'}", "steps": [["Multiply both sides by v minus v s.", "f'(v - v_s) = fv"], ["Expand.", "f'v - f'v_s = fv"], ["Move the v s term to one side.", "f'v - fv = f'v_s"], ["Factor v and divide by f prime.", "v_s = \\frac{v(f'-f)}{f'}"]], "note": "Type f-prime as fp."}, {"id": "C5", "set": "C", "level": 2, "ctx": "Bracketed unknown", "eq": "a(x - b) = cx", "target": "x", "vars": ["a", "b", "c"], "ans": "a*b/(a-c)", "ans_tex": "x = \\frac{ab}{a-c}", "steps": [["Expand the bracket.", "ax - ab = cx"], ["Collect x terms.", "ax - cx = ab"], ["Factor and divide.", "x = \\frac{ab}{a-c}"]]}, {"id": "D1", "set": "D", "level": 1, "ctx": "Radioactive decay", "eq": "N = N_0 e^{-kt}", "target": "t", "vars": ["N", "N0", "k"], "ans": "ln(N0/N)/k", "ans_tex": "t = \\frac{\\ln(N_0/N)}{k}", "steps": [["Divide by N nought to isolate the exponential.", "\\frac{N}{N_0} = e^{-kt}"], ["Take the natural log of both sides.", "\\ln\\left(\\frac{N}{N_0}\\right) = -kt"], ["Divide by minus k. Flipping the fraction inside the log absorbs the minus sign.", "t = \\frac{\\ln(N_0/N)}{k}"]], "note": "Type N-nought as N0. Use ln for the natural log."}, {"id": "D2", "set": "D", "level": 1, "ctx": "Acidity", "eq": "\\mathrm{pH} = -\\log_{10}[\\mathrm{H^+}]", "target": "H", "vars": ["pH"], "ans": "10^(-pH)", "ans_tex": "[\\mathrm{H^+}] = 10^{-\\mathrm{pH}}", "steps": [["Multiply by minus one.", "-\\mathrm{pH} = \\log_{10}[\\mathrm{H^+}]"], ["Raise 10 to the power of each side. Ten-to-the-power undoes log base ten.", "[\\mathrm{H^+}] = 10^{-\\mathrm{pH}}"]], "note": "Type the hydrogen-ion concentration as H."}, {"id": "D3", "set": "D", "level": 2, "ctx": "Compound growth", "eq": "A = P(1+r)^t", "target": "t", "vars": ["A", "P", "r"], "ans": "ln(A/P)/ln(1+r)", "ans_tex": "t = \\frac{\\ln(A/P)}{\\ln(1+r)}", "steps": [["Divide by P.", "\\frac{A}{P} = (1+r)^t"], ["Take logs of both sides. The log of a power brings the exponent down.", "\\ln\\left(\\frac{A}{P}\\right) = t\\ln(1+r)"], ["Divide by the log of one plus r.", "t = \\frac{\\ln(A/P)}{\\ln(1+r)}"]]}, {"id": "D4", "set": "D", "level": 2, "ctx": "General exponential", "eq": "y = a b^x", "target": "x", "vars": ["y", "a", "b"], "ans": "ln(y/a)/ln(b)", "ans_tex": "x = \\frac{\\ln(y/a)}{\\ln b}", "steps": [["Divide by a.", "\\frac{y}{a} = b^x"], ["Take logs.", "\\ln\\left(\\frac{y}{a}\\right) = x\\ln b"], ["Divide by ln b.", "x = \\frac{\\ln(y/a)}{\\ln b}"]]}, {"id": "D5", "set": "D", "level": 2, "ctx": "Sound level in decibels", "eq": "L = 10\\log_{10}\\left(\\frac{I}{I_0}\\right)", "target": "I", "vars": ["L", "I0"], "ans": "I0*10^(L/10)", "ans_tex": "I = I_0 \\cdot 10^{L/10}", "steps": [["Divide by 10.", "\\frac{L}{10} = \\log_{10}\\left(\\frac{I}{I_0}\\right)"], ["Raise 10 to each side.", "10^{L/10} = \\frac{I}{I_0}"], ["Multiply by I nought.", "I = I_0 \\cdot 10^{L/10}"]]}, {"id": "D6", "set": "D", "level": 3, "ctx": "Newton's law of cooling", "eq": "T = T_s + (T_0 - T_s)e^{-kt}", "target": "t", "vars": ["T", "Ts", "T0", "k"], "ans": "ln((T0-Ts)/(T-Ts))/k", "ans_tex": "t = \\frac{1}{k}\\ln\\left(\\frac{T_0 - T_s}{T - T_s}\\right)", "steps": [["Subtract T s, the surroundings temperature.", "T - T_s = (T_0 - T_s)e^{-kt}"], ["Divide by the bracket to isolate the exponential.", "\\frac{T - T_s}{T_0 - T_s} = e^{-kt}"], ["Take natural logs.", "\\ln\\left(\\frac{T - T_s}{T_0 - T_s}\\right) = -kt"], ["Divide by minus k and flip the fraction to absorb the sign.", "t = \\frac{1}{k}\\ln\\left(\\frac{T_0 - T_s}{T - T_s}\\right)"]], "note": "Type T-s as Ts and T-nought as T0."}, {"id": "E1", "set": "E", "level": 1, "type": "num", "ctx": "Pendulum length", "q": "A pendulum clock needs a period of exactly 2.00 s where g = 9.81 m/s². How long must the pendulum be?", "eq": "T = 2\\pi\\sqrt{\\frac{L}{g}}", "unit": "m", "num": 0.9939608115313336, "tol": 0.01, "steps": [["Rearrange for L first.", "L = \\frac{gT^2}{4\\pi^2}"], ["Substitute.", "L = \\frac{9.81 \\times 2.00^2}{4\\pi^2} = \\frac{39.24}{39.48}"], ["Evaluate.", "L \\approx 0.994\\ \\mathrm{m}"]]}, {"id": "E2", "set": "E", "level": 1, "type": "num", "ctx": "Ideal gas temperature", "q": "One mole of gas occupies 0.0224 m³ at 101 325 Pa. Taking R = 8.314 J/(mol·K), what is its temperature?", "eq": "PV = nRT", "unit": "K", "num": 272.9949482800096, "tol": 0.005, "steps": [["Rearrange.", "T = \\frac{PV}{nR}"], ["Substitute.", "T = \\frac{101325 \\times 0.0224}{1.00 \\times 8.314}"], ["Evaluate. This is 0 °C, the familiar standard condition.", "T \\approx 273\\ \\mathrm{K}"]]}, {"id": "E3", "set": "E", "level": 2, "type": "num", "ctx": "Weighing the Earth", "q": "Escape velocity from Earth's surface is 11 186 m/s and Earth's radius is 6.371 × 10⁶ m. Using G = 6.674 × 10⁻¹¹ N·m²/kg², find Earth's mass. Give your answer in units of 10²⁴ kg.", "eq": "v = \\sqrt{\\frac{2GM}{R}}", "unit": "× 10²⁴ kg", "num": 5.972292052112677, "tol": 0.01, "steps": [["Square both sides.", "v^2 = \\frac{2GM}{R}"], ["Rearrange for M.", "M = \\frac{v^2 R}{2G}"], ["Substitute.", "M = \\frac{(11186)^2 \\times 6.371\\times10^{6}}{2 \\times 6.674\\times10^{-11}}"], ["Evaluate.", "M \\approx 5.97 \\times 10^{24}\\ \\mathrm{kg}"]]}, {"id": "E4", "set": "E", "level": 2, "type": "num", "ctx": "Radiocarbon dating", "q": "Carbon-14 has a half-life of 5730 years, so k = ln 2 ÷ 5730 per year. A bone retains 25% of its original carbon-14. How old is it, in years?", "eq": "N = N_0 e^{-kt}", "unit": "years", "num": 11460.0, "tol": 0.005, "steps": [["Rearrange (see D1).", "t = \\frac{\\ln(N_0/N)}{k}"], ["N nought over N is 1 divided by 0.25, which is 4.", "t = \\frac{\\ln 4}{\\ln 2 / 5730}"], ["Since ln 4 = 2 ln 2, this is exactly two half-lives.", "t = 2 \\times 5730 = 11\\,460\\ \\mathrm{years}"]]}, {"id": "E5", "set": "E", "level": 1, "type": "num", "ctx": "Image distance", "q": "An object sits 0.30 m from a converging lens of focal length 0.10 m. Where does the image form?", "eq": "\\frac{1}{f} = \\frac{1}{u} + \\frac{1}{v}", "unit": "m", "num": 0.15, "tol": 0.01, "steps": [["Use the rearrangement from B5.", "v = \\frac{uf}{u-f}"], ["Substitute.", "v = \\frac{0.30 \\times 0.10}{0.30 - 0.10} = \\frac{0.030}{0.20}"], ["Evaluate.", "v = 0.15\\ \\mathrm{m}"]]}, {"id": "E6", "set": "E", "level": 1, "type": "num", "ctx": "Doubling time", "q": "A population grows at 2% per year. How many years until it doubles?", "eq": "A = P(1+r)^t", "unit": "years", "num": 35.0027887811465, "tol": 0.01, "steps": [["Doubling means A over P equals 2. Use the rearrangement from D3.", "t = \\frac{\\ln 2}{\\ln 1.02}"], ["Evaluate. Compare the rule of 70: 70 divided by 2 gives 35.", "t \\approx 35.0\\ \\mathrm{years}"]]}, {"id": "F1", "set": "F", "level": 2, "type": "mc", "ctx": "Linearising the pendulum", "q": "You time a pendulum at several lengths L. Which graph gives a straight line through the origin, and what is its gradient?", "eq": "T = 2\\pi\\sqrt{\\frac{L}{g}}", "options": ["T against L; gradient 2π/g", "T² against L; gradient 4π²/g", "T against √L; gradient g/(2π)", "log T against L; gradient ½"], "correct": 1, "steps": [["Square both sides.", "T^2 = \\frac{4\\pi^2}{g}\\,L"], ["Compare with y = m x: y is T squared, x is L, and m is 4 pi squared over g.", "g = \\frac{4\\pi^2}{\\text{gradient}}"]]}, {"id": "F2", "set": "F", "level": 2, "type": "mc", "ctx": "Linearising decay", "q": "Counts N from a radioactive source are recorded over time t. What should you plot to get a straight line?", "eq": "N = N_0 e^{-kt}", "options": ["N against t", "ln N against t; gradient −k, intercept ln N₀", "N against ln t", "1/N against t"], "correct": 1, "steps": [["Take natural logs of both sides.", "\\ln N = \\ln N_0 - kt"], ["Compare with y = mx + c.", "y = \\ln N,\\quad m = -k,\\quad c = \\ln N_0"]]}, {"id": "F3", "set": "F", "level": 2, "type": "num", "ctx": "Scaling an orbit", "q": "Kepler's third law says T² is proportional to a³. If a planet's orbital radius were four times larger, by what factor would its period grow?", "eq": "T^2 \\propto a^3", "unit": "×", "num": 8.0, "tol": 0.001, "steps": [["Rearrange the proportionality for T.", "T \\propto a^{3/2}"], ["Scale a by 4.", "4^{3/2} = (\\sqrt{4})^3 = 2^3 = 8"]]}, {"id": "F4", "set": "F", "level": 1, "type": "num", "ctx": "Inverse-square scaling", "q": "Two masses are moved three times further apart. By what factor does the gravitational force change? Give a decimal.", "eq": "F = \\frac{G m_1 m_2}{r^2}", "unit": "×", "num": 0.1111111111111111, "tol": 0.01, "steps": [["Only r changes, so F is proportional to one over r squared.", "F \\propto r^{-2}"], ["Scale r by 3.", "3^{-2} = \\frac{1}{9} \\approx 0.111"]]}, {"id": "F5", "set": "F", "level": 3, "type": "mc", "ctx": "Power laws", "q": "You suspect y = a xⁿ but do not know n. What plot reveals n?", "eq": "y = a x^n", "options": ["y against x; gradient n", "log y against x; gradient n", "log y against log x; gradient n", "y against log x; gradient a"], "correct": 2, "steps": [["Take logs.", "\\log y = \\log a + n\\log x"], ["This is a straight line with y-variable log y, x-variable log x and gradient n. Social scientists will know this as the log–log (elasticity) model.", "m = n,\\quad c = \\log a"]]}, {"id": "G1", "set": "G", "level": 1, "type": "mc", "ctx": "Kinetic energy", "q": "A student solves E = ½mv² for v and writes v = √(2E) ÷ m. What went wrong?", "eq": "E = \\frac{1}{2}mv^2", "options": ["Nothing; the answer is correct", "The m should be inside the square root", "The 2 should be outside the root", "They should have halved E, not doubled it"], "correct": 1, "steps": [["Dividing by m happens before the root is taken, so m ends up inside the root.", "v^2 = \\frac{2E}{m} \\Rightarrow v = \\sqrt{\\frac{2E}{m}}"]]}, {"id": "G2", "set": "G", "level": 2, "type": "mc", "ctx": "Thin lens", "q": "From 1/f = 1/u + 1/v, a student 'flips everything' and writes f = u + v. Why is this wrong?", "eq": "\\frac{1}{f} = \\frac{1}{u} + \\frac{1}{v}", "options": ["It is right; reciprocals can always be taken term by term", "The reciprocal of a sum is not the sum of the reciprocals", "They forgot a minus sign", "f should be squared"], "correct": 1, "steps": [["You may take the reciprocal of a whole side, never of each term separately. Test with numbers: 1/2 + 1/2 = 1, but 2 + 2 is not 1.", "\\frac{1}{f} = \\frac{u+v}{uv} \\Rightarrow f = \\frac{uv}{u+v}"]]}, {"id": "G3", "set": "G", "level": 1, "type": "mc", "ctx": "Square roots", "q": "Solving x² = 9, a student writes x = 3. What is missing?", "eq": "x^2 = 9", "options": ["Nothing", "The solution x = −3", "The solution x = 9", "The solution x = 1/3"], "correct": 1, "steps": [["Squaring destroys sign information, so the square root brings back two candidates. Context decides which to keep: a length must be positive, a displacement need not be.", "x = \\pm 3"]]}]};
+const $ = s => document.querySelector(s);
+const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+function tex(node, src, display = true){
+  node.innerHTML = "";
+  if (window.MathJax && MathJax.tex2svg){ try { node.appendChild(MathJax.tex2svg(src, { display })); return; } catch(e){} }
+  node.appendChild(el("code", null, src));
+}
+let solved = {};
+try { solved = JSON.parse(localStorage.getItem("m23-solved") || "{}"); } catch(e) { solved = {}; }
+function save(){ try { localStorage.setItem("m23-solved", JSON.stringify(solved)); } catch(e){} }
+
+if (window.math){ try { math.import({ ln: x => math.log(x) }, { override: false }); } catch(e){} }
+
+function normalise(s){
+  return s.replace(/π/g, "pi").replace(/√/g, "sqrt").replace(/²/g, "^2").replace(/³/g, "^3").replace(/[×·]/g, "*").replace(/÷/g, "/").replace(/[−–]/g, "-");
+}
+function domain(p){
+  const r = (a, b) => a + Math.random()*(b - a), s = {};
+  p.vars.forEach(v => s[v] = r(0.6, 2.4));
+  switch (p.id){
+    case "B5": s.u = r(2, 3); s.f = r(0.5, 1.5); break;
+    case "C3": s.R = r(0.2, 0.9); s.R1 = r(1, 3); break;
+    case "D1": s.N0 = s.N + r(0.5, 2); break;
+    case "D4": s.b = r(1.3, 2.4); break;
+    case "D6": s.Ts = r(0.2, 0.5); s.T0 = r(3, 4); s.T = r(1, 2.5); break;
+  }
+  return s;
+}
+function checkExpr(p, input){
+  if (!window.math) return { ok:false, msg:"The answer checker did not load. Compare with the worked solution instead." };
+  let node;
+  try { node = math.parse(normalise(input)); } catch(e){ return { ok:false, msg:"I couldn't read that expression. Check brackets and operators." }; }
+  const allowed = new Set([...p.vars, "pi", "e", "sqrt", "cbrt", "ln", "log", "log10", "exp", "nthRoot"]);
+  const tgt = p.target.replace("_", "");
+  const syms = new Set(node.filter(n => n.isSymbolNode).map(n => n.name));
+  if (syms.has(tgt) || syms.has(p.target)) return { ok:false, msg:"Your answer still contains " + p.target.replace("_","") + ". The target must end up alone on one side." };
+  const unknown = [...syms].filter(s => !allowed.has(s));
+  if (unknown.length) return { ok:false, msg:"Unknown symbol " + unknown.join(", ") + ". You can use: " + p.vars.join(", ") + "." };
+  const f = node.compile(), g = math.compile(p.ans);
+  let tested = 0;
+  for (let i = 0; i < 12 && tested < 6; i++){
+    const sc = domain(p);
+    let want, got;
+    try { want = g.evaluate(sc); got = f.evaluate(sc); } catch(e){ return { ok:false, msg:"That expression couldn't be evaluated: " + e.message }; }
+    if (typeof want !== "number" || !isFinite(want)) continue;
+    if (typeof got !== "number" || !isFinite(got)) return { ok:false, msg:"Not equivalent: your expression gives an undefined value where the correct answer doesn't." };
+    tested++;
+    if (Math.abs(got - want) > 1e-7 * Math.max(1, Math.abs(want))){
+      if (Math.abs(got + want) < 1e-7 * Math.max(1, Math.abs(want))) return { ok:false, msg:"Close: your answer has the wrong sign everywhere. Check a minus sign or a flipped fraction inside a log." };
+      if (Math.abs(got*want - 1) < 1e-6) return { ok:false, msg:"Close: your answer is the reciprocal of the right one. Check which way up a fraction should be." };
+      return { ok:false, msg:"Not equivalent. Substituting numbers gives a different value from the correct rearrangement. Try the hint." };
+    }
+  }
+  return { ok:true };
+}
+
+function setProgress(){
+  let total = 0, done = 0;
+  BANK.sets.forEach(s => {
+    const ps = BANK.problems.filter(p => p.set === s.code), d = ps.filter(p => solved[p.id]).length;
+    total += ps.length; done += d;
+    const n = document.getElementById("n-" + s.code); n.textContent = d + "/" + ps.length; n.classList.toggle("full", d === ps.length);
+  });
+  $("#ov-t").textContent = done + " of " + total + " solved";
+  $("#ov-b").style.width = (100*done/total) + "%";
+}
+function markSolved(p, card){ solved[p.id] = true; save(); card.classList.add("solved"); setProgress(); }
+
+function renderSolution(p, box){
+  box.innerHTML = ""; box.className = "sol";
+  const ol = el("ol");
+  p.steps.forEach(([w, t]) => { const li = el("li"); li.appendChild(el("span", null, w)); const e = el("div", "eq"); tex(e, t); li.appendChild(e); ol.appendChild(li); });
+  box.appendChild(ol);
+}
+
+function card(p){
+  const c = el("article", "card" + (solved[p.id] ? " solved" : "")); c.id = "p-" + p.id;
+  const h = el("div", "chead");
+  const pid = el("div", "pid"); pid.innerHTML = "<b>" + p.id + "</b> · " + p.ctx; h.appendChild(pid);
+  const lv = el("div", "lvl"); lv.innerHTML = "Level <i>" + "●".repeat(p.level) + "○".repeat(3 - p.level) + "</i>"; h.appendChild(lv);
+  c.appendChild(h);
+  if (p.q) c.appendChild(el("p", "q", p.q));
+  const e = el("div", "eq"); tex(e, p.eq); c.appendChild(e);
+  const fb = el("div", "fb"); fb.setAttribute("aria-live", "polite");
+  const type = p.type || "expr";
+  if (type === "expr"){
+    const t = el("p", "task"); t.innerHTML = "Make <b>" + p.target.replace("_", "") + "</b> the subject."; c.appendChild(t);
+    const row = el("div", "row");
+    const lab = el("span", "unit", p.target.replace("_","") + " ="); row.appendChild(lab);
+    const inp = el("input"); inp.type = "text"; inp.id = "in-" + p.id; inp.autocomplete = "off"; inp.spellcheck = false; inp.setAttribute("aria-label", "Your expression for " + p.target);
+    inp.placeholder = "e.g. " + (p.vars[0] || "x") + "/2";
+    row.appendChild(inp);
+    const b = el("button", null, "Check"); row.appendChild(b); c.appendChild(row);
+    const pv = el("div", "preview"); c.appendChild(pv);
+    if (p.note) c.appendChild(el("p", "note", p.note));
+    let tmr;
+    inp.addEventListener("input", () => { clearTimeout(tmr); tmr = setTimeout(() => {
+      const v = inp.value.trim(); if (!v || !window.math){ pv.innerHTML = ""; return; }
+      try { tex(pv, p.target.replace("_2","_2") + " = " + math.parse(normalise(v)).toTex({ parenthesis: "auto", implicit: "hide" }), false); } catch(e){ pv.textContent = "…"; }
+    }, 250); });
+    const go = () => { const v = inp.value.trim(); if (!v){ fb.className = "fb bad"; fb.textContent = "Type an expression first."; return; }
+      const r = checkExpr(p, v);
+      fb.className = "fb " + (r.ok ? "good" : "bad");
+      fb.textContent = r.ok ? "Correct. Compare your route with the worked solution: was it the same number of steps?" : r.msg;
+      if (r.ok) markSolved(p, c); };
+    b.onclick = go; inp.addEventListener("keydown", ev => { if (ev.key === "Enter") go(); });
+  } else if (type === "num"){
+    const row = el("div", "row");
+    const inp = el("input"); inp.type = "number"; inp.step = "any"; inp.id = "in-" + p.id; inp.setAttribute("aria-label", "Your numerical answer");
+    row.appendChild(inp); row.appendChild(el("span", "unit", p.unit));
+    const b = el("button", null, "Check"); row.appendChild(b); c.appendChild(row);
+    const go = () => { const v = parseFloat(inp.value); if (isNaN(v)){ fb.className = "fb bad"; fb.textContent = "Enter a number."; return; }
+      const ok = Math.abs(v - p.num) / Math.abs(p.num) <= p.tol;
+      fb.className = "fb " + (ok ? "good" : "bad");
+      fb.textContent = ok ? "Correct: " + (+p.num.toPrecision(4)) + " " + p.unit + "." : "Not within " + Math.round(p.tol*100) + "% of the answer. Rearrange symbolically first, then substitute. Check unit conversions and powers of ten.";
+      if (ok) markSolved(p, c); };
+    b.onclick = go; inp.addEventListener("keydown", ev => { if (ev.key === "Enter") go(); });
+  } else {
+    const box = el("div", "mc");
+    p.options.forEach((o, i) => { const b = el("button", null, o); b.onclick = () => {
+      if (i === p.correct){ b.classList.add("right"); [...box.children].forEach(x => x.disabled = true); fb.className = "fb good"; fb.textContent = "Correct."; markSolved(p, c); }
+      else { b.classList.add("wrong"); b.disabled = true; fb.className = "fb bad"; fb.textContent = "Not that one. Open the worked solution if you're unsure why."; }
+    }; box.appendChild(b); });
+    c.appendChild(box);
+  }
+  c.appendChild(fb);
+  const ex = el("div", "extras");
+  const hb = el("button", "ghost", "Hint"), sb = el("button", "ghost", "Worked solution");
+  ex.appendChild(hb); ex.appendChild(sb); c.appendChild(ex);
+  const hint = el("p", "note"); hint.hidden = true; hint.textContent = "First move: " + p.steps[0][0]; c.appendChild(hint);
+  const sol = el("div"); sol.hidden = true; c.appendChild(sol);
+  hb.onclick = () => { hint.hidden = !hint.hidden; };
+  sb.onclick = () => { if (!sol.childElementCount) renderSolution(p, sol); sol.hidden = !sol.hidden; sb.textContent = sol.hidden ? "Worked solution" : "Hide solution"; };
+  return c;
+}
+
+function build(){
+  const idx = $("#index"), main = $("#main");
+  BANK.sets.forEach(s => {
+    const a = el("a"); a.href = "#set-" + s.code;
+    a.appendChild(el("span", null, s.code + " · " + s.name.split(",")[0].replace("Target in more than one place", "Target twice")));
+    const n = el("span", "n"); n.id = "n-" + s.code; a.appendChild(n); idx.appendChild(a);
+    const sec = el("section", "set"); sec.id = "set-" + s.code;
+    const hd = el("div", "sethead"); hd.appendChild(el("span", "code", s.code)); hd.appendChild(el("h2", null, s.name)); sec.appendChild(hd);
+    sec.appendChild(el("p", "setintro", s.intro));
+    BANK.problems.filter(p => p.set === s.code).forEach(p => sec.appendChild(card(p)));
+    main.appendChild(sec);
+  });
+  const ov = el("div", "overall"); ov.innerHTML = '<span id="ov-t"></span><div class="bar"><i id="ov-b"></i></div>';
+  const reset = el("button", "ghost", "Clear progress"); reset.style.marginTop = "10px"; reset.style.fontSize = "13px";
+  reset.onclick = () => { solved = {}; save(); document.querySelectorAll(".card.solved").forEach(c => c.classList.remove("solved")); setProgress(); };
+  ov.appendChild(reset); idx.appendChild(ov);
+  setProgress();
+}
+if (window.MathJax && MathJax.startup && MathJax.startup.promise) MathJax.startup.promise.then(build).catch(build); else build();
+</script>
+
+<script>if("serviceWorker" in navigator) navigator.serviceWorker.register("../sw.js");</script>
+</body>
+</html>

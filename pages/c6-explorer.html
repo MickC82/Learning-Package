@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1F2B33">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}
+.sp-home{position:fixed;left:max(12px,env(safe-area-inset-left,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:50;
+font:500 14px "Bricolage Grotesque",system-ui,sans-serif;background:var(--ink,#1F2B33);color:var(--sheet,#fff);text-decoration:none;padding:9px 14px;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+</style>
+</head>
+<body>
+<a class="sp-home" href="../index.html">← Hub</a>
+<title>Life Lab</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a lab bench per tab. The live canvas is the hero; controls sit beneath; the aside states the learning aim and holds the challenge. */
+
+:root{
+  --paper:#F4F6F3; --sheet:#FFFFFF; --ink:#1F2B33; --mute:#5E6B72; --rule:#D7DDDC; --grid:#E6EAE8;
+  --ochre:#B07508; --ochre-soft:#F3E6C8; --teal:#2C7A6B; --teal-soft:#DCEDE8; --red:#A8402C; --red-soft:#F5E1DB; --blue:#3C6E91; --blue-soft:#DDE8F0;
+  --display:"Bricolage Grotesque", "DejaVu Sans", system-ui, sans-serif;
+  --body:"Source Serif 4", Georgia, "Times New Roman", serif;
+  --mono:"IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#141C21; --sheet:#1B252C; --ink:#E9EEED; --mute:#9AA8AE; --rule:#2D3A42; --grid:#25313A;
+  --ochre:#E2A73A; --ochre-soft:#3B2F17; --teal:#62BBA6; --teal-soft:#1D3A34; --red:#E58570; --red-soft:#3D2420; --blue:#7FB0D3; --blue-soft:#1E3343; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#141C21; --sheet:#1B252C; --ink:#E9EEED; --mute:#9AA8AE; --rule:#2D3A42; --grid:#25313A;
+  --ochre:#E2A73A; --ochre-soft:#3B2F17; --teal:#62BBA6; --teal-soft:#1D3A34; --red:#E58570; --red-soft:#3D2420; --blue:#7FB0D3; --blue-soft:#1E3343; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.55}
+.wrap{max-width:1080px;margin:0 auto;padding-block:28px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:12px 24px;border-bottom:1px solid var(--rule);padding-bottom:16px}
+.kicker{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ochre)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(30px,5vw,46px);line-height:1.05;margin:4px 0 0;text-wrap:balance}
+.tag{color:var(--mute);font-style:italic;margin:6px 0 0;max-width:56ch}
+nav{display:flex;gap:4px;flex-wrap:wrap}
+nav a{font-family:var(--display);font-weight:500;font-size:15px;color:var(--mute);text-decoration:none;padding:8px 14px;border-radius:999px;border:1px solid transparent}
+nav a[aria-current="page"]{color:var(--ink);border-color:var(--ink);background:var(--sheet)}
+a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--ochre);outline-offset:2px}
+.bench{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:24px;margin-top:24px}
+@media (max-width:820px){.bench{grid-template-columns:minmax(0,1fr)}}
+.sheet{background:var(--sheet);border:1px solid var(--rule);border-radius:10px;padding:20px}
+.aside{display:flex;flex-direction:column;gap:16px;min-width:0}
+.label{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);margin:0 0 8px}
+.practising{border-left:3px solid var(--teal);padding:2px 0 2px 12px;font-size:15.5px;margin:0}
+.row{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center}
+.ctrl{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px 18px;margin-top:12px}
+.ctrl label{font-family:var(--mono);font-size:12.5px;color:var(--mute);display:flex;flex-direction:column;gap:4px}
+.ctrl label b{color:var(--ink);font-weight:500}
+input[type=range]{width:100%;accent-color:var(--ochre)}
+select,input[type=number],input[type=text]{font:inherit;font-size:15px;color:var(--ink);background:var(--paper);border:1px solid var(--rule);border-radius:6px;padding:6px 9px;min-width:0}
+input[type=number],input[type=text]{width:8.5em;font-family:var(--mono)}
+button{font-family:var(--display);font-weight:500;font-size:15px;cursor:pointer;border-radius:8px;border:1px solid var(--ink);background:var(--ink);color:var(--sheet);padding:8px 15px}
+button.ghost{background:transparent;color:var(--ink);border-color:var(--rule)}
+button.ghost:hover{border-color:var(--ink)}
+canvas{width:100%;display:block;border-radius:6px;touch-action:none}
+.read{font-family:var(--mono);font-size:13.5px;font-variant-numeric:tabular-nums;margin-top:10px;line-height:1.7}
+.read b{color:var(--ochre);font-weight:500}
+.fb{margin-top:10px;font-size:15.5px;min-height:1.3em}
+.fb.good{color:var(--teal)} .fb.bad{color:var(--red)}
+.pill{display:inline-block;font-family:var(--mono);font-size:12px;padding:2px 9px;border-radius:999px}
+.pill.ok{background:var(--teal-soft);color:var(--teal)} .pill.no{background:var(--red-soft);color:var(--red)} .pill.mid{background:var(--ochre-soft);color:var(--ochre)}
+.small{font-size:14.5px;color:var(--mute)}
+.task{background:var(--ochre-soft);border-radius:8px;padding:12px 14px;font-size:15.5px}
+footer{margin-top:40px;font-size:14px;color:var(--mute);border-top:1px solid var(--rule);padding-top:14px}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+
+</style>
+<div class="wrap">
+<header>
+  <div><div class="kicker">Second Pass · Course 6 · Explorer</div><h1>Life Lab</h1><p class="tag">Three benches for Course 6: genetic crosses, natural selection against drift, and an epidemic model with vaccination.</p></div>
+  <nav aria-label="Benches"><a href="#genetics" data-tab="genetics">1 · Genetics</a>
+<a href="#selection" data-tab="selection">2 · Selection</a>
+<a href="#epidemic" data-tab="epidemic">3 · Epidemic</a></nav>
+</header>
+<section id="v-genetics" class="bench">
+<div class="sheet">
+<canvas id="gc" aria-label="Punnett square for the chosen cross with expected and simulated offspring counts"></canvas>
+<div class="ctrl">
+<label for="mode">Inheritance<select id="mode"><option value="auto">ordinary (autosomal) gene</option><option value="x">X-linked gene (e.g. colour blindness)</option></select></label>
+<label for="p1">Parent 1<select id="p1"></select></label>
+<label for="p2">Parent 2<select id="p2"></select></label></div>
+<div class="row" style="margin-top:12px"><button id="breed">Breed 100 offspring</button></div>
+<div class="read" id="gr"></div></div>
+<div class="aside">
+<div class="sheet"><p class="label">What you're practising</p><p class="practising">Each parent passes on one allele at random, so a Punnett square gives probabilities, not guarantees. Breed 100 offspring and compare the counts with the expected ratio: chance makes them wobble. For X-linked genes, sons get their only X from their mother. Reader §6.5.</p></div>
+<div class="sheet"><p class="label">Challenge</p><p id="gq" style="margin:0 0 8px"></p><div class="row"><input type="text" id="ga" inputmode="decimal" aria-label="Probability"><button id="gch">Check</button><button class="ghost" id="gn">Next question</button></div><div class="fb" id="gf"></div></div>
+
+</div>
+</section>
+<section id="v-selection" class="bench" hidden>
+<div class="sheet">
+<canvas id="sc" aria-label="Allele frequency over generations for several populations"></canvas>
+<div class="ctrl">
+<label for="sp">Starting frequency <b id="spv">0.05</b><input type="range" id="sp" min="0.01" max="0.5" step="0.01" value="0.05"></label>
+<label for="ss">Selective advantage <b id="ssv">5%</b><input type="range" id="ss" min="-10" max="20" step="1" value="5"></label>
+<label for="sn">Population size <b id="snv">500</b><input type="range" id="sn" min="1" max="4" step="0.25" value="2.7"></label></div>
+<div class="row" style="margin-top:12px"><button id="srun">Run 6 populations</button></div>
+<div class="read" id="sr"></div></div>
+<div class="aside">
+<div class="sheet"><p class="label">What you're practising</p><p class="practising">Natural selection pushes a helpful allele up steadily; genetic drift adds random wobble, and in small populations drift can beat selection, even losing a good allele. Set the advantage to 0 to see pure drift. Reader §6.6.</p></div>
+<div class="sheet"><p class="label">Challenge</p><div class="task">Find a population size small enough that a 5% advantage is often lost by chance. Then set a 10% disadvantage: can drift ever carry a harmful allele to fixation in a tiny population?</div></div>
+
+</div>
+</section>
+<section id="v-epidemic" class="bench" hidden>
+<div class="sheet">
+<canvas id="ec" aria-label="Epidemic curves for susceptible, infected and recovered people over time"></canvas>
+<div class="ctrl">
+<label for="r0">R₀ <b id="r0v">3.0</b><input type="range" id="r0" min="1" max="10" step="0.1" value="3"></label>
+<label for="vac">Vaccinated before the outbreak <b id="vacv">0%</b><input type="range" id="vac" min="0" max="95" step="1" value="0"></label>
+<label for="dur">Infectious period <b id="durv">7 days</b><input type="range" id="dur" min="3" max="14" step="1" value="7"></label></div>
+<div class="read" id="er"></div></div>
+<div class="aside">
+<div class="sheet"><p class="label">What you're practising</p><p class="practising">The SIR model divides a population into Susceptible, Infected and Recovered. An outbreak grows only while each case infects more than one other (R_eff above 1). Vaccination removes susceptible people; past the herd-immunity threshold 1 − 1/R₀ the outbreak fizzles. Reader §6.8.</p></div>
+<div class="sheet"><p class="label">Challenge</p><p style="margin:0 0 8px">For R₀ = 3, predict the vaccination percentage needed for herd immunity, then test it.</p><div class="row"><input type="text" id="ea" inputmode="decimal" aria-label="Percent"><button id="ech">Check</button></div><div class="fb" id="ef"></div></div>
+
+</div>
+</section>
+<footer>Pair with the Course 6 Theory Reader, Visual Companion and Workbook. Models are simplified for teaching.</footer>
+</div>
+<script>
+
+const $ = id => document.getElementById(id);
+const tok = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const REDRAW = [];
+function setupCanvas(c, ratio){
+  const dpr = window.devicePixelRatio || 1, w = c.clientWidth || 600, h = Math.round(w * ratio);
+  if (c.width !== Math.round(w*dpr) || c.height !== Math.round(h*dpr)){ c.width = Math.round(w*dpr); c.height = Math.round(h*dpr); c.style.height = h + "px"; }
+  const g = c.getContext("2d"); g.setTransform(dpr, 0, 0, dpr, 0, 0); return { g, W:w, H:h };
+}
+function niceTicks(a, b, n = 6){ const span = b - a || 1, s = Math.pow(10, Math.floor(Math.log10(span/n))); const st = [1, 2, 5, 10].map(q => q*s).find(q => span/q <= n + 1) || s*10; const out = []; for (let v = Math.ceil(a/st)*st; v <= b + 1e-9*span; v += st) out.push(+v.toPrecision(10)); return out; }
+function frame(g, W, H, xr, yr, o = {}){
+  const p = Object.assign({ l:56, r:14, t:14, b:42 }, o.pad || {});
+  const X = x => p.l + (x - xr[0])/(xr[1] - xr[0])*(W - p.l - p.r), Y = y => H - p.b - (y - yr[0])/(yr[1] - yr[0])*(H - p.t - p.b);
+  g.fillStyle = tok("--sheet"); g.fillRect(0, 0, W, H);
+  g.strokeStyle = tok("--grid"); g.lineWidth = 1; g.font = "12px " + tok("--mono"); g.fillStyle = tok("--mute");
+  (o.xt || niceTicks(xr[0], xr[1])).forEach(v => { g.beginPath(); g.moveTo(X(v), p.t); g.lineTo(X(v), H - p.b); g.stroke(); g.textAlign = "center"; g.fillText(o.xf ? o.xf(v) : +v.toPrecision(4), X(v), H - p.b + 16); });
+  (o.yt || niceTicks(yr[0], yr[1])).forEach(v => { g.beginPath(); g.moveTo(p.l, Y(v)); g.lineTo(W - p.r, Y(v)); g.stroke(); g.textAlign = "right"; g.fillText(o.yf ? o.yf(v) : +v.toPrecision(4), p.l - 6, Y(v) + 4); });
+  g.strokeStyle = tok("--mute"); g.beginPath(); g.moveTo(p.l, p.t); g.lineTo(p.l, H - p.b); g.lineTo(W - p.r, H - p.b); g.stroke();
+  g.fillStyle = tok("--ink"); g.font = "13px " + tok("--mono"); g.textAlign = "center";
+  if (o.xl) g.fillText(o.xl, (p.l + W - p.r)/2, H - 8);
+  if (o.yl){ g.save(); g.translate(14, (p.t + H - p.b)/2); g.rotate(-Math.PI/2); g.fillText(o.yl, 0, 0); g.restore(); }
+  return { X, Y, p, W, H };
+}
+function clip(g, fr){ g.save(); g.beginPath(); g.rect(fr.p.l, fr.p.t, fr.W - fr.p.l - fr.p.r, fr.H - fr.p.t - fr.p.b); g.clip(); }
+function line(g, pts, color, w = 2, dash){ g.strokeStyle = color; g.lineWidth = w; g.setLineDash(dash || []); g.beginPath(); pts.forEach(([x, y], i) => i ? g.lineTo(x, y) : g.moveTo(x, y)); g.stroke(); g.setLineDash([]); }
+function dot(g, x, y, r, color){ g.fillStyle = color; g.beginPath(); g.arc(x, y, r, 0, 2*Math.PI); g.fill(); }
+function txt(g, s, x, y, color, size = 13, align = "left", font = "--mono"){ g.fillStyle = color; g.font = size + "px " + tok(font); g.textAlign = align; g.fillText(s, x, y); }
+function arrow(g, x1, y1, x2, y2, color, w = 2.5){ const a = Math.atan2(y2 - y1, x2 - x1), hl = 10; g.strokeStyle = color; g.fillStyle = color; g.lineWidth = w; g.beginPath(); g.moveTo(x1, y1); g.lineTo(x2 - hl*0.6*Math.cos(a), y2 - hl*0.6*Math.sin(a)); g.stroke(); g.beginPath(); g.moveTo(x2, y2); g.lineTo(x2 - hl*Math.cos(a - 0.4), y2 - hl*Math.sin(a - 0.4)); g.lineTo(x2 - hl*Math.cos(a + 0.4), y2 - hl*Math.sin(a + 0.4)); g.closePath(); g.fill(); }
+const fmt = (x, p = 3) => { if (!isFinite(x)) return "—"; const a = Math.abs(x); return a !== 0 && (a >= 1e5 || a < 1e-3) ? x.toExponential(p - 1) : String(+x.toPrecision(p)); };
+const bind = (ids, fn) => ids.forEach(id => $(id).addEventListener("input", fn));
+const near = (a, b, tol) => Math.abs(a - b) <= tol * Math.max(1e-12, Math.abs(b));
+function feedback(el, ok, msg){ el.className = "fb " + (ok ? "good" : "bad"); el.textContent = msg; }
+function route(tabs){
+  const h = location.hash.replace("#", ""), t = tabs.includes(h) ? h : tabs[0];
+  tabs.forEach(n => { $("v-" + n).hidden = n !== t; document.querySelector('[data-tab="' + n + '"]').setAttribute("aria-current", n === t ? "page" : "false"); });
+  requestAnimationFrame(() => REDRAW.forEach(f => f()));
+}
+function redrawAll(){ REDRAW.forEach(f => f()); }
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", redrawAll);
+new MutationObserver(redrawAll).observe(document.documentElement, { attributes:true, attributeFilter:["data-theme"] });
+window.addEventListener("resize", () => { clearTimeout(window.__rz); window.__rz = setTimeout(redrawAll, 120); });
+
+
+/* ---------- genetics ---------- */
+const OPTS = { auto:[["AA", "AA (homozygous dominant)"], ["Aa", "Aa (carrier)"], ["aa", "aa (homozygous recessive)"]],
+               x:[["XAXA", "mother XᴬXᴬ (unaffected)"], ["XAXa", "mother XᴬXᵃ (carrier)"], ["XaXa", "mother XᵃXᵃ (affected)"], ["XAY", "father XᴬY (unaffected)"], ["XaY", "father XᵃY (affected)"]] };
+let sim = null;
+function fillParents(){ const m = $("mode").value; ["p1", "p2"].forEach((id, k) => { const s = $(id); s.innerHTML = "";
+  OPTS[m].filter(o => m === "auto" || (k === 0 ? o[0].length === 4 && !o[0].endsWith("Y") : o[0].endsWith("Y"))).forEach(o => { const op = document.createElement("option"); op.value = o[0]; op.textContent = o[1]; s.appendChild(op); }); });
+  $("p1").value = m === "auto" ? "Aa" : "XAXa"; $("p2").value = m === "auto" ? "Aa" : "XAY"; sim = null; }
+const gam = (gt, m) => m === "auto" ? [gt[0], gt[1]] : gt.endsWith("Y") ? [gt.slice(0, 2), "Y"] : [gt.slice(0, 2), gt.slice(2)];
+const pretty = s => s.replace(/X([Aa])/g, (_, a) => "X" + (a === "A" ? "ᴬ" : "ᵃ"));
+function pheno(child, m){ if (m === "auto") return child.includes("A") ? "dominant trait" : "recessive trait";
+  const male = child.includes("Y"); const affected = male ? child.includes("Xa") : child === "XaXa"; return (male ? "son " : "daughter ") + (affected ? "affected" : child.includes("Xa") ? "carrier" : "unaffected"); }
+function cross(){ const m = $("mode").value, g1 = gam($("p1").value, m), g2 = gam($("p2").value, m), cells = [];
+  g1.forEach(a => g2.forEach(b => { let c = m === "auto" ? [a, b].sort().join("") : (b === "Y" ? a + "Y" : [a, b].sort().join("")); cells.push({ a, b, c, p:pheno(c, m) }); })); return { m, g1, g2, cells }; }
+function drawG(){
+  const X = cross(), { g, W, H } = setupCanvas($("gc"), 0.5); g.fillStyle = tok("--sheet"); g.fillRect(0, 0, W, H);
+  const s = Math.min(H*0.32, 86), x0 = 40 + s*0.6, y0 = 30 + s*0.5;
+  X.g2.forEach((b, j) => txt(g, pretty(b), x0 + s*j + s/2, y0 - 10, tok("--ochre"), 16, "center")); X.g1.forEach((a, i) => txt(g, pretty(a), x0 - 12, y0 + s*i + s/2 + 5, tok("--ochre"), 16, "right"));
+  X.cells.forEach((c, k) => { const i = Math.floor(k/2), j = k % 2, hit = /recessive|affected/.test(c.p) && !/unaffected/.test(c.p);
+    g.fillStyle = hit ? tok("--ochre-soft") : tok("--teal-soft"); g.fillRect(x0 + s*j, y0 + s*i, s, s); g.strokeStyle = tok("--ink"); g.lineWidth = 1.2; g.strokeRect(x0 + s*j, y0 + s*i, s, s);
+    txt(g, pretty(c.c), x0 + s*j + s/2, y0 + s*i + s/2 + 2, tok("--ink"), 16, "center"); txt(g, c.p.replace(" trait", ""), x0 + s*j + s/2, y0 + s*i + s/2 + 18, tok("--mute"), 10, "center"); });
+  const counts = {}; X.cells.forEach(c => counts[c.p] = (counts[c.p] || 0) + 25);
+  const bx = x0 + 2*s + 40, keys = Object.keys(counts); txt(g, "expected per 100", bx, 24, tok("--mute"), 11); if (sim) txt(g, "simulated", bx + 170, 24, tok("--mute"), 11);
+  keys.forEach((k, i) => { const y = 46 + i*30; txt(g, k, bx, y, tok("--ink"), 12); g.fillStyle = tok("--teal"); g.fillRect(bx, y + 4, counts[k]*1.2, 8); txt(g, counts[k] + "", bx + counts[k]*1.2 + 6, y + 12, tok("--teal"), 11);
+    if (sim){ const n = sim[k] || 0; g.fillStyle = tok("--ochre"); g.fillRect(bx + 170, y + 4, n*1.2, 8); txt(g, n + "", bx + 170 + n*1.2 + 6, y + 12, tok("--ochre"), 11); } });
+  $("gr").innerHTML = "cross: " + pretty($("p1").value) + " × " + pretty($("p2").value) + "<br>" + keys.map(k => k + " <b>" + counts[k] + "%</b>").join(" &nbsp; ");
+}
+$("breed").onclick = () => { const X = cross(); sim = {}; for (let i = 0; i < 100; i++){ const c = X.cells[Math.floor(Math.random()*4)]; sim[c.p] = (sim[c.p] || 0) + 1; } drawG(); };
+const GQ = [["Two carriers (Aa × Aa) have a child. What is the probability it shows the recessive trait?", "auto", "Aa", "Aa", 0.25],
+            ["Aa × aa: what is the probability a child shows the dominant trait?", "auto", "Aa", "aa", 0.5],
+            ["A carrier mother (XᴬXᵃ) and unaffected father: probability a SON is affected?", "x", "XAXa", "XAY", 0.5],
+            ["An affected father (XᵃY) and a non-carrier mother: probability a DAUGHTER is a carrier?", "x", "XAXA", "XaY", 1]];
+let gq = 0; function setGQ(){ const q = GQ[gq]; $("gq").textContent = q[0] + " (decimal)"; $("ga").value = ""; $("gf").textContent = ""; }
+$("gch").onclick = () => { const q = GQ[gq], v = parseFloat($("ga").value); if (isNaN(v)) return feedback($("gf"), false, "Enter a probability between 0 and 1.");
+  feedback($("gf"), Math.abs(v - q[4]) < 0.01, (Math.abs(v - q[4]) < 0.01 ? "Correct: " : "Not quite: ") + q[4] + ". The cross is now set up on the left so you can see why."); $("mode").value = q[1]; fillParents(); $("p1").value = q[2]; $("p2").value = q[3]; drawG(); };
+$("gn").onclick = () => { gq = (gq + 1) % GQ.length; setGQ(); };
+$("mode").onchange = () => { fillParents(); drawG(); }; bind(["p1", "p2"], () => { sim = null; drawG(); }); REDRAW.push(drawG); fillParents(); setGQ();
+
+/* ---------- selection and drift ---------- */
+let runs = [];
+function binom(n, p){ if (n < 60){ let k = 0; for (let i = 0; i < n; i++) if (Math.random() < p) k++; return k; } const m = n*p, sd = Math.sqrt(n*p*(1 - p)); let u = 0, v = 0; while (!u) u = Math.random(); while (!v) v = Math.random(); return Math.max(0, Math.min(n, Math.round(m + sd*Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)))); }
+function selParams(){ return { p0:+$("sp").value, s:+$("ss").value/100, N:Math.round(Math.pow(10, +$("sn").value)) }; }
+function drawS(){
+  const { p0, s, N } = selParams(), { g, W, H } = setupCanvas($("sc"), 0.55), G = 150, fr = frame(g, W, H, [0, G], [0, 1], { xl:"generation", yl:"allele frequency" });
+  const det = [p0]; for (let t = 0; t < G; t++){ const q = det[t]; det.push(q*(1 + s)/(q*(1 + s) + (1 - q))); }
+  line(g, det.map((q, t) => [fr.X(t), fr.Y(q)]), tok("--ink"), 2, [6, 4]);
+  const cols = [tok("--teal"), tok("--ochre"), tok("--blue"), tok("--red"), tok("--teal"), tok("--ochre")];
+  runs.forEach((r, i) => line(g, r.map((q, t) => [fr.X(t), fr.Y(q)]), cols[i], 1.8));
+  $("spv").textContent = p0.toFixed(2); $("ssv").textContent = (s*100).toFixed(0) + "%"; $("snv").textContent = N;
+  const fixed = runs.filter(r => r[r.length - 1] >= 1).length, lost = runs.filter(r => r[r.length - 1] <= 0).length;
+  $("sr").innerHTML = "dashed line: selection alone (infinite population) &nbsp; coloured: " + runs.length + " populations of " + N + "<br>" + (runs.length ? "reached 100%: <b>" + fixed + "</b> &nbsp; lost: <b>" + lost + "</b> &nbsp; still varying: <b>" + (runs.length - fixed - lost) + "</b>" : "Press Run.");
+}
+$("srun").onclick = () => { const { p0, s, N } = selParams(); runs = []; for (let k = 0; k < 6; k++){ const r = [p0]; for (let t = 0; t < 150; t++){ const q = r[t]; const qs = q*(1 + s)/(q*(1 + s) + (1 - q)); r.push(binom(2*N, qs)/(2*N)); } runs.push(r); } drawS(); };
+bind(["sp", "ss", "sn"], () => { runs = []; drawS(); }); REDRAW.push(drawS);
+
+/* ---------- SIR ---------- */
+function sir(){ const R0 = +$("r0").value, vac = +$("vac").value/100, D = +$("dur").value, gam = 1/D, beta = R0*gam;
+  let S = (1 - vac)*0.999, I = 0.001, R = vac; const out = []; const dt = 0.25;
+  for (let t = 0; t <= 300; t += dt){ if (Math.abs(t - Math.round(t)) < 1e-9) out.push([t, S, I, R]); const nI = beta*S*I*dt, nR = gam*I*dt; S -= nI; I += nI - nR; R += nR; } return { out, R0, vac, D }; }
+function drawE(){
+  const m = sir(), { g, W, H } = setupCanvas($("ec"), 0.55), fr = frame(g, W, H, [0, 300], [0, 100], { xl:"days", yl:"% of population" });
+  [[1, tok("--blue"), "susceptible"], [2, tok("--red"), "infected"], [3, tok("--teal"), "recovered or immune"]].forEach(([k, c, n], i) => { line(g, m.out.map(r => [fr.X(r[0]), fr.Y(r[k]*100)]), c, 2.4); txt(g, n, W - 18, 24 + i*16, c, 12, "right"); });
+  const peak = Math.max(...m.out.map(r => r[2])), ever = (1 - m.vac) - m.out[m.out.length - 1][1], hit = 1 - 1/m.R0, Reff = m.R0*(1 - m.vac);
+  ["r0", "vac", "dur"].forEach(id => $(id + "v").textContent = id === "r0" ? (+$(id).value).toFixed(1) : id === "vac" ? $(id).value + "%" : $(id).value + " days");
+  $("er").innerHTML = "R_eff at the start = R₀ × fraction susceptible = <b>" + Reff.toFixed(2) + "</b> " + (Reff > 1 ? '<span class="pill no">outbreak grows</span>' : '<span class="pill ok">outbreak fizzles</span>') +
+    "<br>peak infected <b>" + (peak*100).toFixed(1) + "%</b> &nbsp; ever infected <b>" + Math.max(0, ever*100).toFixed(1) + "%</b> &nbsp; herd-immunity threshold 1 − 1/R₀ = <b>" + (hit*100).toFixed(0) + "%</b>";
+}
+$("ech").onclick = () => { const v = parseFloat($("ea").value); if (isNaN(v)) return feedback($("ef"), false, "Enter a percentage."); const ok = Math.abs(v - 66.7) < 1.5;
+  feedback($("ef"), ok, (ok ? "Right: " : "Not quite: ") + "1 − 1/3 ≈ 67%. Set R₀ to 3 and vaccination to 66% and then 68% to see the change."); $("r0").value = 3; drawE(); };
+bind(["r0", "vac", "dur"], drawE); REDRAW.push(drawE);
+
+const TABS = ["genetics","selection","epidemic"];
+window.addEventListener("hashchange", () => route(TABS));
+route(TABS);
+</script>
+
+<script>if("serviceWorker" in navigator) navigator.serviceWorker.register("../sw.js");</script>
+</body>
+</html>

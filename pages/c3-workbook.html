@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1F2B33">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}
+.sp-home{position:fixed;left:max(12px,env(safe-area-inset-left,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:50;
+font:500 14px "Bricolage Grotesque",system-ui,sans-serif;background:var(--ink,#1F2B33);color:var(--sheet,#fff);text-decoration:none;padding:9px 14px;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+</style>
+</head>
+<body>
+<a class="sp-home" href="../index.html">← Hub</a>
+<title>Physics Workbook</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<script>window.MathJax = { svg: { fontCache: 'global' }, startup: { typeset: false }, options: { enableMenu: false } };</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.11.0/math.min.js"></script>
+<style>
+/* Layout: a course workbook. Module index on the left (chips on phones); each module is an exercise sheet ending in a quick check; capstone and mixed practice close the course. */
+:root{
+  --paper:#F4F6F3; --sheet:#FFFFFF; --ink:#1F2B33; --mute:#5E6B72; --rule:#D7DDDC;
+  --ochre:#B07508; --ochre-soft:#F3E6C8; --teal:#2C7A6B; --teal-soft:#DCEDE8; --red:#A8402C; --red-soft:#F5E1DB;
+  --display:"Bricolage Grotesque", "DejaVu Sans", system-ui, sans-serif;
+  --body:"Source Serif 4", Georgia, "Times New Roman", serif;
+  --mono:"IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#141C21; --sheet:#1B252C; --ink:#E9EEED; --mute:#9AA8AE; --rule:#2D3A42;
+  --ochre:#E2A73A; --ochre-soft:#3B2F17; --teal:#62BBA6; --teal-soft:#1D3A34; --red:#E58570; --red-soft:#3D2420; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#141C21; --sheet:#1B252C; --ink:#E9EEED; --mute:#9AA8AE; --rule:#2D3A42;
+  --ochre:#E2A73A; --ochre-soft:#3B2F17; --teal:#62BBA6; --teal-soft:#1D3A34; --red:#E58570; --red-soft:#3D2420; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.55}
+.wrap{max-width:1120px;margin:0 auto;padding-block:28px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header{border-bottom:1px solid var(--rule);padding-bottom:16px}
+.kicker{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ochre)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(30px,5vw,44px);line-height:1.05;margin:4px 0 6px;text-wrap:balance}
+h2{font-family:var(--display);font-weight:700;font-size:24px;margin:0;text-wrap:balance}
+h3{font-family:var(--display);font-weight:500;font-size:18px;margin:18px 0 8px}
+.tag{color:var(--mute);margin:0;max-width:64ch}
+.layout{display:grid;grid-template-columns:230px minmax(0,1fr);gap:28px;margin-top:24px}
+@media (max-width:860px){.layout{grid-template-columns:minmax(0,1fr)}}
+.index{position:sticky;top:calc(env(safe-area-inset-top,0px) + 16px);align-self:start;display:flex;flex-direction:column;gap:2px;max-height:calc(100vh - 32px);overflow-y:auto}
+@media (max-width:860px){.index{position:static;flex-direction:row;flex-wrap:wrap;max-height:none}}
+.index a{display:flex;justify-content:space-between;gap:10px;text-decoration:none;color:var(--ink);font-family:var(--display);font-size:14.5px;padding:7px 10px;border-radius:8px;border:1px solid transparent}
+.index a:hover{border-color:var(--rule)}
+.index .n{font-family:var(--mono);font-size:12px;color:var(--mute);font-variant-numeric:tabular-nums;white-space:nowrap}
+.index .n.full{color:var(--teal)}
+.overall{font-family:var(--mono);font-size:12.5px;color:var(--mute);padding:10px;font-variant-numeric:tabular-nums}
+.bar{height:6px;background:var(--rule);border-radius:3px;overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;background:var(--teal);width:0;transition:width .4s}
+section.mod{margin-bottom:44px;scroll-margin-top:16px}
+.modhead{display:flex;gap:14px;align-items:baseline;margin-bottom:12px}
+.modhead .code{font-family:var(--display);font-weight:700;font-size:28px;color:var(--ochre);line-height:1}
+.card{background:var(--sheet);border:1px solid var(--rule);border-radius:10px;padding:16px 20px;margin-bottom:12px}
+.card.solved{border-color:var(--teal)}
+.chead{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline}
+.pid{font-family:var(--mono);font-size:13px;color:var(--mute)}
+.lvl{font-family:var(--mono);font-size:12px;color:var(--ochre);letter-spacing:2px}
+.q{margin:6px 0}
+.eq{overflow-x:auto;padding:4px 0;font-size:18px}
+.eq mjx-container{margin:6px 0!important;text-align:left!important}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:8px}
+input[type=text]{font:inherit;font-family:var(--mono);font-size:16px;color:var(--ink);background:var(--paper);border:1px solid var(--rule);border-radius:6px;padding:8px 10px;min-width:0;flex:0 1 12em}
+input.wide{flex:1 1 220px}
+.unit{font-family:var(--mono);font-size:14px;color:var(--mute)}
+button{font-family:var(--display);font-weight:500;font-size:15px;cursor:pointer;border-radius:8px;border:1px solid var(--ink);background:var(--ink);color:var(--sheet);padding:8px 15px}
+button.ghost{background:transparent;color:var(--ink);border-color:var(--rule)}
+button.ghost:hover{border-color:var(--ink)}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--ochre);outline-offset:2px}
+.fb{margin-top:8px;font-size:15.5px;min-height:1.2em}
+.fb.good{color:var(--teal)} .fb.bad{color:var(--red)}
+.mc{display:grid;gap:7px;margin-top:6px}
+.mc button{text-align:left;background:var(--paper);color:var(--ink);border:1px solid var(--rule);font-family:var(--body);font-size:15.5px;padding:9px 12px}
+.mc button.right{border-color:var(--teal);background:var(--teal-soft)}
+.mc button.wrong{border-color:var(--red);background:var(--red-soft)}
+.extras{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.sol{margin-top:10px;border-top:1px dashed var(--rule);padding-top:8px;font-size:15.5px}
+.sol ol{margin:0;padding-left:1.3em}
+.sol li{margin-bottom:5px}
+.model{background:var(--teal-soft);border-radius:8px;padding:10px 14px;margin-top:10px;font-size:15.5px}
+.quiz{background:var(--ochre-soft);border-radius:10px;padding:16px 20px}
+.quiz .qq{margin:14px 0 4px;font-weight:600}
+.quiz .score{font-family:var(--mono);font-size:13px;color:var(--ink)}
+.preview{font-size:15px;color:var(--mute);min-height:24px;overflow-x:auto}
+.howto{background:var(--sheet);border:1px solid var(--rule);border-radius:10px;padding:16px 20px;margin-bottom:28px;font-size:15.5px}
+.howto ul{margin:6px 0 0;padding-left:1.2em}
+code{font-family:var(--mono);font-size:.92em;background:var(--paper);padding:1px 5px;border-radius:4px}
+footer{margin-top:24px;font-size:14px;color:var(--mute);border-top:1px solid var(--rule);padding-top:14px}
+</style>
+
+<div class="wrap">
+<header>
+  <div class="kicker">Second Pass · Course 3</div>
+  <h1 id="h1">Physics Workbook</h1>
+  <p class="tag">Eight problems and a four-question quick check for every module, then the course capstone and a mixed practice set. Answers are checked as you go, with hints and worked solutions on every problem.</p>
+</header>
+<div class="layout">
+  <nav class="index" id="index" aria-label="Modules"></nav>
+  <main id="main">
+    <div class="howto">
+      <b>How answers work.</b> Number answers accept ordinary decimals or scientific notation such as <code>6.67e-11</code>; small rounding differences are fine. Some problems ask you to explain: write your answer on paper, then open the model answer and compare.
+      <ul><li>Try before opening the hint. Use the worked solution to compare method, not just the final number.</li>
+      <li>Your progress is remembered in this browser.</li></ul>
+    </div>
+  </main>
+</div>
+<footer>Pair with the course Theory Reader (audio edition), the Visual Companion and the explorer. The printable PDF workbook has the same problems with space to write.</footer>
+</div>
+
+<script>
+const D = {"n": 3, "name": "Physics", "modules": [{"id": "3.1", "title": "Motion (kinematics)", "problems": [{"t": "num", "lv": 1, "q": "A cyclist accelerates from 2 m/s to 8 m/s in 4 s. What is her acceleration?", "a": 1.5, "unit": "m/s²", "s": ["a = (v − u)/t.", "(8 − 2) ÷ 4 = 1.5 m/s²."]}, {"t": "num", "lv": 1, "q": "A stone is dropped from rest. How fast is it falling after 3 s? (g = 9.8 m/s²)", "a": 29.4, "unit": "m/s", "s": ["v = u + at = 0 + 9.8 × 3."]}, {"t": "num", "lv": 2, "q": "How far does that stone fall in 3 s?", "a": 44.1, "unit": "m", "s": ["s = ut + ½at².", "½ × 9.8 × 9 = 44.1 m."]}, {"t": "num", "lv": 2, "q": "A car travelling at 25 m/s brakes at 5 m/s². What is its stopping distance?", "a": 62.5, "unit": "m", "s": ["v² = u² + 2as with v = 0, a = −5.", "0 = 625 − 10s, s = 62.5 m."]}, {"t": "num", "lv": 2, "q": "A ball is thrown straight up at 14 m/s. How high does it go?", "a": 10.0, "unit": "m", "s": ["At the top v = 0: 0 = 14² − 2 × 9.8 × s.", "s = 196 ÷ 19.6 = 10 m."]}, {"t": "num", "lv": 2, "q": "A ball rolls off a 1.25 m high table at 3.0 m/s. How far from the table does it land?", "a": 1.5152288168283161, "unit": "m", "s": ["Vertical: 1.25 = ½ × 9.8 × t², so t ≈ 0.505 s.", "Horizontal: 3.0 × 0.505 ≈ 1.5 m."]}, {"t": "num", "lv": 3, "q": "A projectile is launched at 20 m/s at 30° above level ground. What is its range?", "a": 35.34797566467096, "unit": "m", "s": ["R = u² sin 2θ / g.", "400 × sin 60° ÷ 9.8 ≈ 35.3 m."]}, {"t": "mc", "lv": 2, "q": "At the top of a ball's flight, its acceleration is", "o": ["zero", "9.8 m/s² downwards", "9.8 m/s² upwards", "changing direction"], "c": 1, "s": ["Gravity still acts. Velocity is momentarily zero, not acceleration."]}], "quiz": [{"q": "The area under a velocity–time graph gives", "o": ["acceleration", "displacement", "speed", "force"], "c": 1}, {"q": "A car at constant speed around a bend is", "o": ["not accelerating", "accelerating", "decelerating", "in equilibrium"], "c": 1}, {"q": "Ignoring air, a projectile's horizontal velocity", "o": ["increases", "decreases", "stays constant", "is zero"], "c": 2}, {"q": "Range on level ground is greatest at", "o": ["30°", "45°", "60°", "90°"], "c": 1}]}, {"id": "3.2", "title": "Forces and Newton's laws", "problems": [{"t": "num", "lv": 1, "q": "What net force gives a 1200 kg car an acceleration of 2.5 m/s²?", "a": 3000, "unit": "N", "s": ["F = ma = 1200 × 2.5."]}, {"t": "num", "lv": 1, "q": "What is the weight of a 65 kg person on Earth (g = 9.8 m/s²)?", "a": 637, "unit": "N", "s": ["W = mg = 65 × 9.8."]}, {"t": "num", "lv": 2, "q": "A 10 kg box is pushed with 50 N across a floor where friction is 20 N. What is its acceleration?", "a": 3, "unit": "m/s²", "s": ["Net force = 50 − 20 = 30 N.", "a = 30 ÷ 10 = 3 m/s²."]}, {"t": "num", "lv": 2, "q": "A 5 kg block sits on a frictionless 30° slope. What is its acceleration down the slope?", "a": 4.9, "unit": "m/s²", "s": ["Component along slope: mg sin θ.", "a = g sin 30° = 4.9 m/s²."]}, {"t": "num", "lv": 2, "q": "A crate of mass 40 kg rests on the floor. The coefficient of friction is 0.30. What horizontal force is needed to start it sliding?", "a": 117.60000000000001, "unit": "N", "s": ["N = mg = 392 N.", "F = μN = 0.30 × 392 ≈ 118 N."]}, {"t": "num", "lv": 2, "q": "A 0.5 kg ball on a 0.8 m string is swung in a horizontal circle at 4 m/s. What is the tension (ignore gravity)?", "a": 10.0, "unit": "N", "s": ["F = mv²/r.", "0.5 × 16 ÷ 0.8 = 10 N."]}, {"t": "mc", "lv": 2, "q": "A book rests on a table. The reaction partner (Newton's third law) of the book's weight is", "o": ["the table's push on the book", "the book's gravitational pull on Earth", "friction", "the table's weight"], "c": 1, "s": ["The weight is Earth pulling the book. Its partner is the book pulling Earth."]}, {"t": "num", "lv": 3, "q": "A 70 kg person stands in a lift accelerating upwards at 1.5 m/s². What does a bathroom scale under them read, in newtons?", "a": 791.0, "unit": "N", "s": ["N − mg = ma.", "N = 70(9.8 + 1.5) = 791 N."]}], "quiz": [{"q": "A body moving at constant velocity has net force", "o": ["in its direction", "zero", "opposite to motion", "equal to its weight"], "c": 1}, {"q": "Doubling mass with the same force", "o": ["doubles acceleration", "halves acceleration", "has no effect", "quadruples it"], "c": 1}, {"q": "Centripetal force points", "o": ["outwards", "along the motion", "towards the centre", "upwards"], "c": 2}, {"q": "Third-law force pairs act on", "o": ["the same object", "different objects", "only moving objects", "only in contact"], "c": 1}]}, {"id": "3.3", "title": "Energy, work and power", "problems": [{"t": "num", "lv": 1, "q": "How much work is done lifting a 20 kg box 1.5 m? (g = 9.8)", "a": 294.0, "unit": "J", "s": ["W = mgh.", "20 × 9.8 × 1.5 = 294 J."]}, {"t": "num", "lv": 1, "q": "What is the kinetic energy of a 1000 kg car at 20 m/s?", "a": 200000, "unit": "J", "s": ["½ × 1000 × 400 = 200 000 J."]}, {"t": "num", "lv": 2, "q": "A ball is dropped from 5.0 m. Ignoring air resistance, how fast is it moving when it hits the ground?", "a": 9.899494936611665, "unit": "m/s", "s": ["mgh = ½mv², so v = √(2gh).", "√(98) ≈ 9.9 m/s."]}, {"t": "num", "lv": 2, "q": "A 60 kg climber gains 300 m of height in 20 minutes. What is her average power output against gravity?", "a": 147.0, "unit": "W", "s": ["Energy = mgh = 176 400 J.", "÷ 1200 s ≈ 147 W."]}, {"t": "num", "lv": 2, "q": "A 2.0 kW kettle runs for 3 minutes. How many joules does it use?", "a": 360000, "unit": "J", "s": ["E = Pt = 2000 × 180.", "= 360 000 J."]}, {"t": "num", "lv": 2, "q": "A motor uses 500 J of electrical energy to lift a load, gaining 350 J of potential energy. What is its efficiency?", "a": 70, "unit": "%", "s": ["350 ÷ 500 = 0.70."]}, {"t": "num", "lv": 2, "q": "A rope pulls a sled 10 m with 80 N at 30° to the ground. How much work is done?", "a": 692.820323027551, "unit": "J", "s": ["W = Fd cos θ.", "80 × 10 × 0.866 ≈ 693 J."]}, {"t": "num", "lv": 3, "q": "If a car's speed rises from 50 km/h to 100 km/h, by what factor does its braking distance increase (same braking force)?", "a": 4, "unit": "×", "s": ["Braking work Fd must remove ½mv².", "d ∝ v², so doubling v multiplies d by 4."]}], "quiz": [{"q": "The unit of energy is the", "o": ["watt", "newton", "joule", "pascal"], "c": 2}, {"q": "Doubling speed multiplies kinetic energy by", "o": ["2", "4", "√2", "8"], "c": 1}, {"q": "A kilowatt-hour measures", "o": ["power", "energy", "force", "current"], "c": 1}, {"q": "Holding a weight still does how much work on it?", "o": ["mgh", "zero", "mg", "infinite"], "c": 1}]}, {"id": "3.4", "title": "Momentum, collisions and rotation", "problems": [{"t": "num", "lv": 1, "q": "What is the momentum of a 0.16 kg cricket ball moving at 30 m/s?", "a": 4.8, "unit": "kg m/s", "s": ["p = mv = 0.16 × 30."]}, {"t": "num", "lv": 2, "q": "A 1500 kg car at 20 m/s hits a stationary 1000 kg car and they lock together. What is their speed just after?", "a": 12.0, "unit": "m/s", "s": ["Momentum before = 30 000 kg m/s.", "v = 30 000 ÷ 2500 = 12 m/s."]}, {"t": "num", "lv": 2, "q": "A 0.06 kg tennis ball arrives at 20 m/s and leaves in the opposite direction at 30 m/s. What impulse did the racket give?", "a": 3.0, "unit": "N s", "s": ["Δp = m(v − u) = 0.06 × (30 − (−20)).", "= 3.0 N s."]}, {"t": "num", "lv": 2, "q": "If that contact lasted 0.005 s, what was the average force?", "a": 600.0, "unit": "N", "s": ["F = Δp/Δt = 3.0 ÷ 0.005 = 600 N."]}, {"t": "mc", "lv": 2, "q": "Airbags reduce injury mainly because they", "o": ["reduce momentum change", "increase collision time", "absorb momentum permanently", "increase mass"], "c": 1, "s": ["Same Δp over a longer time means smaller force."]}, {"t": "num", "lv": 2, "q": "A 30 N force acts at right angles to a spanner 0.25 m from the bolt. What is the torque?", "a": 7.5, "unit": "N m", "s": ["τ = Fr = 30 × 0.25."]}, {"t": "num", "lv": 2, "q": "A 4.0 kg rifle fires a 0.010 kg bullet at 600 m/s. What is the rifle's recoil speed?", "a": 1.5, "unit": "m/s", "s": ["Total momentum zero before.", "4v = 0.01 × 600, v = 1.5 m/s."]}, {"t": "mc", "lv": 3, "q": "A spinning skater pulls in her arms, halving her moment of inertia. Her rotation rate", "o": ["halves", "doubles", "is unchanged", "quadruples"], "c": 1, "s": ["L = Iω is conserved.", "Halve I, double ω."]}], "quiz": [{"q": "Momentum is", "o": ["a scalar", "a vector", "energy", "force"], "c": 1}, {"q": "In all collisions without external forces, what is conserved?", "o": ["kinetic energy", "momentum", "speed", "both KE and momentum"], "c": 1}, {"q": "Torque depends on force and", "o": ["mass", "perpendicular distance from pivot", "speed", "time"], "c": 1}, {"q": "Impulse equals", "o": ["force × distance", "change in momentum", "mass × acceleration", "energy ÷ time"], "c": 1}]}, {"id": "3.5", "title": "Waves and sound", "problems": [{"t": "num", "lv": 1, "q": "A wave has frequency 50 Hz and wavelength 4 m. What is its speed?", "a": 200, "unit": "m/s", "s": ["v = fλ = 50 × 4."]}, {"t": "num", "lv": 1, "q": "What is the period of a 250 Hz sound?", "a": 0.004, "unit": "s", "s": ["T = 1/f = 1/250."]}, {"t": "num", "lv": 2, "q": "Sound travels at 340 m/s. What is the wavelength of a 440 Hz note?", "a": 0.7727272727272727, "unit": "m", "s": ["λ = v/f = 340 ÷ 440 ≈ 0.77 m."]}, {"t": "num", "lv": 2, "q": "You see lightning and hear thunder 3 s later. Sound travels at 340 m/s. How far away was the strike?", "a": 1020, "unit": "m", "s": ["Light arrives almost instantly.", "d = 340 × 3 = 1020 m."]}, {"t": "num", "lv": 2, "q": "A guitar string 0.65 m long carries waves at 420 m/s. What is its fundamental (n = 1) frequency?", "a": 323.07692307692304, "unit": "Hz", "s": ["f₁ = v/2L.", "420 ÷ 1.3 ≈ 323 Hz."]}, {"t": "mc", "lv": 2, "q": "Sound passes from air into water, where it travels faster. Its frequency", "o": ["increases", "decreases", "stays the same", "becomes zero"], "c": 2, "s": ["Frequency is set by the source; wavelength changes instead."]}, {"t": "mc", "lv": 2, "q": "Sound waves are", "o": ["transverse", "longitudinal", "electromagnetic", "standing only"], "c": 1, "s": ["Air molecules oscillate along the direction of travel."]}, {"t": "num", "lv": 3, "q": "A 700 Hz siren approaches at 20 m/s. Sound speed is 340 m/s. What frequency do you hear?", "a": 743.75, "unit": "Hz", "s": ["f' = f v/(v − v_s).", "700 × 340 ÷ 320 ≈ 744 Hz."]}], "quiz": [{"q": "v = fλ: doubling frequency in the same medium", "o": ["doubles speed", "halves wavelength", "doubles wavelength", "halves speed"], "c": 1}, {"q": "Destructive interference occurs when", "o": ["peak meets peak", "peak meets trough", "waves stop", "frequencies double"], "c": 1}, {"q": "Points on a standing wave that never move are", "o": ["antinodes", "nodes", "peaks", "compressions"], "c": 1}, {"q": "A receding source sounds", "o": ["higher", "lower", "louder", "the same"], "c": 1}]}, {"id": "3.6", "title": "Electricity and circuits", "problems": [{"t": "num", "lv": 1, "q": "A current of 2 A flows for 30 s. How much charge passes?", "a": 60, "unit": "C", "s": ["Q = It = 2 × 30."]}, {"t": "num", "lv": 1, "q": "A 12 V supply drives current through a 4 Ω resistor. What is the current?", "a": 3, "unit": "A", "s": ["I = V/R = 12 ÷ 4."]}, {"t": "num", "lv": 2, "q": "Resistors of 3 Ω, 5 Ω and 12 Ω are connected in series. What is the total resistance?", "a": 20, "unit": "Ω", "s": ["Add them: 3 + 5 + 12."]}, {"t": "num", "lv": 2, "q": "A 6 Ω and a 12 Ω resistor are connected in parallel. What is the combined resistance?", "a": 4, "unit": "Ω", "s": ["1/R = 1/6 + 1/12 = 3/12.", "R = 4 Ω."]}, {"t": "num", "lv": 2, "q": "A 230 V heater draws 8 A. What is its power?", "a": 1840, "unit": "W", "s": ["P = VI = 230 × 8."]}, {"t": "num", "lv": 2, "q": "A 60 W lamp runs on 230 V. What is its resistance when lit?", "a": 881.6666666666666, "unit": "Ω", "s": ["P = V²/R, so R = V²/P.", "52 900 ÷ 60 ≈ 882 Ω."]}, {"t": "num", "lv": 2, "q": "A 2.4 kW appliance runs for 2.5 hours. Electricity costs 30 cents per kWh. What does it cost, in dollars?", "a": 1.7999999999999998, "unit": "dollars", "s": ["Energy = 2.4 × 2.5 = 6 kWh.", "6 × $0.30 = $1.80."]}, {"t": "mc", "lv": 3, "q": "Power is transmitted at higher voltage mainly to", "o": ["increase current", "reduce current and so I²R heating losses", "make it safer at home", "increase resistance"], "c": 1, "s": ["Same P = VI with higher V means lower I.", "Loss I²R falls with the square of current."]}], "quiz": [{"q": "One ampere is one", "o": ["coulomb per second", "joule per second", "ohm per volt", "volt per coulomb"], "c": 0}, {"q": "Adding a resistor in parallel makes the total resistance", "o": ["larger", "smaller", "unchanged", "zero"], "c": 1}, {"q": "Components in series share the same", "o": ["voltage", "current", "power", "resistance"], "c": 1}, {"q": "A kilowatt-hour is a unit of", "o": ["power", "energy", "charge", "current"], "c": 1}]}, {"id": "3.7", "title": "Magnetism and electromagnetism", "problems": [{"t": "num", "lv": 1, "q": "A 0.5 m wire carrying 4 A lies at right angles to a 0.2 T field. What force acts on it?", "a": 0.4, "unit": "N", "s": ["F = BIL = 0.2 × 4 × 0.5."]}, {"t": "num", "lv": 2, "q": "A transformer has 500 primary turns and 25 secondary turns. With 240 V in, what is the output voltage?", "a": 12, "unit": "V", "s": ["Vs = Vp × Ns/Np = 240 × 25/500."]}, {"t": "num", "lv": 2, "q": "An electron (q = 1.6 × 10⁻¹⁹ C) moves at 2 × 10⁶ m/s perpendicular to a 0.01 T field. What force acts on it?", "a": 3.2e-15, "unit": "N", "s": ["F = qvB.", "1.6 × 10⁻¹⁹ × 2 × 10⁶ × 0.01 = 3.2 × 10⁻¹⁵ N."]}, {"t": "mc", "lv": 2, "q": "A magnet is held still inside a coil. The induced current is", "o": ["large", "zero", "alternating", "growing"], "c": 1, "s": ["Induction needs a changing flux."]}, {"t": "mc", "lv": 2, "q": "Who first showed that an electric current produces a magnetic field?", "o": ["Faraday", "Ørsted", "Maxwell", "Newton"], "c": 1, "s": ["Ørsted, 1820."]}, {"t": "num", "lv": 2, "q": "A coil of 200 turns sees its flux change by 0.03 Wb in 0.1 s. What size of voltage is induced?", "a": 60.0, "unit": "V", "s": ["ε = NΔΦ/Δt = 200 × 0.03 ÷ 0.1 = 60 V."]}, {"t": "mc", "lv": 2, "q": "Transformers do not work with steady direct current because", "o": ["DC is too strong", "there is no changing magnetic field", "DC has no voltage", "coils resist DC"], "c": 1, "s": ["Induction requires change."]}, {"t": "show", "lv": 3, "q": "Explain in a few sentences how a bicycle dynamo lights a lamp.", "a": "The wheel spins a magnet near a coil (or a coil near a magnet). The magnetic flux through the coil keeps changing, which by Faraday's law induces a voltage. That voltage drives a current through the lamp. The faster you ride, the faster the flux changes, so the lamp glows brighter.", "s": ["What is changing, and what does that cause?"]}], "quiz": [{"q": "A current-carrying wire produces", "o": ["no field", "a magnetic field", "only heat", "light"], "c": 1}, {"q": "A step-down transformer has", "o": ["more secondary turns", "fewer secondary turns", "equal turns", "no secondary"], "c": 1}, {"q": "Induced voltage depends on", "o": ["the size of the flux", "the rate of change of flux", "the colour of the wire", "resistance only"], "c": 1}, {"q": "Maxwell showed light is", "o": ["a particle only", "an electromagnetic wave", "a sound wave", "a magnetic pole"], "c": 1}]}, {"id": "3.8", "title": "Thermodynamics and heat", "problems": [{"t": "num", "lv": 1, "q": "Convert 25 °C to kelvin.", "a": 298, "unit": "K", "s": ["25 + 273."]}, {"t": "num", "lv": 1, "q": "How much energy raises 2.0 kg of water by 10 K? (c = 4200 J/kg K)", "a": 84000, "unit": "J", "s": ["Q = mcΔT = 2 × 4200 × 10."]}, {"t": "num", "lv": 2, "q": "How much energy melts 0.5 kg of ice at 0 °C? (L = 3.34 × 10⁵ J/kg)", "a": 167000.0, "unit": "J", "s": ["Q = mL = 0.5 × 3.34 × 10⁵ = 1.67 × 10⁵ J."]}, {"t": "num", "lv": 2, "q": "A 2 kW kettle heats 1.5 kg of water from 20 °C to 100 °C. Ignoring losses, how long does it take?", "a": 252.0, "unit": "s", "s": ["Q = 1.5 × 4200 × 80 = 504 000 J.", "t = Q/P = 252 s."]}, {"t": "num", "lv": 2, "q": "A gas gains 500 J of heat and does 200 J of work on its surroundings. What is the change in its internal energy?", "a": 300, "unit": "J", "s": ["ΔU = Q − W = 500 − 200."]}, {"t": "num", "lv": 2, "q": "What is the maximum efficiency of an engine running between 600 K and 300 K?", "a": 50, "unit": "%", "s": ["1 − 300/600 = 0.5."]}, {"t": "mc", "lv": 2, "q": "A refrigerator moves heat from cold to hot. Does this break the second law?", "o": ["Yes", "No, because work is supplied and more entropy is produced outside", "No, because fridges are cold", "Only in summer"], "c": 1, "s": ["The second law forbids this happening spontaneously, not with work input."]}, {"t": "show", "lv": 3, "q": "Explain why steam at 100 °C causes worse burns than water at 100 °C.", "a": "When steam condenses on skin it releases its latent heat of vaporisation, about 2.26 million joules per kilogram, before it even starts cooling as water. Water at 100 °C only releases heat as it cools. So the same mass of steam delivers far more energy to the skin.", "s": ["Think about latent heat."]}], "quiz": [{"q": "Absolute zero is", "o": ["0 °C", "0 K", "−100 °C", "273 K"], "c": 1}, {"q": "Heat flows spontaneously from", "o": ["cold to hot", "hot to cold", "either way", "neither"], "c": 1}, {"q": "During boiling, temperature", "o": ["rises fast", "stays constant", "falls", "oscillates"], "c": 1}, {"q": "The first law of thermodynamics is about", "o": ["entropy", "conservation of energy", "absolute zero", "momentum"], "c": 1}]}, {"id": "3.9", "title": "Modern physics", "problems": [{"t": "num", "lv": 1, "q": "How much energy is equivalent to 1 g of mass? (c = 3 × 10⁸ m/s)", "a": 90000000000000.0, "unit": "J", "s": ["E = mc² = 0.001 × 9 × 10¹⁶.", "= 9 × 10¹³ J."]}, {"t": "num", "lv": 2, "q": "What is the energy of a photon of green light, frequency 5.6 × 10¹⁴ Hz? (h = 6.63 × 10⁻³⁴ J s)", "a": 3.7128e-19, "unit": "J", "s": ["E = hf = 6.63 × 10⁻³⁴ × 5.6 × 10¹⁴ ≈ 3.7 × 10⁻¹⁹ J."]}, {"t": "num", "lv": 2, "q": "A radioactive isotope has a half-life of 8 days. What fraction remains after 24 days? Give a decimal.", "a": 0.125, "s": ["24 ÷ 8 = 3 half-lives.", "(½)³ = 0.125."]}, {"t": "num", "lv": 2, "q": "A sample of wood has 25% of its original carbon-14. How old is it? (half-life 5730 years)", "a": 11460, "unit": "years", "s": ["25% = (½)², two half-lives.", "2 × 5730 = 11 460 years."]}, {"t": "num", "lv": 3, "q": "A spaceship travels at 0.8c. By what factor do its clocks run slow (γ)?", "a": 1.6666666666666667, "s": ["γ = 1/√(1 − 0.64) = 1/√0.36.", "= 1/0.6 ≈ 1.67."]}, {"t": "mc", "lv": 2, "q": "In the photoelectric effect, increasing the brightness of light below the threshold frequency", "o": ["ejects more electrons", "ejects faster electrons", "ejects no electrons", "lowers the threshold"], "c": 2, "s": ["Each photon must individually have enough energy; more low-energy photons don't help."]}, {"t": "mc", "lv": 2, "q": "The Sun produces energy mainly by", "o": ["fission of uranium", "fusion of hydrogen into helium", "chemical burning", "radioactive decay"], "c": 1, "s": ["Hydrogen fusion in the core."]}, {"t": "show", "lv": 3, "q": "Why does each element produce its own pattern of spectral lines?", "a": "Electrons in an atom can only occupy certain energy levels, and the spacing of those levels depends on the element's nuclear charge and electron arrangement. When an electron drops between levels it emits a photon with energy exactly equal to the gap, E = hf, so only certain frequencies appear. Different elements have different level spacings and so different line patterns.", "s": ["Link energy levels to photon frequency."]}], "quiz": [{"q": "E = mc² says", "o": ["mass and energy are equivalent", "energy is always lost", "light has mass", "speed adds"], "c": 0}, {"q": "Photon energy is proportional to", "o": ["wavelength", "frequency", "brightness", "amplitude"], "c": 1}, {"q": "After 3 half-lives, the fraction remaining is", "o": ["1/3", "1/6", "1/8", "1/9"], "c": 2}, {"q": "Moving clocks", "o": ["run fast", "run slow", "stop", "are unaffected"], "c": 1}]}], "capstone": {"title": "A satellite's journey", "scenario": "A 500 kg weather satellite is carried to orbit and released. Use motion, forces, energy and modern physics to work out key numbers for its mission. Take g at the surface as 9.8 m/s², Earth's radius as 6.37 × 10⁶ m, GM for Earth as 3.99 × 10¹⁴ m³/s².", "parts": [{"t": "num", "lv": 2, "q": "What is the satellite's weight on the launch pad?", "a": 4900, "unit": "N", "s": ["W = mg = 500 × 9.8."]}, {"t": "num", "lv": 2, "q": "In a circular orbit at radius r, gravity supplies the centripetal force: GMm/r² = mv²/r. Find the orbital speed at r = 7.0 × 10⁶ m.", "a": 7549.83443527075, "unit": "m/s", "s": ["v = √(GM/r).", "√(3.99 × 10¹⁴ ÷ 7.0 × 10⁶) ≈ 7550 m/s."]}, {"t": "num", "lv": 2, "q": "What is its kinetic energy in that orbit?", "a": 14250000000.0, "unit": "J", "tol": 0.02, "s": ["½mv² = ½ × 500 × (7550)².", "≈ 1.4 × 10¹⁰ J."]}, {"t": "num", "lv": 2, "q": "Its solar panels deliver 1.2 kW. How much energy do they supply in one 100-minute orbit?", "a": 7200000, "unit": "J", "s": ["E = Pt = 1200 × 6000 s.", "= 7.2 × 10⁶ J."]}, {"t": "num", "lv": 3, "q": "Its radio transmits at 2.0 × 10⁹ Hz. What is the wavelength? (c = 3.0 × 10⁸ m/s)", "a": 0.15, "unit": "m", "s": ["λ = c/f = 3 × 10⁸ ÷ 2 × 10⁹ = 0.15 m."]}, {"t": "show", "lv": 3, "q": "The satellite's clock is compared with clocks on the ground. Name the two relativistic effects that make them drift apart.", "a": "Special relativity: the satellite moves fast relative to the ground, so its clock runs slow (time dilation). General relativity: it sits higher in Earth's gravitational field, where clocks run faster. For GPS satellites the gravitational effect wins, and both must be corrected for the system to work.", "s": ["One effect comes from speed, the other from gravity."]}]}};
+const KEY = "sp-c" + D.n;
+const $ = s => document.querySelector(s);
+const el = (t, c, x) => { const e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; };
+function tex(node, src, display = true){
+  node.innerHTML = "";
+  if (window.MathJax && MathJax.tex2svg){ try { node.appendChild(MathJax.tex2svg(src, { display })); return; } catch(e){} }
+  node.appendChild(el("code", null, src));
+}
+let solved = {};
+try { solved = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch(e){}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(solved)); } catch(e){} };
+if (window.math){ try { math.import({ ln: x => math.log(x) }, { override:false }); } catch(e){} }
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random()*(i+1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+
+function parseNum(s){
+  s = s.trim().replace(/\s+/g, "").replace(/[−–]/g, "-").replace(/,/g, "");
+  s = s.replace(/[×x\*]10\^?\(?(-?\d+)\)?/i, "e$1").replace(/·10\^?(-?\d+)/, "e$1");
+  if (s.endsWith("%")) s = s.slice(0, -1);
+  const v = Number(s); return isFinite(v) && s !== "" ? v : NaN;
+}
+function fmtNum(x){ if (x === 0) return "0"; const a = Math.abs(x); return (a >= 1e5 || a < 1e-3) ? x.toExponential(3).replace(/\.?0+e/, "e") : String(+x.toPrecision(4)); }
+function checkExpr(p, input){
+  if (!window.math) return { ok:false, msg:"The checker didn't load. Compare with the worked solution." };
+  let node; try { node = math.parse(input.replace(/π/g, "pi").replace(/√/g, "sqrt").replace(/²/g, "^2").replace(/[×·]/g, "*").replace(/−/g, "-")); } catch(e){ return { ok:false, msg:"I couldn't read that. Check brackets and operators." }; }
+  const syms = new Set(node.filter(n => n.isSymbolNode).map(n => n.name));
+  if (syms.has(p.target)) return { ok:false, msg:"Your answer still contains " + p.target + "." };
+  const allowed = new Set([...p.vars, "pi", "e", "sqrt", "cbrt", "ln", "log", "log10", "exp"]);
+  const unk = [...syms].filter(s => !allowed.has(s)); if (unk.length) return { ok:false, msg:"Unknown symbol " + unk.join(", ") + ". Use: " + p.vars.join(", ") + "." };
+  const f = node.compile(), g = math.compile(p.ans); let n = 0;
+  for (let i = 0; i < 14 && n < 6; i++){
+    const sc = {}; p.vars.forEach(v => sc[v] = 0.6 + Math.random()*1.8);
+    if (p.dom) Object.entries(p.dom).forEach(([k, [a, b]]) => sc[k] = a + Math.random()*(b - a));
+    let w, gt; try { w = g.evaluate(sc); gt = f.evaluate(sc); } catch(e){ return { ok:false, msg:"That couldn't be evaluated." }; }
+    if (typeof w !== "number" || !isFinite(w)) continue; n++;
+    if (typeof gt !== "number" || Math.abs(gt - w) > 1e-7*Math.max(1, Math.abs(w))) return { ok:false, msg:"Not equivalent: substituting numbers gives a different value. Try the hint." };
+  }
+  return { ok:true };
+}
+
+function progress(){
+  let tot = 0, done = 0;
+  D.modules.forEach(m => { const d = m.problems.filter((_, i) => solved[m.id + "." + (i+1)]).length; tot += m.problems.length; done += d;
+    const n = document.getElementById("n-" + m.id); n.textContent = d + "/" + m.problems.length; n.classList.toggle("full", d === m.problems.length); });
+  $("#ov-t").textContent = done + " of " + tot + " problems solved"; $("#ov-b").style.width = (100*done/tot) + "%";
+}
+function solveMark(id, card){ if (!id) return; solved[id] = true; save(); card.classList.add("solved"); progress(); }
+
+function problemCard(p, label, id){
+  const c = el("article", "card" + (id && solved[id] ? " solved" : ""));
+  const h = el("div", "chead"); h.appendChild(el("span", "pid", label)); h.appendChild(el("span", "lvl", "●".repeat(p.lv || 2) + "○".repeat(3 - (p.lv || 2)))); c.appendChild(h);
+  c.appendChild(el("p", "q", p.q));
+  if (p.eq){ const e = el("div", "eq"); tex(e, p.eq); c.appendChild(e); }
+  const fb = el("div", "fb"); fb.setAttribute("aria-live", "polite");
+  if (p.t === "num"){
+    const r = el("div", "row"); const inp = el("input"); inp.type = "text"; inp.inputMode = "decimal"; inp.setAttribute("aria-label", "Your answer");
+    r.appendChild(inp); if (p.unit) r.appendChild(el("span", "unit", p.unit));
+    const b = el("button", null, "Check"); r.appendChild(b); c.appendChild(r);
+    const go = () => { const v = parseNum(inp.value); if (isNaN(v)){ fb.className = "fb bad"; fb.textContent = "Enter a number, for example 2.5 or 3e8."; return; }
+      const tol = p.tol || 0.02, ok = p.a === 0 ? Math.abs(v) < 1e-9 : Math.abs(v - p.a) / Math.abs(p.a) <= tol;
+      fb.className = "fb " + (ok ? "good" : "bad"); fb.textContent = ok ? "Correct: " + fmtNum(p.a) + (p.unit ? " " + p.unit : "") + "." : "Not quite. Check units, powers of ten and rounding, or open the hint.";
+      if (ok) solveMark(id, c); };
+    b.onclick = go; inp.addEventListener("keydown", e => { if (e.key === "Enter") go(); });
+  } else if (p.t === "mc"){
+    const box = el("div", "mc");
+    p.o.forEach((o, i) => { const b = el("button", null, o); b.onclick = () => {
+      if (i === p.c){ b.classList.add("right"); [...box.children].forEach(x => x.disabled = true); fb.className = "fb good"; fb.textContent = "Correct."; solveMark(id, c); }
+      else { b.classList.add("wrong"); b.disabled = true; fb.className = "fb bad"; fb.textContent = "Not that one. Try again, or open the worked solution."; } }; box.appendChild(b); });
+    c.appendChild(box);
+  } else if (p.t === "expr"){
+    const r = el("div", "row"); r.appendChild(el("span", "unit", p.target + " ="));
+    const inp = el("input", "wide"); inp.type = "text"; inp.spellcheck = false; inp.autocomplete = "off"; inp.setAttribute("aria-label", "Your expression");
+    r.appendChild(inp); const b = el("button", null, "Check"); r.appendChild(b); c.appendChild(r);
+    const pv = el("div", "preview"); c.appendChild(pv);
+    inp.addEventListener("input", () => { try { tex(pv, p.target + "=" + math.parse(inp.value).toTex({ parenthesis:"auto" }), false); } catch(e){ pv.textContent = ""; } });
+    const go = () => { const res = checkExpr(p, inp.value.trim()); fb.className = "fb " + (res.ok ? "good" : "bad"); fb.textContent = res.ok ? "Correct." : res.msg; if (res.ok) solveMark(id, c); };
+    b.onclick = go; inp.addEventListener("keydown", e => { if (e.key === "Enter") go(); });
+  } else {
+    const b = el("button", null, "I've written my answer: show the model"); const m = el("div", "model"); m.hidden = true; m.textContent = p.a;
+    b.onclick = () => { m.hidden = false; b.hidden = true; const ok = el("button", "ghost", "Mine matched"); ok.onclick = () => { solveMark(id, c); ok.disabled = true; ok.textContent = "Marked as done"; }; c.insertBefore(ok, fb); };
+    c.appendChild(b); c.appendChild(m);
+  }
+  c.appendChild(fb);
+  if (p.s && p.s.length){
+    const ex = el("div", "extras"); const hb = el("button", "ghost", "Hint"), sb = el("button", "ghost", "Worked solution"); ex.appendChild(hb); ex.appendChild(sb); c.appendChild(ex);
+    const hint = el("p", "fb"); hint.hidden = true; hint.style.color = "var(--mute)"; hint.textContent = "Start here: " + p.s[0]; c.appendChild(hint);
+    const sol = el("div", "sol"); sol.hidden = true; const ol = el("ol"); p.s.forEach(s => ol.appendChild(el("li", null, s))); sol.appendChild(ol); c.appendChild(sol);
+    hb.onclick = () => hint.hidden = !hint.hidden; sb.onclick = () => { sol.hidden = !sol.hidden; sb.textContent = sol.hidden ? "Worked solution" : "Hide solution"; };
+  }
+  return c;
+}
+function quizBox(m){
+  const q = el("div", "quiz"); q.appendChild(el("h3", null, "Quick check · Module " + m.id)); q.firstChild.style.marginTop = "0";
+  const sc = el("div", "score"); let right = 0, answered = 0;
+  const upd = () => sc.textContent = answered < m.quiz.length ? answered + " of " + m.quiz.length + " answered" : "Score " + right + " of " + m.quiz.length + (right === m.quiz.length ? ". Module complete." : ". Revisit the reader section for any you missed.");
+  m.quiz.forEach(item => {
+    q.appendChild(el("p", "qq", item.q)); const box = el("div", "mc"); const fb = el("div", "fb"); let first = true;
+    item.o.forEach((o, i) => { const b = el("button", null, o); b.onclick = () => {
+      if (first){ answered++; if (i === item.c) right++; first = false; upd(); }
+      if (i === item.c){ b.classList.add("right"); [...box.children].forEach(x => x.disabled = true); fb.className = "fb good"; fb.textContent = item.w || "Correct."; }
+      else { b.classList.add("wrong"); b.disabled = true; fb.className = "fb bad"; fb.textContent = "Not quite. Try another option."; } }; box.appendChild(b); });
+    q.appendChild(box); q.appendChild(fb);
+  });
+  upd(); q.appendChild(sc); return q;
+}
+function build(){
+  const idx = $("#index"), main = $("#main");
+  D.modules.forEach(m => {
+    const a = el("a"); a.href = "#m-" + m.id.replace(".", "-"); a.appendChild(el("span", null, m.id + " " + m.title)); const n = el("span", "n"); n.id = "n-" + m.id; a.appendChild(n); idx.appendChild(a);
+    const s = el("section", "mod"); s.id = "m-" + m.id.replace(".", "-");
+    const h = el("div", "modhead"); h.appendChild(el("span", "code", m.id)); h.appendChild(el("h2", null, m.title)); s.appendChild(h);
+    m.problems.forEach((p, i) => s.appendChild(problemCard(p, m.id + "." + (i+1), m.id + "." + (i+1))));
+    s.appendChild(quizBox(m)); main.appendChild(s);
+  });
+  // capstone
+  const ca = el("a"); ca.href = "#capstone"; ca.appendChild(el("span", null, "★ Capstone")); idx.appendChild(ca);
+  const cs = el("section", "mod"); cs.id = "capstone";
+  const ch = el("div", "modhead"); ch.appendChild(el("span", "code", "★")); ch.appendChild(el("h2", null, "Capstone: " + D.capstone.title)); cs.appendChild(ch);
+  cs.appendChild(el("p", null, D.capstone.scenario));
+  D.capstone.parts.forEach((p, i) => cs.appendChild(problemCard(p, "Part " + (i+1), null)));
+  main.appendChild(cs);
+  // mixed practice
+  const ma = el("a"); ma.href = "#mixed"; ma.appendChild(el("span", null, "↻ Mixed practice")); idx.appendChild(ma);
+  const ms = el("section", "mod"); ms.id = "mixed";
+  const mh = el("div", "modhead"); mh.appendChild(el("span", "code", "↻")); mh.appendChild(el("h2", null, "Mixed practice")); ms.appendChild(mh);
+  ms.appendChild(el("p", null, "Ten problems drawn at random from across the course. Mixing topics is harder than practising one at a time, and it is the best preparation for remembering long-term."));
+  const holder = el("div"); const gen = el("button", null, "Draw ten problems");
+  gen.onclick = () => { holder.innerHTML = ""; const pool = []; D.modules.forEach(m => m.problems.forEach((p, i) => { if (p.t !== "show") pool.push([p, m.id + "." + (i+1)]); }));
+    shuffle(pool).slice(0, 10).forEach(([p, lab]) => holder.appendChild(problemCard(p, "From " + lab, null))); gen.textContent = "Draw a fresh ten"; };
+  ms.appendChild(gen); ms.appendChild(holder); main.appendChild(ms);
+  const ov = el("div", "overall"); ov.innerHTML = '<span id="ov-t"></span><div class="bar"><i id="ov-b"></i></div>';
+  const rs = el("button", "ghost", "Clear progress"); rs.style.marginTop = "8px"; rs.style.fontSize = "13px";
+  rs.onclick = () => { solved = {}; save(); document.querySelectorAll(".card.solved").forEach(c => c.classList.remove("solved")); progress(); };
+  ov.appendChild(rs); idx.appendChild(ov); progress();
+}
+if (window.MathJax && MathJax.startup && MathJax.startup.promise) MathJax.startup.promise.then(build).catch(build); else build();
+</script>
+
+<script>if("serviceWorker" in navigator) navigator.serviceWorker.register("../sw.js");</script>
+</body>
+</html>

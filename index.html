@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Second Pass</title>
+<meta name="description" content="A STEM refresher: maths, algebra, physics, chemistry, astronomy and biology.">
+<meta name="theme-color" content="#1F2B33">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Second Pass">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: an app home screen. Status strip, three first steps, then one ledger row per course with its kit and a module checklist. */
+:root{ --paper:#F4F6F3; --sheet:#FFFFFF; --ink:#1F2B33; --mute:#5E6B72; --rule:#D7DDDC; --ochre:#B07508; --ochre-soft:#F3E6C8; --teal:#2C7A6B; --teal-soft:#DCEDE8;
+  --display:"Bricolage Grotesque","DejaVu Sans",system-ui,sans-serif; --body:"Source Serif 4",Georgia,serif; --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace; color-scheme:light }
+@media (prefers-color-scheme: dark){:root{ --paper:#141C21; --sheet:#1B252C; --ink:#E9EEED; --mute:#9AA8AE; --rule:#2D3A42; --ochre:#E2A73A; --ochre-soft:#3B2F17; --teal:#62BBA6; --teal-soft:#1D3A34; color-scheme:dark}}
+*{box-sizing:border-box} [hidden]{display:none!important}
+html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);background:var(--paper)}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.55}
+.wrap{max-width:1000px;margin:0 auto;padding-block:28px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.kicker{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ochre)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(40px,7vw,64px);line-height:1;margin:6px 0 10px}
+h2{font-family:var(--display);font-weight:700;font-size:26px;margin:0;text-wrap:balance}
+.lede{font-size:19px;max-width:62ch;margin:0 0 18px}
+.status{display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-family:var(--mono);font-size:13px;color:var(--mute);margin-bottom:18px}
+.pill{padding:4px 10px;border-radius:999px;background:var(--sheet);border:1px solid var(--rule)} .pill.ok{background:var(--teal-soft);color:var(--teal);border-color:transparent}
+.install{background:var(--ochre-soft);border-radius:10px;padding:12px 16px;font-size:15.5px;margin-bottom:22px}
+.install button{font:500 15px var(--display);border-radius:8px;border:1px solid var(--ink);background:var(--ink);color:var(--sheet);padding:7px 14px;cursor:pointer;margin-left:6px}
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:36px}
+@media (max-width:720px){.steps{grid-template-columns:minmax(0,1fr)}}
+.step{background:var(--sheet);border:1px solid var(--rule);border-radius:10px;padding:16px 18px;text-decoration:none;color:var(--ink);display:block}
+.step:hover{border-color:var(--ink)} .step b{display:block;font-family:var(--display);font-size:19px;margin:4px 0} .step span{font-size:15px;color:var(--mute)} .step i{font-style:normal;font-family:var(--mono);font-size:12px;color:var(--ochre)}
+.course{border-top:2px solid var(--ink);padding:22px 0 28px;display:grid;grid-template-columns:90px minmax(0,1fr);gap:8px 22px}
+@media (max-width:620px){.course{grid-template-columns:minmax(0,1fr)}}
+.num{font-family:var(--display);font-weight:700;font-size:56px;line-height:.9;color:var(--ochre)}
+.desc{color:var(--mute);margin:6px 0 12px;max-width:64ch}
+.kit{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.kit a,.kit button{font-family:var(--mono);font-size:13px;padding:7px 12px;border-radius:999px;border:1px solid var(--ink);background:transparent;text-decoration:none;color:var(--ink);cursor:pointer}
+.kit a:hover,.kit button:hover{background:var(--ink);color:var(--sheet)} .kit .main{background:var(--ink);color:var(--sheet)}
+ul.mods{list-style:none;margin:0;padding:0;columns:2;column-gap:28px} @media (max-width:620px){ul.mods{columns:1}}
+ul.mods li{break-inside:avoid;padding:3px 0} ul.mods label{display:flex;gap:9px;align-items:baseline;cursor:pointer;font-size:15.5px}
+ul.mods input{accent-color:var(--teal)} ul.mods .id{font-family:var(--mono);font-size:12.5px;color:var(--mute);min-width:2.4em}
+ul.mods input:checked ~ .t{color:var(--mute);text-decoration:line-through}
+.prog{font-family:var(--mono);font-size:12.5px;color:var(--mute);margin-top:10px}
+dialog{border:none;border-radius:12px;padding:0;background:#000;max-width:min(960px,94vw);width:94vw}
+dialog::backdrop{background:rgba(0,0,0,.7)} dialog video{width:100%;display:block}
+dialog .bar{display:flex;justify-content:space-between;align-items:center;background:var(--sheet);color:var(--ink);padding:8px 12px;font-family:var(--mono);font-size:13px}
+dialog .bar button{font:500 14px var(--display);border-radius:8px;border:1px solid var(--ink);background:transparent;color:var(--ink);padding:5px 12px;cursor:pointer}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--ochre);outline-offset:2px}
+footer{margin-top:24px;font-size:14px;color:var(--mute);border-top:1px solid var(--rule);padding-top:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="kicker">A STEM refresher · Year 12 to first-year university</div>
+<h1>Second Pass</h1>
+<p class="lede">Six courses and forty-nine modules. Each has an audio-ready reader, a visual companion, an interactive explorer, a workbook and a short video, at about four hours a week.</p>
+<div class="status"><span class="pill" id="offline">Preparing offline copy…</span><span class="pill" id="net"></span><span id="overall"></span></div>
+<div class="install" id="install" hidden></div>
+<div class="steps">
+<a class="step" href="pages/warm-up.html"><i>Step 1</i><b>Warm-up check</b><span>24 relaxed questions that set your pace and build a dated plan.</span></a>
+<a class="step" href="pages/untangler.html"><i>Step 2</i><b>Module 2.3 first</b><span>The Formula Untangler: rearranging, the skill every science leans on.</span></a>
+<a class="step" href="pages/m23-workbook.html"><i>Step 3</i><b>2.3 workbook</b><span>38 problems with automatic checking, then on to Course 1.</span></a>
+</div>
+<section class="course"><div class="num">2.3</div><div><h2>Pilot module: Rearranging formulas</h2><p class="desc">The full-length pilot, with its own reader, companion, workbook and explainer.</p>
+<div class="kit"><a href="docs/M2.3-Theory-Reader.pdf" target="_blank" rel="noopener">Theory reader</a><a href="docs/M2.3-Visual-Companion.pdf" target="_blank" rel="noopener">Visual companion</a>
+<a class="main" href="pages/m23-workbook.html">Workbook</a><a href="docs/M2.3-Workbook.pdf" target="_blank" rel="noopener">Printable</a><a href="pages/untangler.html">Formula Untangler</a><button data-video="video/M2.3-Animated-Explainer.mp4" data-title="Module 2.3 explainer">▶ Video</button></div></div></section>
+<div id="courses"></div>
+<footer>Everything works offline once the status above reads "Ready offline". Ticks and workbook progress are saved on this device. Documents open in your device's viewer; use Done or Back to return.</footer>
+</div>
+<dialog id="player"><div class="bar"><span id="ptitle"></span><button id="pclose">Close</button></div><video id="pvid" controls playsinline preload="metadata"></video></dialog>
+<script>
+const C = [{"n": 1, "name": "Mathematics foundations", "blurb": "Number sense, units, geometry, trigonometry, statistics, vectors and the habits of mathematical thinking: the toolkit every other course uses.", "mods": [["1.1", "Numbers and arithmetic fluency"], ["1.2", "Units, measurement and dimensional analysis"], ["1.3", "Geometry"], ["1.4", "Trigonometry"], ["1.5", "Probability and statistics"], ["1.6", "Vectors"], ["1.7", "Mathematical thinking"]], "cap": "Estimating Earth from a shadow", "reader": "docs/C1-Mathematics-Theory-Reader.pdf", "comp": "docs/C1-Mathematics-Visual-Companion.pdf", "wbpdf": "docs/C1-Mathematics-Workbook.pdf", "wb": "pages/c1-workbook.html", "ex": "pages/c1-explorer.html", "vid": "video/C1-Mathematics-Animated-Explainer.mp4", "exn": "Maths Workbench"}, {"n": 2, "name": "Algebra", "blurb": "Expressions, equations, functions, quadratics, exponentials and logarithms, and a first look at calculus: the language every science is written in.", "mods": [["2.1", "Expressions and simplifying"], ["2.2", "Linear equations and inequalities"], ["2.3", "Rearranging formulas"], ["2.4", "Functions and graphs"], ["2.5", "Systems of equations"], ["2.6", "Quadratics and polynomials"], ["2.7", "Exponentials and logarithms"], ["2.8", "Calculus intuition"]], "cap": "Modelling a cooling cup of coffee", "reader": "docs/C2-Algebra-Theory-Reader.pdf", "comp": "docs/C2-Algebra-Visual-Companion.pdf", "wbpdf": "docs/C2-Algebra-Workbook.pdf", "wb": "pages/c2-workbook.html", "ex": "pages/c2-explorer.html", "vid": "video/C2-Algebra-Animated-Explainer.mp4", "exn": "Function Lab"}, {"n": 3, "name": "Physics", "blurb": "Motion, forces, energy, momentum, waves, electricity, magnetism, heat, and the modern physics of relativity, quanta and the nucleus.", "mods": [["3.1", "Motion (kinematics)"], ["3.2", "Forces and Newton's laws"], ["3.3", "Energy, work and power"], ["3.4", "Momentum, collisions and rotation"], ["3.5", "Waves and sound"], ["3.6", "Electricity and circuits"], ["3.7", "Magnetism and electromagnetism"], ["3.8", "Thermodynamics and heat"], ["3.9", "Modern physics"]], "cap": "A satellite's journey", "reader": "docs/C3-Physics-Theory-Reader.pdf", "comp": "docs/C3-Physics-Visual-Companion.pdf", "wbpdf": "docs/C3-Physics-Workbook.pdf", "wb": "pages/c3-workbook.html", "ex": "pages/c3-explorer.html", "vid": "video/C3-Physics-Animated-Explainer.mp4", "exn": "Physics Lab"}, {"n": 4, "name": "Chemistry", "blurb": "Atoms, the periodic table, bonding, the mole, gases, reactions, equilibrium, acids and redox, and the organic chemistry of life.", "mods": [["4.1", "Matter and atomic structure"], ["4.2", "The periodic table"], ["4.3", "Bonding and molecular shape"], ["4.4", "The mole and stoichiometry"], ["4.5", "States of matter and gas laws"], ["4.6", "Energy, rates and equilibrium"], ["4.7", "Acids, bases and redox"], ["4.8", "Organic chemistry essentials"]], "cap": "Investigating an antacid tablet", "reader": "docs/C4-Chemistry-Theory-Reader.pdf", "comp": "docs/C4-Chemistry-Visual-Companion.pdf", "wbpdf": "docs/C4-Chemistry-Workbook.pdf", "wb": "pages/c4-workbook.html", "ex": "pages/c4-explorer.html", "vid": "video/C4-Chemistry-Animated-Explainer.mp4", "exn": "Chemistry Lab"}, {"n": 5, "name": "Astronomy", "blurb": "The sky, gravity and orbits, light, the Solar System, the lives and deaths of stars, galaxies and the history of the universe.", "mods": [["5.1", "The sky and the history of astronomy"], ["5.2", "Gravity and orbits"], ["5.3", "Light as messenger"], ["5.4", "The Solar System"], ["5.5", "Stars"], ["5.6", "Stellar death"], ["5.7", "Galaxies"], ["5.8", "Cosmology"]], "cap": "Characterising a star with a planet", "reader": "docs/C5-Astronomy-Theory-Reader.pdf", "comp": "docs/C5-Astronomy-Visual-Companion.pdf", "wbpdf": "docs/C5-Astronomy-Workbook.pdf", "wb": "pages/c5-workbook.html", "ex": "pages/c5-explorer.html", "vid": "video/C5-Astronomy-Animated-Explainer.mp4", "exn": "Sky Lab"}, {"n": 6, "name": "Biology", "blurb": "The chemistry of life, cells, metabolism, DNA and genes, inheritance, evolution, the human body, microbes and immunity, and ecosystems.", "mods": [["6.1", "The chemistry of life"], ["6.2", "Cells"], ["6.3", "Metabolism"], ["6.4", "DNA, genes and protein synthesis"], ["6.5", "Inheritance and genetics"], ["6.6", "Evolution and natural selection"], ["6.7", "Human body systems"], ["6.8", "Microbes, immunity and disease"], ["6.9", "Ecology and ecosystems"]], "cap": "Tracking an outbreak", "reader": "docs/C6-Biology-Theory-Reader.pdf", "comp": "docs/C6-Biology-Visual-Companion.pdf", "wbpdf": "docs/C6-Biology-Workbook.pdf", "wb": "pages/c6-workbook.html", "ex": "pages/c6-explorer.html", "vid": "video/C6-Biology-Animated-Explainer.mp4", "exn": "Life Lab"}];
+let done = {}; try { done = JSON.parse(localStorage.getItem("sp-hub") || "{}"); } catch(e){}
+const save = () => { try { localStorage.setItem("sp-hub", JSON.stringify(done)); } catch(e){} };
+const box = document.getElementById("courses");
+C.forEach(c => {
+  const s = document.createElement("section"); s.className = "course";
+  const mods = c.mods.map(([id, t]) => '<li><label><input type="checkbox" data-id="' + id + '"' + (done[id] ? " checked" : "") + '><span class="id">' + id + '</span><span class="t">' + t + '</span></label></li>').join("");
+  s.innerHTML = '<div class="num">' + c.n + '</div><div><h2>' + c.name + '</h2><p class="desc">' + c.blurb + '</p><div class="kit">' +
+    '<a href="' + c.reader + '" target="_blank" rel="noopener">Theory reader</a><a href="' + c.comp + '" target="_blank" rel="noopener">Visual companion</a>' +
+    '<a class="main" href="' + c.wb + '">Workbook</a><a href="' + c.wbpdf + '" target="_blank" rel="noopener">Printable</a><a href="' + c.ex + '">' + c.exn + '</a>' +
+    '<button data-video="' + c.vid + '" data-title="Course ' + c.n + ' explainer">▶ Video</button></div>' +
+    '<ul class="mods">' + mods + '<li><label><input type="checkbox" data-id="cap' + c.n + '"' + (done["cap" + c.n] ? " checked" : "") + '><span class="id">★</span><span class="t">Capstone: ' + c.cap + '</span></label></li></ul><div class="prog" id="p' + c.n + '"></div></div>';
+  box.appendChild(s);
+});
+function prog(){ let all = 0, d = 0; C.forEach(c => { const ids = c.mods.map(m => m[0]).concat("cap" + c.n), k = ids.filter(i => done[i]).length; all += ids.length; d += k; document.getElementById("p" + c.n).textContent = k + " of " + ids.length + " complete"; });
+  document.getElementById("overall").textContent = d + " of " + all + " modules ticked"; }
+box.addEventListener("change", e => { if (e.target.dataset.id){ done[e.target.dataset.id] = e.target.checked; save(); prog(); } });
+prog();
+
+// video player
+const dlg = document.getElementById("player"), vid = document.getElementById("pvid");
+document.addEventListener("click", e => { const b = e.target.closest("[data-video]"); if (!b) return; vid.src = b.dataset.video; document.getElementById("ptitle").textContent = b.dataset.title; dlg.showModal(); vid.play().catch(() => {}); });
+document.getElementById("pclose").onclick = () => { vid.pause(); dlg.close(); };
+dlg.addEventListener("close", () => vid.pause());
+
+// online / offline status
+const net = document.getElementById("net"); const upd = () => net.textContent = navigator.onLine ? "Online" : "Offline"; addEventListener("online", upd); addEventListener("offline", upd); upd();
+
+// service worker and offline readiness
+const off = document.getElementById("offline");
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.addEventListener("message", e => { if (e.data && e.data.type === "progress") off.textContent = e.data.done < e.data.total ? "Saving for offline: " + e.data.done + " of " + e.data.total : "Ready offline"; if (e.data.done >= e.data.total) off.classList.add("ok"); });
+  navigator.serviceWorker.register("sw.js").then(async reg => {
+    await navigator.serviceWorker.ready;
+    const keys = await caches.keys(); if (keys.some(k => k.startsWith("sp-core-"))) { off.textContent = "Ready offline"; off.classList.add("ok"); }
+    // warm the library cache so workbooks render maths offline too
+    if (navigator.onLine) ["https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.min.js", "https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.11.0/math.min.js"].forEach(u => fetch(u, { mode:"no-cors" }).catch(() => {}));
+    if (navigator.storage && navigator.storage.persist) navigator.storage.persist();
+  }).catch(() => { off.textContent = "Offline copy unavailable in this browser"; });
+} else off.textContent = "Offline copy unavailable in this browser";
+
+// install guidance
+const inst = document.getElementById("install"), standalone = matchMedia("(display-mode: standalone)").matches || navigator.standalone;
+const ios = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+let deferred = null;
+if (!standalone){
+  if (ios){ inst.hidden = false; inst.innerHTML = "<b>Install on this iPad or iPhone:</b> tap the Share button in Safari, then <b>Add to Home Screen</b>. Second Pass then opens full-screen like an app."; }
+  addEventListener("beforeinstallprompt", e => { e.preventDefault(); deferred = e; inst.hidden = false; inst.innerHTML = "<b>Install Second Pass on this computer</b> for a Start-menu app that works offline.<button id='ib'>Install</button>";
+    document.getElementById("ib").onclick = async () => { deferred.prompt(); await deferred.userChoice; inst.hidden = true; }; });
+}
+</script>
+</body>
+</html>

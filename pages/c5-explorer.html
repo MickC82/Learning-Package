@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1F2B33">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}
+.sp-home{position:fixed;left:max(12px,env(safe-area-inset-left,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:50;
+font:500 14px "Bricolage Grotesque",system-ui,sans-serif;background:var(--ink,#1F2B33);color:var(--sheet,#fff);text-decoration:none;padding:9px 14px;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+</style>
+</head>
+<body>
+<a class="sp-home" href="../index.html">← Hub</a>
+<title>Sky Lab</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a lab bench per tab. The live canvas is the hero; controls sit beneath; the aside states the learning aim and holds the challenge. */
+
+:root{
+  --paper:#F4F6F3; --sheet:#FFFFFF; --ink:#1F2B33; --mute:#5E6B72; --rule:#D7DDDC; --grid:#E6EAE8;
+  --ochre:#B07508; --ochre-soft:#F3E6C8; --teal:#2C7A6B; --teal-soft:#DCEDE8; --red:#A8402C; --red-soft:#F5E1DB; --blue:#3C6E91; --blue-soft:#DDE8F0;
+  --display:"Bricolage Grotesque", "DejaVu Sans", system-ui, sans-serif;
+  --body:"Source Serif 4", Georgia, "Times New Roman", serif;
+  --mono:"IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#141C21; --sheet:#1B252C; --ink:#E9EEED; --mute:#9AA8AE; --rule:#2D3A42; --grid:#25313A;
+  --ochre:#E2A73A; --ochre-soft:#3B2F17; --teal:#62BBA6; --teal-soft:#1D3A34; --red:#E58570; --red-soft:#3D2420; --blue:#7FB0D3; --blue-soft:#1E3343; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#141C21; --sheet:#1B252C; --ink:#E9EEED; --mute:#9AA8AE; --rule:#2D3A42; --grid:#25313A;
+  --ochre:#E2A73A; --ochre-soft:#3B2F17; --teal:#62BBA6; --teal-soft:#1D3A34; --red:#E58570; --red-soft:#3D2420; --blue:#7FB0D3; --blue-soft:#1E3343; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.55}
+.wrap{max-width:1080px;margin:0 auto;padding-block:28px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:12px 24px;border-bottom:1px solid var(--rule);padding-bottom:16px}
+.kicker{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ochre)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(30px,5vw,46px);line-height:1.05;margin:4px 0 0;text-wrap:balance}
+.tag{color:var(--mute);font-style:italic;margin:6px 0 0;max-width:56ch}
+nav{display:flex;gap:4px;flex-wrap:wrap}
+nav a{font-family:var(--display);font-weight:500;font-size:15px;color:var(--mute);text-decoration:none;padding:8px 14px;border-radius:999px;border:1px solid transparent}
+nav a[aria-current="page"]{color:var(--ink);border-color:var(--ink);background:var(--sheet)}
+a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--ochre);outline-offset:2px}
+.bench{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:24px;margin-top:24px}
+@media (max-width:820px){.bench{grid-template-columns:minmax(0,1fr)}}
+.sheet{background:var(--sheet);border:1px solid var(--rule);border-radius:10px;padding:20px}
+.aside{display:flex;flex-direction:column;gap:16px;min-width:0}
+.label{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);margin:0 0 8px}
+.practising{border-left:3px solid var(--teal);padding:2px 0 2px 12px;font-size:15.5px;margin:0}
+.row{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center}
+.ctrl{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px 18px;margin-top:12px}
+.ctrl label{font-family:var(--mono);font-size:12.5px;color:var(--mute);display:flex;flex-direction:column;gap:4px}
+.ctrl label b{color:var(--ink);font-weight:500}
+input[type=range]{width:100%;accent-color:var(--ochre)}
+select,input[type=number],input[type=text]{font:inherit;font-size:15px;color:var(--ink);background:var(--paper);border:1px solid var(--rule);border-radius:6px;padding:6px 9px;min-width:0}
+input[type=number],input[type=text]{width:8.5em;font-family:var(--mono)}
+button{font-family:var(--display);font-weight:500;font-size:15px;cursor:pointer;border-radius:8px;border:1px solid var(--ink);background:var(--ink);color:var(--sheet);padding:8px 15px}
+button.ghost{background:transparent;color:var(--ink);border-color:var(--rule)}
+button.ghost:hover{border-color:var(--ink)}
+canvas{width:100%;display:block;border-radius:6px;touch-action:none}
+.read{font-family:var(--mono);font-size:13.5px;font-variant-numeric:tabular-nums;margin-top:10px;line-height:1.7}
+.read b{color:var(--ochre);font-weight:500}
+.fb{margin-top:10px;font-size:15.5px;min-height:1.3em}
+.fb.good{color:var(--teal)} .fb.bad{color:var(--red)}
+.pill{display:inline-block;font-family:var(--mono);font-size:12px;padding:2px 9px;border-radius:999px}
+.pill.ok{background:var(--teal-soft);color:var(--teal)} .pill.no{background:var(--red-soft);color:var(--red)} .pill.mid{background:var(--ochre-soft);color:var(--ochre)}
+.small{font-size:14.5px;color:var(--mute)}
+.task{background:var(--ochre-soft);border-radius:8px;padding:12px 14px;font-size:15.5px}
+footer{margin-top:40px;font-size:14px;color:var(--mute);border-top:1px solid var(--rule);padding-top:14px}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+
+</style>
+<div class="wrap">
+<header>
+  <div><div class="kicker">Second Pass · Course 5 · Explorer</div><h1>Sky Lab</h1><p class="tag">Three benches for Course 5: launch planets into orbit, explore real stars on the HR diagram, and measure the expansion of the universe.</p></div>
+  <nav aria-label="Benches"><a href="#orbits" data-tab="orbits">1 · Orbits</a>
+<a href="#stars" data-tab="stars">2 · HR diagram</a>
+<a href="#hubble" data-tab="hubble">3 · Hubble's law</a></nav>
+</header>
+<section id="v-orbits" class="bench">
+<div class="sheet">
+<canvas id="oc" aria-label="Orbit simulation: a planet launched sideways around a star"></canvas>
+<div class="ctrl">
+<label for="om">Star mass <b id="omv">1.0 M☉</b><input type="range" id="om" min="0.5" max="2" step="0.1" value="1"></label>
+<label for="or">Starting distance <b id="orv">1.0 AU</b><input type="range" id="or" min="0.5" max="2" step="0.1" value="1"></label>
+<label for="ov">Launch speed <b id="ovv">100%</b><input type="range" id="ov" min="50" max="150" step="1" value="100"></label></div>
+<div class="row" style="margin-top:12px"><button id="ogo">Launch</button><button class="ghost" id="oclr">Clear trails</button></div>
+<div class="read" id="or2"></div></div>
+<div class="aside">
+<div class="sheet"><p class="label">What you're practising</p><p class="practising">Launch speed is shown as a percentage of the circular-orbit speed √(GM/r). At 100% the orbit is a circle; slower gives an ellipse that dips inwards; faster stretches outwards; at √2 ≈ 141% the planet escapes. Equal areas in equal times: watch it speed up near the star. Reader §5.2.</p></div>
+<div class="sheet"><p class="label">Challenge</p><div class="task">Predict, then test: (1) what launch speed escapes? (2) Double the star mass at 1 AU: by what factor does the circular period change?</div><div class="row" style="margin-top:10px"><input type="text" id="oa" inputmode="decimal" aria-label="Period factor"><button id="och">Check (2)</button></div><div class="fb" id="of"></div></div>
+
+</div>
+</section>
+<section id="v-stars" class="bench" hidden>
+<div class="sheet">
+<canvas id="hc" aria-label="Hertzsprung-Russell diagram of real bright stars; select one to see its data"></canvas>
+<div class="ctrl"><label for="hm">Main-sequence star of mass <b id="hmv">1.0 M☉</b><input type="range" id="hm" min="0.2" max="20" step="0.1" value="1"></label></div>
+<div class="read" id="hr"></div></div>
+<div class="aside">
+<div class="sheet"><p class="label">What you're practising</p><p class="practising">Real stars on the HR diagram: luminosity against surface temperature, hot on the left. Click any star for its data. The slider places a main-sequence star by mass, using L ∝ M^3.5 and lifetime ≈ 10¹⁰ × M^−2.5 years. Reader §5.5.</p></div>
+<div class="sheet"><p class="label">Challenge</p><p style="margin:0 0 8px">Click the star you can find in the Southern Cross pointers: Alpha Centauri A. How does it compare with the Sun? Then find a red supergiant and a white dwarf.</p><div class="fb" id="hf"></div></div>
+
+</div>
+</section>
+<section id="v-hubble" class="bench" hidden>
+<div class="sheet">
+<canvas id="uc" aria-label="Hubble diagram of galaxy velocity against distance with your trial line"></canvas>
+<div class="ctrl"><label for="uh">Your Hubble constant <b id="uhv">50</b> km/s/Mpc<input type="range" id="uh" min="30" max="110" step="1" value="50"></label></div>
+<div class="read" id="ur"></div></div>
+<div class="aside">
+<div class="sheet"><p class="label">What you're practising</p><p class="practising">Fit the line by eye: adjust the gradient until the residuals (red ticks) are as small and balanced as possible. The gradient is the Hubble constant H₀, and 1/H₀ estimates the age of the universe. Reader §5.8.</p></div>
+<div class="sheet"><p class="label">Challenge</p><div class="fb" id="uf"></div><p class="small" style="margin:6px 0 0">Data are simulated around the modern value with realistic scatter from galaxies’ own motions.</p></div>
+
+</div>
+</section>
+<footer>Pair with the Course 5 Theory Reader, Visual Companion and Workbook. Star data are approximate published values.</footer>
+</div>
+<script>
+
+const $ = id => document.getElementById(id);
+const tok = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const REDRAW = [];
+function setupCanvas(c, ratio){
+  const dpr = window.devicePixelRatio || 1, w = c.clientWidth || 600, h = Math.round(w * ratio);
+  if (c.width !== Math.round(w*dpr) || c.height !== Math.round(h*dpr)){ c.width = Math.round(w*dpr); c.height = Math.round(h*dpr); c.style.height = h + "px"; }
+  const g = c.getContext("2d"); g.setTransform(dpr, 0, 0, dpr, 0, 0); return { g, W:w, H:h };
+}
+function niceTicks(a, b, n = 6){ const span = b - a || 1, s = Math.pow(10, Math.floor(Math.log10(span/n))); const st = [1, 2, 5, 10].map(q => q*s).find(q => span/q <= n + 1) || s*10; const out = []; for (let v = Math.ceil(a/st)*st; v <= b + 1e-9*span; v += st) out.push(+v.toPrecision(10)); return out; }
+function frame(g, W, H, xr, yr, o = {}){
+  const p = Object.assign({ l:56, r:14, t:14, b:42 }, o.pad || {});
+  const X = x => p.l + (x - xr[0])/(xr[1] - xr[0])*(W - p.l - p.r), Y = y => H - p.b - (y - yr[0])/(yr[1] - yr[0])*(H - p.t - p.b);
+  g.fillStyle = tok("--sheet"); g.fillRect(0, 0, W, H);
+  g.strokeStyle = tok("--grid"); g.lineWidth = 1; g.font = "12px " + tok("--mono"); g.fillStyle = tok("--mute");
+  (o.xt || niceTicks(xr[0], xr[1])).forEach(v => { g.beginPath(); g.moveTo(X(v), p.t); g.lineTo(X(v), H - p.b); g.stroke(); g.textAlign = "center"; g.fillText(o.xf ? o.xf(v) : +v.toPrecision(4), X(v), H - p.b + 16); });
+  (o.yt || niceTicks(yr[0], yr[1])).forEach(v => { g.beginPath(); g.moveTo(p.l, Y(v)); g.lineTo(W - p.r, Y(v)); g.stroke(); g.textAlign = "right"; g.fillText(o.yf ? o.yf(v) : +v.toPrecision(4), p.l - 6, Y(v) + 4); });
+  g.strokeStyle = tok("--mute"); g.beginPath(); g.moveTo(p.l, p.t); g.lineTo(p.l, H - p.b); g.lineTo(W - p.r, H - p.b); g.stroke();
+  g.fillStyle = tok("--ink"); g.font = "13px " + tok("--mono"); g.textAlign = "center";
+  if (o.xl) g.fillText(o.xl, (p.l + W - p.r)/2, H - 8);
+  if (o.yl){ g.save(); g.translate(14, (p.t + H - p.b)/2); g.rotate(-Math.PI/2); g.fillText(o.yl, 0, 0); g.restore(); }
+  return { X, Y, p, W, H };
+}
+function clip(g, fr){ g.save(); g.beginPath(); g.rect(fr.p.l, fr.p.t, fr.W - fr.p.l - fr.p.r, fr.H - fr.p.t - fr.p.b); g.clip(); }
+function line(g, pts, color, w = 2, dash){ g.strokeStyle = color; g.lineWidth = w; g.setLineDash(dash || []); g.beginPath(); pts.forEach(([x, y], i) => i ? g.lineTo(x, y) : g.moveTo(x, y)); g.stroke(); g.setLineDash([]); }
+function dot(g, x, y, r, color){ g.fillStyle = color; g.beginPath(); g.arc(x, y, r, 0, 2*Math.PI); g.fill(); }
+function txt(g, s, x, y, color, size = 13, align = "left", font = "--mono"){ g.fillStyle = color; g.font = size + "px " + tok(font); g.textAlign = align; g.fillText(s, x, y); }
+function arrow(g, x1, y1, x2, y2, color, w = 2.5){ const a = Math.atan2(y2 - y1, x2 - x1), hl = 10; g.strokeStyle = color; g.fillStyle = color; g.lineWidth = w; g.beginPath(); g.moveTo(x1, y1); g.lineTo(x2 - hl*0.6*Math.cos(a), y2 - hl*0.6*Math.sin(a)); g.stroke(); g.beginPath(); g.moveTo(x2, y2); g.lineTo(x2 - hl*Math.cos(a - 0.4), y2 - hl*Math.sin(a - 0.4)); g.lineTo(x2 - hl*Math.cos(a + 0.4), y2 - hl*Math.sin(a + 0.4)); g.closePath(); g.fill(); }
+const fmt = (x, p = 3) => { if (!isFinite(x)) return "—"; const a = Math.abs(x); return a !== 0 && (a >= 1e5 || a < 1e-3) ? x.toExponential(p - 1) : String(+x.toPrecision(p)); };
+const bind = (ids, fn) => ids.forEach(id => $(id).addEventListener("input", fn));
+const near = (a, b, tol) => Math.abs(a - b) <= tol * Math.max(1e-12, Math.abs(b));
+function feedback(el, ok, msg){ el.className = "fb " + (ok ? "good" : "bad"); el.textContent = msg; }
+function route(tabs){
+  const h = location.hash.replace("#", ""), t = tabs.includes(h) ? h : tabs[0];
+  tabs.forEach(n => { $("v-" + n).hidden = n !== t; document.querySelector('[data-tab="' + n + '"]').setAttribute("aria-current", n === t ? "page" : "false"); });
+  requestAnimationFrame(() => REDRAW.forEach(f => f()));
+}
+function redrawAll(){ REDRAW.forEach(f => f()); }
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", redrawAll);
+new MutationObserver(redrawAll).observe(document.documentElement, { attributes:true, attributeFilter:["data-theme"] });
+window.addEventListener("resize", () => { clearTimeout(window.__rz); window.__rz = setTimeout(redrawAll, 120); });
+
+
+/* ---------- orbits (units: AU, years, solar masses; GM☉ = 4π²) ---------- */
+let trails = [], orb = null, oraf = null;
+function circV(M, r){ return Math.sqrt(4*Math.PI*Math.PI*M/r); }
+function oParams(){ return { M:+$("om").value, r:+$("or").value, f:+$("ov").value/100 }; }
+function drawO(){
+  const { g, W, H } = setupCanvas($("oc"), 0.62); g.fillStyle = tok("--sheet"); g.fillRect(0, 0, W, H);
+  const S = Math.min(W, H)/6.5, cx = W/2, cy = H/2, X = x => cx + x*S, Y = y => cy - y*S;
+  g.strokeStyle = tok("--grid"); g.lineWidth = 1; for (let r = 1; r <= 4; r++){ g.beginPath(); g.arc(cx, cy, r*S, 0, 2*Math.PI); g.stroke(); txt(g, r + " AU", cx + r*S + 3, cy - 3, tok("--mute"), 10); }
+  trails.forEach(t => line(g, t.map(([x, y]) => [X(x), Y(y)]), tok("--grid"), 1.4));
+  dot(g, cx, cy, 6 + 3*+$("om").value, tok("--ochre"));
+  if (orb){ line(g, orb.path.map(([x, y]) => [X(x), Y(y)]), tok("--teal"), 2);
+    if (orb.sweeps) orb.sweeps.forEach((s, i) => { g.fillStyle = i ? tok("--blue-soft") : tok("--teal-soft"); g.beginPath(); g.moveTo(cx, cy); s.forEach(([x, y]) => g.lineTo(X(x), Y(y))); g.closePath(); g.fill(); });
+    dot(g, X(orb.x), Y(orb.y), 5, tok("--ink")); }
+  const { M, r, f } = oParams(); $("omv").textContent = M.toFixed(1) + " M☉"; $("orv").textContent = r.toFixed(1) + " AU"; $("ovv").textContent = Math.round(f*100) + "%";
+  const v = f*circV(M, r), E = 0.5*v*v - 4*Math.PI*Math.PI*M/r, bound = E < 0, a = bound ? -4*Math.PI*Math.PI*M/(2*E) : Infinity, T = bound ? Math.sqrt(a**3/M) : Infinity;
+  $("or2").innerHTML = "launch speed <b>" + (v*4.74).toFixed(1) + " km/s</b> (" + Math.round(f*100) + "% of circular) &nbsp; " + (bound ? "bound orbit, semi-major axis <b>" + a.toFixed(2) + " AU</b>, period <b>" + T.toFixed(2) + " years</b> (Kepler: T² = a³/M)" : '<span class="pill no">escapes</span> energy ≥ 0');
+}
+$("ogo").onclick = () => {
+  cancelAnimationFrame(oraf); if (orb) { trails.push(orb.path); if (trails.length > 5) trails.shift(); }
+  const { M, r, f } = oParams(), GM = 4*Math.PI*Math.PI*M; let x = r, y = 0, vx = 0, vy = f*circV(M, r); const dt = 0.0015;
+  orb = { x, y, path:[[x, y]], sweeps:[] }; let t = 0, steps = 0, sweepA = null, sweepB = null;
+  const frameFn = () => { for (let k = 0; k < 14; k++){ const d3 = Math.pow(x*x + y*y, 1.5); vx -= GM*x/d3*dt/2; vy -= GM*y/d3*dt/2; x += vx*dt; y += vy*dt; const e3 = Math.pow(x*x + y*y, 1.5); vx -= GM*x/e3*dt/2; vy -= GM*y/e3*dt/2; t += dt; steps++;
+      if (steps % 6 === 0) orb.path.push([x, y]);
+      if (steps > 40 && steps <= 120){ (sweepA = sweepA || []).push([x, y]); } }
+    orb.x = x; orb.y = y; orb.sweeps = sweepA ? [sweepA] : []; drawO();
+    if (Math.hypot(x, y) < 6 && t < 12 && orb.path.length < 6000) oraf = requestAnimationFrame(frameFn); };
+  oraf = requestAnimationFrame(frameFn);
+};
+$("oclr").onclick = () => { trails = []; drawO(); };
+$("och").onclick = () => { const v = parseFloat($("oa").value), tr = 1/Math.SQRT2; if (isNaN(v)) return feedback($("of"), false, "Enter a factor, e.g. 0.5.");
+  feedback($("of"), Math.abs(v - tr) < 0.02, (Math.abs(v - tr) < 0.02 ? "Yes: " : "Not quite: ") + "T = 2π√(r³/GM), so doubling M multiplies T by 1/√2 ≈ 0.707. (Escape happens at √2 ≈ 141% of circular speed.)"); };
+bind(["om", "or", "ov"], drawO); REDRAW.push(drawO);
+
+/* ---------- HR diagram, real stars (approximate) ---------- */
+const STARS = [["Sun", 5772, 1, "G2 main sequence"], ["Sirius A", 9940, 25.4, "A1 main sequence, 8.6 ly"], ["Alpha Centauri A", 5790, 1.52, "G2 main sequence, 4.4 ly, Southern Cross pointer"], ["Alpha Centauri B", 5260, 0.5, "K1 main sequence, 4.4 ly"], ["Proxima Centauri", 3042, 0.0017, "M5 red dwarf, nearest star, 4.2 ly"],
+ ["Vega", 9600, 40, "A0 main sequence, 25 ly"], ["Altair", 7700, 10.6, "A7 main sequence, 17 ly"], ["Achernar", 15000, 3150, "B6, fast rotator, 139 ly"], ["Spica", 25300, 20500, "B1, 250 ly"], ["Rigel", 12100, 120000, "B8 blue supergiant, 860 ly"],
+ ["Betelgeuse", 3600, 126000, "M1 red supergiant, about 550 ly"], ["Antares", 3570, 75900, "M1 red supergiant, about 550 ly"], ["Canopus", 7400, 10700, "A9 bright giant, 310 ly"], ["Arcturus", 4290, 170, "K1 red giant, 37 ly"], ["Aldebaran", 3910, 439, "K5 red giant, 65 ly"],
+ ["Acrux", 28000, 25000, "B0.5, brightest star of the Southern Cross"], ["Hadar (Beta Centauri)", 25000, 41700, "B1 giant, Southern Cross pointer"], ["Barnard's Star", 3130, 0.0035, "M4 red dwarf, 6 ly"], ["Sirius B", 25000, 0.056, "white dwarf"], ["Procyon B", 7740, 0.00049, "white dwarf"],
+ ["40 Eridani B", 16500, 0.013, "white dwarf"], ["Polaris", 6015, 1260, "F7 supergiant, northern pole star"], ["Deneb", 8525, 196000, "A2 supergiant, about 2600 ly"], ["Epsilon Eridani", 5084, 0.34, "K2 main sequence, 10.5 ly"], ["Tau Ceti", 5344, 0.52, "G8 main sequence, 12 ly"]];
+let picked = null;
+function hrMap(W, H){ const pad = { l:56, r:14, t:14, b:42 }; const X = T => pad.l + (Math.log10(40000) - Math.log10(T))/(Math.log10(40000) - Math.log10(2500))*(W - pad.l - pad.r), Y = L => H - pad.b - (Math.log10(L) + 4.5)/(5.8 + 4.5)*(H - pad.t - pad.b); return { X, Y, pad }; }
+function drawH(){
+  const c = $("hc"), { g, W, H } = setupCanvas(c, 0.65), m = hrMap(W, H);
+  g.fillStyle = tok("--sheet"); g.fillRect(0, 0, W, H); g.strokeStyle = tok("--grid"); g.lineWidth = 1; g.font = "11px " + tok("--mono"); g.fillStyle = tok("--mute");
+  [30000, 20000, 10000, 6000, 4000, 3000].forEach(T => { const x = m.X(T); g.beginPath(); g.moveTo(x, m.pad.t); g.lineTo(x, H - m.pad.b); g.stroke(); g.textAlign = "center"; g.fillText(T, x, H - m.pad.b + 15); });
+  [-4, -2, 0, 2, 4].forEach(e => { const y = m.Y(Math.pow(10, e)); g.beginPath(); g.moveTo(m.pad.l, y); g.lineTo(W - m.pad.r, y); g.stroke(); g.textAlign = "right"; g.fillText("10^" + e, m.pad.l - 5, y + 4); });
+  txt(g, "surface temperature (K), hot on the left", (m.pad.l + W)/2, H - 8, tok("--ink"), 12, "center"); g.save(); g.translate(14, H/2); g.rotate(-Math.PI/2); txt(g, "luminosity (Sun = 1)", 0, 0, tok("--ink"), 12, "center"); g.restore();
+  const ms = []; for (let M = 0.15; M <= 25; M *= 1.08){ const L = Math.pow(M, 3.5), T = 5772*Math.pow(M, 0.55); ms.push([m.X(Math.min(39000, T)), m.Y(Math.min(5e5, L))]); } line(g, ms, tok("--teal-soft"), 10); txt(g, "main sequence", m.X(14000), m.Y(4000) - 16, tok("--teal"), 11);
+  STARS.forEach(s => { const col = s[1] > 9000 ? tok("--blue") : s[1] > 5000 ? tok("--ochre") : tok("--red"); dot(g, m.X(s[1]), m.Y(s[2]), s[0] === "Sun" ? 7 : 5, col); if (s === picked){ g.strokeStyle = tok("--ink"); g.lineWidth = 2; g.beginPath(); g.arc(m.X(s[1]), m.Y(s[2]), 10, 0, 2*Math.PI); g.stroke(); txt(g, s[0], m.X(s[1]) + 13, m.Y(s[2]) + 4, tok("--ink"), 12); } });
+  txt(g, "☉", m.X(5772) + 9, m.Y(1) + 4, tok("--ink"), 12);
+  const M = +$("hm").value, L = Math.pow(M, 3.5), T = 5772*Math.pow(M, 0.55), life = 1e10*Math.pow(M, -2.5);
+  dot(g, m.X(Math.min(39000, T)), m.Y(Math.min(5e5, L)), 8, tok("--ink")); $("hmv").textContent = M.toFixed(1) + " M☉";
+  $("hr").innerHTML = (picked ? "<b>" + picked[0] + "</b>: " + picked[1] + " K, " + fmt(picked[2]) + " × the Sun's luminosity, " + picked[3] + "<br>" : "Click a star for its data.<br>") +
+    "slider star: " + M.toFixed(1) + " M☉ → about " + fmt(T, 2) + " K, " + fmt(L, 2) + " L☉, main-sequence life ≈ <b>" + fmt(life, 2) + " years</b>";
+}
+$("hc").addEventListener("click", e => { const r = $("hc").getBoundingClientRect(), m = hrMap(r.width, r.height), x = e.clientX - r.left, y = e.clientY - r.top;
+  let best = null, bd = 18; STARS.forEach(s => { const d = Math.hypot(m.X(s[1]) - x, m.Y(s[2]) - y); if (d < bd){ bd = d; best = s; } }); picked = best; drawH();
+  if (best){ const msg = best[0] === "Alpha Centauri A" ? "Found it: almost a twin of the Sun, slightly brighter." : best[3].includes("supergiant") ? "A supergiant: cool but enormous, so very luminous." : best[3].includes("white dwarf") ? "A white dwarf: hot but tiny, so faint." : ""; if (msg) feedback($("hf"), true, msg); } });
+bind(["hm"], drawH); REDRAW.push(drawH);
+
+/* ---------- Hubble ---------- */
+const GAL = []; (function(){ let s = 42; const rnd = () => { s = (s*16807) % 2147483647; return s/2147483647; };
+  for (let i = 0; i < 28; i++){ const d = 15 + rnd()*420; const n = (rnd() + rnd() + rnd() - 1.5)*1800; GAL.push([d, 70*d + n]); } })();
+function bestH(){ let sxy = 0, sxx = 0; GAL.forEach(([d, v]) => { sxy += d*v; sxx += d*d; }); return sxy/sxx; }
+function drawU(){
+  const Hc = +$("uh").value, { g, W, H } = setupCanvas($("uc"), 0.6), fr = frame(g, W, H, [0, 460], [0, 36000], { xl:"distance (Mpc)", yl:"velocity (km/s)", yf:v => v/1000 + "k" });
+  let ss = 0; GAL.forEach(([d, v]) => { const p = Hc*d; ss += (v - p)**2; line(g, [[fr.X(d), fr.Y(v)], [fr.X(d), fr.Y(p)]], tok("--red"), 1); dot(g, fr.X(d), fr.Y(v), 4.5, tok("--ochre")); });
+  line(g, [[fr.X(0), fr.Y(0)], [fr.X(460), fr.Y(Hc*460)]], tok("--teal"), 2.4);
+  const rms = Math.sqrt(ss/GAL.length), age = 977.8/Hc, best = bestH(); $("uhv").textContent = Hc;
+  $("ur").innerHTML = "rms residual <b>" + fmt(rms) + " km/s</b> &nbsp; age estimate 1/H₀ ≈ <b>" + age.toFixed(1) + " billion years</b>";
+  const ok = Math.abs(Hc - best)/best < 0.03; $("uf").className = "fb " + (ok ? "good" : ""); $("uf").textContent = ok ? "Best fit: H₀ ≈ " + best.toFixed(0) + " km/s/Mpc, giving an age of about " + (977.8/best).toFixed(1) + " billion years. The precise modern figure, 13.8, comes from a fuller model." : "Keep adjusting: aim for the smallest rms residual.";
+}
+bind(["uh"], drawU); REDRAW.push(drawU);
+
+const TABS = ["orbits","stars","hubble"];
+window.addEventListener("hashchange", () => route(TABS));
+route(TABS);
+</script>
+
+<script>if("serviceWorker" in navigator) navigator.serviceWorker.register("../sw.js");</script>
+</body>
+</html>

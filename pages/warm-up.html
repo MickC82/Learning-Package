@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1F2B33">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}
+.sp-home{position:fixed;left:max(12px,env(safe-area-inset-left,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:50;
+font:500 14px "Bricolage Grotesque",system-ui,sans-serif;background:var(--ink,#1F2B33);color:var(--sheet,#fff);text-decoration:none;padding:9px 14px;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+</style>
+</head>
+<body>
+<a class="sp-home" href="../index.html">← Hub</a>
+<title>Second Pass Diagnostic</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: an entrance exam that turns into a study plan. Questions in one column; results become a subject ledger and a dated timeline. */
+:root{
+  --paper:#F4F6F3; --sheet:#FFFFFF; --ink:#1F2B33; --mute:#5E6B72; --rule:#D7DDDC;
+  --ochre:#B07508; --ochre-soft:#F3E6C8; --teal:#2C7A6B; --teal-soft:#DCEDE8; --red:#A8402C; --red-soft:#F5E1DB; --blue:#3C6E91; --blue-soft:#DDE8F0;
+  --display:"Bricolage Grotesque", "DejaVu Sans", system-ui, sans-serif;
+  --body:"Source Serif 4", Georgia, "Times New Roman", serif;
+  --mono:"IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#141C21; --sheet:#1B252C; --ink:#E9EEED; --mute:#9AA8AE; --rule:#2D3A42;
+  --ochre:#E2A73A; --ochre-soft:#3B2F17; --teal:#62BBA6; --teal-soft:#1D3A34; --red:#E58570; --red-soft:#3D2420; --blue:#7FB0D3; --blue-soft:#1E3343; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#141C21; --sheet:#1B252C; --ink:#E9EEED; --mute:#9AA8AE; --rule:#2D3A42;
+  --ochre:#E2A73A; --ochre-soft:#3B2F17; --teal:#62BBA6; --teal-soft:#1D3A34; --red:#E58570; --red-soft:#3D2420; --blue:#7FB0D3; --blue-soft:#1E3343; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.55}
+.wrap{max-width:900px;margin:0 auto;padding-block:28px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.kicker{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ochre)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(32px,5.5vw,48px);line-height:1.04;margin:4px 0 8px;text-wrap:balance}
+h2{font-family:var(--display);font-weight:700;font-size:26px;margin:0 0 6px;text-wrap:balance}
+h3{font-family:var(--display);font-weight:500;font-size:19px;margin:0}
+p{margin:0 0 12px}
+.lede{font-size:19px;max-width:60ch}
+.mute{color:var(--mute)}
+.sheet{background:var(--sheet);border:1px solid var(--rule);border-radius:10px;padding:22px}
+.stack{display:flex;flex-direction:column;gap:16px}
+.row{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+button{font-family:var(--display);font-weight:500;font-size:16px;cursor:pointer;border-radius:8px;border:1px solid var(--ink);background:var(--ink);color:var(--sheet);padding:10px 18px}
+button.ghost{background:transparent;color:var(--ink);border-color:var(--rule)}
+button:disabled{opacity:.4;cursor:default}
+button:focus-visible,input:focus-visible,label:focus-within{outline:2px solid var(--ochre);outline-offset:2px}
+.facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:18px 0}
+@media (max-width:600px){.facts{grid-template-columns:minmax(0,1fr)}}
+.fact{border-top:2px solid var(--ochre);padding-top:8px;font-size:15.5px}
+.fact b{display:block;font-family:var(--display);font-size:22px;font-weight:700}
+/* quiz */
+.progress{display:flex;gap:3px;margin:16px 0 22px}
+.progress i{flex:1;height:5px;border-radius:2px;background:var(--rule)}
+.progress i.done{background:var(--teal)} .progress i.now{background:var(--ochre)}
+.qmeta{display:flex;justify-content:space-between;font-family:var(--mono);font-size:12.5px;color:var(--mute);gap:10px;flex-wrap:wrap}
+.qtext{font-size:21px;line-height:1.45;margin:10px 0 18px;text-wrap:pretty}
+.choices{display:grid;gap:8px}
+.choice{display:flex;gap:12px;align-items:flex-start;background:var(--paper);border:1px solid var(--rule);border-radius:8px;padding:12px 14px;cursor:pointer;font-size:17px}
+.choice:hover{border-color:var(--ink)}
+.choice input{margin-top:5px;accent-color:var(--ochre)}
+.choice.unsure{color:var(--mute);font-style:italic}
+.choice.sel{border-color:var(--ochre);background:var(--ochre-soft)}
+.choice.right{border-color:var(--teal);background:var(--teal-soft)}
+.choice.wrong{border-color:var(--red);background:var(--red-soft)}
+.explain{margin-top:14px;padding:12px 14px;border-radius:8px;background:var(--paper);font-size:16px}
+.explain b{font-family:var(--display);font-weight:500}
+.nav{display:flex;justify-content:space-between;margin-top:20px;gap:10px}
+/* results */
+.ledger{display:grid;gap:10px}
+.subj{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1.6fr) auto;gap:14px;align-items:center;padding:12px 0;border-bottom:1px solid var(--rule)}
+@media (max-width:620px){.subj{grid-template-columns:minmax(0,1fr) auto}.subj .dots{grid-column:1/-1;order:3}}
+.subj h3 small{display:block;font-family:var(--mono);font-size:12px;color:var(--mute);font-weight:400}
+.dots{display:flex;gap:4px}
+.dots i{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--rule);background:transparent}
+.dots i.ok{background:var(--teal);border-color:var(--teal)}
+.dots i.no{border-color:var(--red)}
+.pill{font-family:var(--mono);font-size:12px;padding:4px 10px;border-radius:999px;white-space:nowrap}
+.pill.full{background:var(--red-soft);color:var(--red)} .pill.std{background:var(--blue-soft);color:var(--blue)} .pill.fast{background:var(--teal-soft);color:var(--teal)}
+.flags{font-size:15px;color:var(--mute);margin-top:4px}
+.key{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;font-size:14.5px}
+@media (max-width:620px){.key{grid-template-columns:minmax(0,1fr)}}
+.controls{display:flex;flex-wrap:wrap;gap:14px 24px;align-items:center}
+.controls label{font-family:var(--mono);font-size:13px;color:var(--mute);display:flex;gap:8px;align-items:center}
+input[type=date],input[type=number]{font:inherit;font-family:var(--mono);font-size:15px;color:var(--ink);background:var(--paper);border:1px solid var(--rule);border-radius:6px;padding:6px 8px}
+input[type=number]{width:5em}
+.total{font-family:var(--display);font-size:22px;margin:4px 0 0}
+.total b{color:var(--ochre)}
+.tl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:15px;min-width:540px}
+th{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute);text-align:left;font-weight:500;padding:8px 8px;border-bottom:1px solid var(--ink)}
+td{padding:9px 8px;border-bottom:1px solid var(--rule);vertical-align:top;font-variant-numeric:tabular-nums}
+td.num{font-family:var(--mono);font-size:14px;white-space:nowrap}
+tr.course td{font-family:var(--display);font-weight:500;background:var(--paper)}
+tr.mod td:first-child{padding-left:22px;color:var(--mute);font-family:var(--mono);font-size:13px}
+tr.mod.hot td:nth-child(2)::after{content:" ●";color:var(--red);font-size:12px}
+tr.mod.now td:nth-child(2){font-weight:600}
+details summary{cursor:pointer;font-family:var(--display);font-size:16px;margin:4px 0 10px}
+.ready{display:inline-block;font-family:var(--mono);font-size:11px;padding:1px 7px;border-radius:999px;background:var(--teal-soft);color:var(--teal);margin-left:6px;vertical-align:2px}
+footer{margin-top:32px;font-size:14px;color:var(--mute);border-top:1px solid var(--rule);padding-top:14px}
+</style>
+<div class="wrap">
+  <div class="kicker">Second Pass · Course 0 · Orientation</div>
+  <h1>Where are you starting from?</h1>
+
+  <section id="intro" class="stack">
+    <p class="lede">A relaxed warm-up of 24 short questions, four per subject. It isn't a test. It simply shows which topics have stuck since school and which need dusting off, then builds a study plan around you.</p>
+    <div class="facts">
+      <div class="fact"><b>About 15 minutes</b>No calculator, no time limit. Scrap paper is handy.</div>
+      <div class="fact"><b>"Not sure" is welcome</b>After 28 years, not remembering is normal. Picking "Not sure" just means that topic gets a little more time.</div>
+      <div class="fact"><b>You see the answer each time</b>Every question shows a short explanation, so you're already learning.</div>
+    </div>
+    <div class="row"><button id="start">Start the warm-up</button><button class="ghost" id="resume" hidden>Resume</button></div>
+  </section>
+
+  <section id="quiz" hidden>
+    <div class="progress" id="prog"></div>
+    <div class="sheet">
+      <div class="qmeta"><span id="qsub"></span><span id="qnum"></span></div>
+      <p class="qtext" id="qtext"></p>
+      <div class="choices" id="choices" role="radiogroup"></div>
+      <div class="explain" id="explain" hidden aria-live="polite"></div>
+      <div class="nav"><button class="ghost" id="back">Back</button><button id="next" disabled>Next</button></div>
+    </div>
+  </section>
+
+  <section id="results" class="stack" hidden>
+    <div class="sheet">
+      <h2>Your starting point</h2>
+      <p class="mute" id="encourage"></p>
+      <div class="ledger" id="ledger"></div>
+      <div class="key" style="margin-top:16px">
+        <div><span class="pill full">From the ground up</span><br>Take each module at full pace: reader, companion, explorer and workbook. About 4 hours, one week per module.</div>
+        <div><span class="pill std">Steady pace</span><br>Some of it is coming back. Listen to readers at speed and skip worked examples you can already do. About 3 hours.</div>
+        <div><span class="pill fast">Quick refresh</span><br>You remember this well. Skim the reader and focus on the harder workbook problems. About 2 hours.</div>
+      </div>
+    </div>
+
+    <div class="sheet">
+      <h2>Your study plan</h2>
+      <div class="controls" style="margin:8px 0 12px">
+        <label for="startdate">Start <input type="date" id="startdate"></label>
+        <label for="hpw">Hours a week <input type="number" id="hpw" min="1" max="20" step="0.5" value="4"></label>
+      </div>
+      <p class="total" id="total"></p>
+      <p class="mute" style="font-size:15px">Every course ends with a capstone of about 4 hours. Module 2.3, Rearranging Formulas, is suggested as your first module whatever your results, because physics and chemistry lean on it from week one.</p>
+      <div class="tl"><table id="plan"></table></div>
+    </div>
+
+    <details class="sheet">
+      <summary>Look back over your answers</summary>
+      <div id="review"></div>
+    </details>
+    <div class="row"><button class="ghost" id="retake">Take the warm-up again</button></div>
+  </section>
+
+  <footer>Second Pass is a STEM refresher pitched between final-year high school and first-year university. Your answers are remembered in this browser only, so you can close the page and come back.</footer>
+</div>
+
+<script>
+const SUBJECTS = [
+ { id:"math", name:"Mathematics", course:1 }, { id:"alg", name:"Algebra", course:2 }, { id:"phys", name:"Physics", course:3 },
+ { id:"chem", name:"Chemistry", course:4 }, { id:"astro", name:"Astronomy", course:5 }, { id:"bio", name:"Biology", course:6 }
+];
+const COURSES = {
+ 1:{ name:"Mathematics foundations", mods:["Numbers and arithmetic fluency","Units, measurement and dimensional analysis","Geometry","Trigonometry","Probability and statistics","Vectors","Mathematical thinking"] },
+ 2:{ name:"Algebra", mods:["Expressions and simplifying","Linear equations and inequalities","Rearranging formulas","Functions and graphs","Systems of equations","Quadratics and polynomials","Exponentials and logarithms","Calculus intuition"] },
+ 3:{ name:"Physics", mods:["Motion (kinematics)","Forces and Newton's laws","Energy, work and power","Momentum, collisions and rotation","Waves and sound","Electricity and circuits","Magnetism and electromagnetism","Thermodynamics and heat","Modern physics"] },
+ 4:{ name:"Chemistry", mods:["Matter and atomic structure","The periodic table","Bonding and molecular shape","The mole and stoichiometry","States of matter and gas laws","Energy, rates and equilibrium","Acids, bases and redox","Organic chemistry essentials"] },
+ 5:{ name:"Astronomy", mods:["The sky and the history of astronomy","Gravity and orbits","Light as messenger","The Solar System","Stars","Stellar death","Galaxies","Cosmology"] },
+ 6:{ name:"Biology", mods:["The chemistry of life","Cells","Metabolism","DNA, genes and protein synthesis","Inheritance and genetics","Evolution and natural selection","Human body systems","Microbes, immunity and disease","Ecology and ecosystems"] }
+};
+const Q = [
+ ["math","What is 10% of 350?",["3.5","35","350","0.35"],1,"1.1","Ten per cent means dividing by ten."],
+ ["math","Which number is the same as 4 × 10³?",["400","4000","40 000","12"],1,"1.1","10³ is a thousand, so 4 × 1000 = 4000. This is scientific notation."],
+ ["math","A right-angled triangle has short sides of 3 cm and 4 cm. How long is the longest side?",["5 cm","7 cm","6 cm","12 cm"],0,"1.3","Pythagoras: 3² + 4² = 9 + 16 = 25, and √25 = 5."],
+ ["math","A fair coin is tossed twice. What is the chance of two heads?",["1 in 2","1 in 3","1 in 4","1 in 8"],2,"1.5","Each toss is ½, and independent chances multiply: ½ × ½ = ¼."],
+
+ ["alg","If 2x + 3 = 11, what is x?",["4","7","5.5","8"],0,"2.2","Take 3 from both sides (2x = 8), then halve both sides."],
+ ["alg","What is 3(x + 2) written without brackets?",["3x + 2","3x + 6","x + 6","5x"],1,"2.1","Multiply everything inside the bracket by 3."],
+ ["alg","Area of a circle is A = πr². Which formula gives r?",["r = A/π","r = √(A/π)","r = A − π","r = πA²"],1,"2.3","Divide both sides by π, then take the square root."],
+ ["alg","A population doubles every 10 years. Starting at 1000, what is it after 30 years?",["3000","6000","8000","4000"],2,"2.7","Three doublings: 1000 → 2000 → 4000 → 8000. That's exponential growth."],
+
+ ["phys","A car travels 120 km in 2 hours. What is its average speed?",["60 km/h","240 km/h","120 km/h","30 km/h"],0,"3.1","Speed is distance divided by time."],
+ ["phys","Which needs a bigger push to get moving at the same rate: an empty shopping trolley or a full one?",["Empty","Full","They're the same","It depends on the colour"],1,"3.2","More mass needs more force for the same acceleration: Newton's second law, F = ma."],
+ ["phys","A ball is dropped. As it falls, its stored (potential) energy turns mostly into",["heat","sound","movement (kinetic) energy","light"],2,"3.3","Height energy becomes movement energy. Energy changes form but isn't lost."],
+ ["phys","Sound travels as",["a wave of vibrations through the air","tiny particles shot from the source","light","electricity"],0,"3.5","Sound is a pressure wave: air molecules pass vibrations along."],
+
+ ["chem","What are the three particles that make up atoms?",["protons, neutrons, electrons","atoms, molecules, ions","quarks, photons, waves","cells, genes, proteins"],0,"4.1","Protons and neutrons in the nucleus, electrons around it."],
+ ["chem","Water's chemical formula is H₂O. What does the 2 tell you?",["two water molecules","two hydrogen atoms in each molecule","two oxygen atoms","it is heated twice"],1,"4.4","Subscripts count atoms in one molecule: two hydrogens, one oxygen."],
+ ["chem","Lemon juice is an acid. Its pH is most likely",["2","7","10","14"],0,"4.7","Acids are below 7, neutral is 7, and alkalis are above."],
+ ["chem","Why does a balloon shrink when you put it in the freezer?",["the rubber gets thicker","gas particles slow down and take up less room","air leaks out","cold air is heavier"],1,"4.5","Colder gas particles move more slowly and push less on the walls, so the volume drops."],
+
+ ["astro","What causes the seasons on Earth?",["Earth getting closer to the Sun","the tilt of Earth's axis","the Moon","clouds"],1,"5.1","The tilt changes how directly sunlight hits each hemisphere. Earth is actually closest to the Sun in January."],
+ ["astro","What keeps the Moon in orbit around Earth?",["magnetism","gravity","air pressure","nothing; it drifts"],1,"5.2","Gravity pulls it towards Earth while its sideways motion keeps it going round."],
+ ["astro","The Sun is",["a planet","a star","a galaxy","a comet"],1,"5.5","It's an ordinary middle-aged star, the closest one to us."],
+ ["astro","A light-year measures",["time","distance","brightness","speed"],1,"5.3","It's how far light travels in a year: about 9.5 trillion km."],
+
+ ["bio","The basic building block of all living things is the",["atom","cell","organ","gene"],1,"6.2","Every living thing is made of one or more cells."],
+ ["bio","Which gas do plants take in to make their food?",["oxygen","nitrogen","carbon dioxide","helium"],2,"6.3","Photosynthesis uses carbon dioxide, water and light, and releases oxygen."],
+ ["bio","Where is DNA mostly found in your cells?",["the nucleus","the skin","the blood plasma","the bones only"],0,"6.4","The nucleus holds most of a cell's DNA."],
+ ["bio","Bacteria that survive an antibiotic and multiply are an example of",["natural selection","photosynthesis","digestion","gravity"],0,"6.6","Survivors pass on resistance, so it becomes more common over generations."]
+];
+const UNSURE = "Not sure";
+const $ = id => document.getElementById(id);
+let ans = {}, qi = 0;
+function load(){ try { const s = JSON.parse(localStorage.getItem("sp-diag2") || "null"); if (s){ ans = s.ans || {}; qi = s.qi || 0; } } catch(e){} }
+function save(){ try { localStorage.setItem("sp-diag2", JSON.stringify({ ans, qi })); } catch(e){} }
+function show(id){ ["intro","quiz","results"].forEach(s => $(s).hidden = s !== id); window.scrollTo(0, 0); }
+function escapeHtml(s){ return String(s).replace(/[&<>"]/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" })[c]); }
+
+function reveal(){
+  const [, , opts, correct, , why] = Q[qi], a = ans[qi];
+  const box = $("choices");
+  [...box.children].forEach((lab, i) => { const v = i < opts.length ? i : -1; lab.querySelector("input").disabled = true;
+    if (v === correct) lab.classList.add("right"); else if (v === a) lab.classList.add("wrong"); });
+  const ok = a === correct, e = $("explain"); e.hidden = false;
+  e.innerHTML = "<b>" + (ok ? "Yes, well remembered." : a === -1 ? "No problem. Here's the idea:" : "Not quite, and that's fine. Here's the idea:") + "</b> " + escapeHtml(why);
+  $("next").disabled = false;
+}
+function drawQ(){
+  const [sub, text, opts] = Q[qi]; const S = SUBJECTS.find(s => s.id === sub);
+  $("qsub").textContent = S.name; $("qnum").textContent = (qi + 1) + " of " + Q.length;
+  $("qtext").textContent = text; $("explain").hidden = true;
+  const box = $("choices"); box.innerHTML = "";
+  [...opts, UNSURE].forEach((o, i) => {
+    const val = i < opts.length ? i : -1;
+    const lab = document.createElement("label"); lab.className = "choice" + (val === -1 ? " unsure" : "");
+    const inp = document.createElement("input"); inp.type = "radio"; inp.name = "c"; inp.id = "c" + i;
+    inp.onchange = () => { ans[qi] = val; save(); reveal(); };
+    lab.appendChild(inp); lab.appendChild(document.createTextNode(o)); box.appendChild(lab);
+  });
+  $("next").disabled = true;
+  if (qi in ans) reveal();
+  $("next").textContent = qi === Q.length - 1 ? "See my starting point" : "Next";
+  $("back").disabled = qi === 0;
+  $("prog").innerHTML = Q.map((_, i) => '<i class="' + (i in ans && i !== qi ? "done" : i === qi ? "now" : "") + '"></i>').join("");
+}
+$("start").onclick = () => { ans = {}; qi = 0; save(); show("quiz"); drawQ(); };
+$("resume").onclick = () => { if (Object.keys(ans).length >= Q.length) results(); else { show("quiz"); drawQ(); } };
+$("next").onclick = () => { if (qi < Q.length - 1){ qi++; save(); drawQ(); } else results(); };
+$("back").onclick = () => { if (qi > 0){ qi--; save(); drawQ(); } };
+$("retake").onclick = () => { ans = {}; qi = 0; save(); show("quiz"); drawQ(); };
+
+function route(score){ return score <= 1 ? "full" : score <= 3 ? "std" : "fast"; }
+const ROUTE = { full:["From the ground up", 4], std:["Steady pace", 3], fast:["Quick refresh", 2] };
+let scores = {}, flagged = new Set();
+function results(){
+  scores = {}; flagged = new Set(); SUBJECTS.forEach(s => scores[s.id] = []);
+  Q.forEach(([sub, , , correct, mod], i) => { const ok = ans[i] === correct; scores[sub].push(ok); if (!ok) flagged.add(mod); });
+  const total = Object.values(scores).flat().filter(Boolean).length;
+  $("encourage").textContent = total >= 18 ? "You remember a great deal. Most courses can move quickly, with extra time only where you stumbled."
+    : total >= 10 ? "A solid base to build on. Some subjects will come back fast; others get the full treatment, which is exactly what the package is for."
+    : "A fresh start, which is the most common result after a long break. Every module begins from the ground up, so nothing is assumed.";
+  const L = $("ledger"); L.innerHTML = "";
+  SUBJECTS.forEach(s => {
+    const arr = scores[s.id], n = arr.filter(Boolean).length, r = route(n);
+    const mods = Q.filter(q => q[0] === s.id).map(q => q[4]).filter((m, i) => !arr[i]);
+    const div = document.createElement("div"); div.className = "subj";
+    div.innerHTML = '<h3>' + s.name + '<small>Course ' + s.course + ' · ' + n + ' of 4</small></h3>' +
+      '<div><div class="dots">' + arr.map(ok => '<i class="' + (ok ? "ok" : "no") + '"></i>').join("") + '</div>' +
+      (mods.length ? '<div class="flags">Extra time for module ' + [...new Set(mods)].join(", ") + '</div>' : '<div class="flags">All four remembered</div>') + '</div>' +
+      '<span class="pill ' + r + '">' + ROUTE[r][0] + '</span>';
+    L.appendChild(div);
+  });
+  const rv = $("review"); rv.innerHTML = "";
+  Q.forEach(([sub, text, opts, correct, mod, why], i) => {
+    const ok = ans[i] === correct, p = document.createElement("p"); p.style.fontSize = "15.5px";
+    const given = ans[i] === -1 || ans[i] == null ? "Not sure" : opts[ans[i]];
+    p.innerHTML = '<b style="color:var(--' + (ok ? "teal" : "ochre") + ')">' + (i + 1) + (ok ? " ✓" : " ·") + '</b> ' + escapeHtml(text) +
+      '<br><span class="mute">You: ' + escapeHtml(given) + (ok ? "" : ' · Answer: ' + escapeHtml(opts[correct])) + ' · Module ' + mod + '. ' + escapeHtml(why) + '</span>';
+    rv.appendChild(p);
+  });
+  show("results"); plan();
+}
+function nextMonday(){ const d = new Date(); d.setHours(12, 0, 0, 0); const add = (8 - d.getDay()) % 7 || 7; d.setDate(d.getDate() + add); return d; }
+function iso(d){ return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); }
+function fmt(d){ return d.toLocaleDateString("en-AU", { day:"numeric", month:"short", year:"numeric" }); }
+$("startdate").value = iso(nextMonday());
+function plan(){
+  const hpw = Math.max(1, parseFloat($("hpw").value) || 4);
+  const start = new Date(($("startdate").value || iso(nextMonday())) + "T12:00:00");
+  const at = hours => { const d = new Date(start); d.setDate(d.getDate() + Math.floor(hours / hpw * 7)); return d; };
+  const items = [{ c:2, m:3, title:COURSES[2].mods[2], h:ROUTE[route(scores.alg.filter(Boolean).length)][1], pilot:true }];
+  SUBJECTS.forEach(s => {
+    const r = route(scores[s.id].filter(Boolean).length);
+    COURSES[s.course].mods.forEach((t, i) => { if (s.course === 2 && i === 2) return; const tag = s.course + "." + (i + 1);
+      items.push({ c:s.course, m:i + 1, title:t, h:flagged.has(tag) ? 4 : ROUTE[r][1], hot:flagged.has(tag) }); });
+    items.push({ c:s.course, cap:true, title:"Capstone: applied problem and mixed practice", h:4 });
+  });
+  let acc = 0; items.forEach(it => { it.from = acc; acc += it.h; it.to = acc; });
+  const weeks = Math.ceil(acc / hpw);
+  $("total").innerHTML = "<b>" + acc + " hours</b> · about <b>" + weeks + " weeks</b> at " + hpw + " h a week · finishing around " + fmt(at(acc));
+  let h = "<thead><tr><th>Module</th><th>Topic</th><th>Hours</th><th>Starts</th></tr></thead><tbody>";
+  const f = items[0];
+  h += '<tr class="course"><td colspan="4">Start here</td></tr><tr class="mod now"><td>2.3</td><td>' + f.title + '</td><td class="num">' + f.h + '</td><td class="num">' + fmt(at(f.from)) + '</td></tr>';
+  let cur = 0;
+  items.slice(1).forEach(it => {
+    if (it.c !== cur){ cur = it.c; const s = SUBJECTS.find(x => x.course === cur), r = route(scores[s.id].filter(Boolean).length);
+      const ci = items.filter(x => x.c === cur && !x.pilot), hrs = ci.reduce((a, x) => a + x.h, 0);
+      h += '<tr class="course"><td colspan="2">Course ' + cur + ' · ' + COURSES[cur].name + ' &nbsp;<span class="pill ' + r + '">' + ROUTE[r][0] + '</span></td><td class="num">' + hrs + '</td><td class="num">' + fmt(at(ci[0].from)) + '</td></tr>'; }
+    h += '<tr class="mod' + (it.hot ? " hot" : "") + '"><td>' + (it.cap ? "★" : it.c + "." + it.m) + '</td><td>' + it.title + '</td><td class="num">' + it.h + '</td><td class="num">' + fmt(at(it.from)) + '</td></tr>';
+  });
+  $("plan").innerHTML = h + "</tbody>";
+}
+$("hpw").oninput = () => { if (Object.keys(scores).length) plan(); };
+$("startdate").onchange = () => { if (Object.keys(scores).length) plan(); };
+load();
+if (Object.keys(ans).length){ $("resume").hidden = false; $("resume").textContent = Object.keys(ans).length >= Q.length ? "See my last results" : "Resume (" + Object.keys(ans).length + " of " + Q.length + " done)"; }
+</script>
+
+<script>if("serviceWorker" in navigator) navigator.serviceWorker.register("../sw.js");</script>
+</body>
+</html>

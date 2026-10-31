@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1F2B33">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}
+.sp-home{position:fixed;left:max(12px,env(safe-area-inset-left,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:50;
+font:500 14px "Bricolage Grotesque",system-ui,sans-serif;background:var(--ink,#1F2B33);color:var(--sheet,#fff);text-decoration:none;padding:9px 14px;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+</style>
+</head>
+<body>
+<a class="sp-home" href="../index.html">← Hub</a>
+<title>Chemistry Workbook</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<script>window.MathJax = { svg: { fontCache: 'global' }, startup: { typeset: false }, options: { enableMenu: false } };</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.11.0/math.min.js"></script>
+<style>
+/* Layout: a course workbook. Module index on the left (chips on phones); each module is an exercise sheet ending in a quick check; capstone and mixed practice close the course. */
+:root{
+  --paper:#F4F6F3; --sheet:#FFFFFF; --ink:#1F2B33; --mute:#5E6B72; --rule:#D7DDDC;
+  --ochre:#B07508; --ochre-soft:#F3E6C8; --teal:#2C7A6B; --teal-soft:#DCEDE8; --red:#A8402C; --red-soft:#F5E1DB;
+  --display:"Bricolage Grotesque", "DejaVu Sans", system-ui, sans-serif;
+  --body:"Source Serif 4", Georgia, "Times New Roman", serif;
+  --mono:"IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#141C21; --sheet:#1B252C; --ink:#E9EEED; --mute:#9AA8AE; --rule:#2D3A42;
+  --ochre:#E2A73A; --ochre-soft:#3B2F17; --teal:#62BBA6; --teal-soft:#1D3A34; --red:#E58570; --red-soft:#3D2420; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#141C21; --sheet:#1B252C; --ink:#E9EEED; --mute:#9AA8AE; --rule:#2D3A42;
+  --ochre:#E2A73A; --ochre-soft:#3B2F17; --teal:#62BBA6; --teal-soft:#1D3A34; --red:#E58570; --red-soft:#3D2420; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.55}
+.wrap{max-width:1120px;margin:0 auto;padding-block:28px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header{border-bottom:1px solid var(--rule);padding-bottom:16px}
+.kicker{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ochre)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(30px,5vw,44px);line-height:1.05;margin:4px 0 6px;text-wrap:balance}
+h2{font-family:var(--display);font-weight:700;font-size:24px;margin:0;text-wrap:balance}
+h3{font-family:var(--display);font-weight:500;font-size:18px;margin:18px 0 8px}
+.tag{color:var(--mute);margin:0;max-width:64ch}
+.layout{display:grid;grid-template-columns:230px minmax(0,1fr);gap:28px;margin-top:24px}
+@media (max-width:860px){.layout{grid-template-columns:minmax(0,1fr)}}
+.index{position:sticky;top:calc(env(safe-area-inset-top,0px) + 16px);align-self:start;display:flex;flex-direction:column;gap:2px;max-height:calc(100vh - 32px);overflow-y:auto}
+@media (max-width:860px){.index{position:static;flex-direction:row;flex-wrap:wrap;max-height:none}}
+.index a{display:flex;justify-content:space-between;gap:10px;text-decoration:none;color:var(--ink);font-family:var(--display);font-size:14.5px;padding:7px 10px;border-radius:8px;border:1px solid transparent}
+.index a:hover{border-color:var(--rule)}
+.index .n{font-family:var(--mono);font-size:12px;color:var(--mute);font-variant-numeric:tabular-nums;white-space:nowrap}
+.index .n.full{color:var(--teal)}
+.overall{font-family:var(--mono);font-size:12.5px;color:var(--mute);padding:10px;font-variant-numeric:tabular-nums}
+.bar{height:6px;background:var(--rule);border-radius:3px;overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;background:var(--teal);width:0;transition:width .4s}
+section.mod{margin-bottom:44px;scroll-margin-top:16px}
+.modhead{display:flex;gap:14px;align-items:baseline;margin-bottom:12px}
+.modhead .code{font-family:var(--display);font-weight:700;font-size:28px;color:var(--ochre);line-height:1}
+.card{background:var(--sheet);border:1px solid var(--rule);border-radius:10px;padding:16px 20px;margin-bottom:12px}
+.card.solved{border-color:var(--teal)}
+.chead{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline}
+.pid{font-family:var(--mono);font-size:13px;color:var(--mute)}
+.lvl{font-family:var(--mono);font-size:12px;color:var(--ochre);letter-spacing:2px}
+.q{margin:6px 0}
+.eq{overflow-x:auto;padding:4px 0;font-size:18px}
+.eq mjx-container{margin:6px 0!important;text-align:left!important}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:8px}
+input[type=text]{font:inherit;font-family:var(--mono);font-size:16px;color:var(--ink);background:var(--paper);border:1px solid var(--rule);border-radius:6px;padding:8px 10px;min-width:0;flex:0 1 12em}
+input.wide{flex:1 1 220px}
+.unit{font-family:var(--mono);font-size:14px;color:var(--mute)}
+button{font-family:var(--display);font-weight:500;font-size:15px;cursor:pointer;border-radius:8px;border:1px solid var(--ink);background:var(--ink);color:var(--sheet);padding:8px 15px}
+button.ghost{background:transparent;color:var(--ink);border-color:var(--rule)}
+button.ghost:hover{border-color:var(--ink)}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--ochre);outline-offset:2px}
+.fb{margin-top:8px;font-size:15.5px;min-height:1.2em}
+.fb.good{color:var(--teal)} .fb.bad{color:var(--red)}
+.mc{display:grid;gap:7px;margin-top:6px}
+.mc button{text-align:left;background:var(--paper);color:var(--ink);border:1px solid var(--rule);font-family:var(--body);font-size:15.5px;padding:9px 12px}
+.mc button.right{border-color:var(--teal);background:var(--teal-soft)}
+.mc button.wrong{border-color:var(--red);background:var(--red-soft)}
+.extras{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.sol{margin-top:10px;border-top:1px dashed var(--rule);padding-top:8px;font-size:15.5px}
+.sol ol{margin:0;padding-left:1.3em}
+.sol li{margin-bottom:5px}
+.model{background:var(--teal-soft);border-radius:8px;padding:10px 14px;margin-top:10px;font-size:15.5px}
+.quiz{background:var(--ochre-soft);border-radius:10px;padding:16px 20px}
+.quiz .qq{margin:14px 0 4px;font-weight:600}
+.quiz .score{font-family:var(--mono);font-size:13px;color:var(--ink)}
+.preview{font-size:15px;color:var(--mute);min-height:24px;overflow-x:auto}
+.howto{background:var(--sheet);border:1px solid var(--rule);border-radius:10px;padding:16px 20px;margin-bottom:28px;font-size:15.5px}
+.howto ul{margin:6px 0 0;padding-left:1.2em}
+code{font-family:var(--mono);font-size:.92em;background:var(--paper);padding:1px 5px;border-radius:4px}
+footer{margin-top:24px;font-size:14px;color:var(--mute);border-top:1px solid var(--rule);padding-top:14px}
+</style>
+
+<div class="wrap">
+<header>
+  <div class="kicker">Second Pass · Course 4</div>
+  <h1 id="h1">Chemistry Workbook</h1>
+  <p class="tag">Eight problems and a four-question quick check for every module, then the course capstone and a mixed practice set. Answers are checked as you go, with hints and worked solutions on every problem.</p>
+</header>
+<div class="layout">
+  <nav class="index" id="index" aria-label="Modules"></nav>
+  <main id="main">
+    <div class="howto">
+      <b>How answers work.</b> Number answers accept ordinary decimals or scientific notation such as <code>6.67e-11</code>; small rounding differences are fine. Some problems ask you to explain: write your answer on paper, then open the model answer and compare.
+      <ul><li>Try before opening the hint. Use the worked solution to compare method, not just the final number.</li>
+      <li>Your progress is remembered in this browser.</li></ul>
+    </div>
+  </main>
+</div>
+<footer>Pair with the course Theory Reader (audio edition), the Visual Companion and the explorer. The printable PDF workbook has the same problems with space to write.</footer>
+</div>
+
+<script>
+const D = {"n": 4, "name": "Chemistry", "modules": [{"id": "4.1", "title": "Matter and atomic structure", "problems": [{"t": "num", "lv": 1, "q": "How many neutrons are in an atom of iron-56 (Z = 26)?", "a": 30, "s": ["N = A − Z = 56 − 26."]}, {"t": "mc", "lv": 1, "q": "What defines which element an atom is?", "o": ["number of neutrons", "number of protons", "mass number", "number of shells"], "c": 1, "s": ["The atomic number, Z, the proton count."]}, {"t": "num", "lv": 2, "q": "How many electrons does a Mg²⁺ ion have? (Mg: Z = 12)", "a": 10, "s": ["Neutral Mg has 12 electrons.", "2+ means two lost: 10."]}, {"t": "mc", "lv": 2, "q": "Give the shell arrangement of chlorine (Z = 17).", "o": ["2, 8, 7", "2, 7, 8", "8, 8, 1", "2, 8, 8"], "c": 0, "s": ["Fill 2, then 8, then the remaining 7."]}, {"t": "num", "lv": 2, "q": "Boron is 20% boron-10 and 80% boron-11. What is its relative atomic mass?", "a": 10.8, "s": ["0.2 × 10 + 0.8 × 11.", "= 10.8."]}, {"t": "mc", "lv": 2, "q": "Carbon-12 and carbon-14 differ in", "o": ["protons", "electrons", "neutrons", "chemical behaviour"], "c": 2, "s": ["Isotopes differ only in neutron number."]}, {"t": "num", "lv": 2, "q": "How many valence electrons does sulfur (Z = 16) have?", "a": 6, "s": ["Arrangement 2, 8, 6.", "Outer shell: 6."]}, {"t": "show", "lv": 3, "q": "Explain why isotopes of the same element have almost identical chemistry.", "a": "Chemistry is decided by electrons, especially the valence electrons. Isotopes have the same number of protons and therefore the same number and arrangement of electrons. Only the neutron count differs, which changes the mass slightly but not how the atom bonds.", "s": ["Which particles take part in reactions?"]}], "quiz": [{"q": "The nucleus contains", "o": ["protons and electrons", "protons and neutrons", "only neutrons", "electrons and neutrons"], "c": 1}, {"q": "An atom with 8 protons and 10 electrons is", "o": ["neutral", "a 2− ion", "a 2+ ion", "an isotope"], "c": 1}, {"q": "Mass number is", "o": ["protons", "protons + neutrons", "electrons", "neutrons"], "c": 1}, {"q": "Maximum electrons in the first shell:", "o": ["2", "8", "18", "1"], "c": 0}]}, {"id": "4.2", "title": "The periodic table", "problems": [{"t": "mc", "lv": 1, "q": "Elements in the same group have the same number of", "o": ["shells", "valence electrons", "neutrons", "protons"], "c": 1, "s": ["That is why they react similarly."]}, {"t": "mc", "lv": 1, "q": "Which group contains the noble gases?", "o": ["1", "2", "17", "18"], "c": 3, "s": ["Group 18, full outer shells."]}, {"t": "mc", "lv": 2, "q": "Which atom is larger?", "o": ["sodium", "chlorine", "they are equal", "it depends on temperature"], "c": 0, "s": ["Same period; Cl has more protons pulling the same shell in."]}, {"t": "mc", "lv": 2, "q": "Which is the most reactive alkali metal of these?", "o": ["lithium", "sodium", "potassium", "they are equal"], "c": 2, "s": ["Reactivity increases down group 1."]}, {"t": "mc", "lv": 2, "q": "Which is the most reactive halogen of these?", "o": ["fluorine", "chlorine", "bromine", "iodine"], "c": 0, "s": ["Reactivity decreases down group 17."]}, {"t": "num", "lv": 2, "q": "Calcium is in group 2. What charge does its ion usually carry? (enter as a number, e.g. 2 for 2+)", "a": 2, "s": ["Two valence electrons, lost to give Ca²⁺."]}, {"t": "mc", "lv": 2, "q": "Why does ionisation energy rise across period 3?", "o": ["more shells", "more protons pulling the same shell", "fewer electrons", "larger atoms"], "c": 1, "s": ["Nuclear charge increases while shielding stays similar."]}, {"t": "show", "lv": 3, "q": "Using electron arrangements, explain why sodium and chlorine react so readily with each other.", "a": "Sodium (2,8,1) has one valence electron that is easy to remove, leaving a full shell. Chlorine (2,8,7) needs one electron to fill its outer shell. Transferring an electron gives Na⁺ and Cl⁻, both with full shells, and the oppositely charged ions attract strongly, releasing energy.", "s": ["What does each atom need to reach a full shell?"]}], "quiz": [{"q": "Periods are", "o": ["columns", "rows", "blocks", "groups"], "c": 1}, {"q": "Electronegativity increases", "o": ["down a group", "across a period", "with more neutrons", "never"], "c": 1}, {"q": "Mendeleev's table was confirmed when", "o": ["electrons were discovered", "predicted elements were found", "isotopes were found", "noble gases reacted"], "c": 1}, {"q": "Transition metals often", "o": ["are gases", "form coloured compounds", "have no electrons", "are unreactive"], "c": 1}]}, {"id": "4.3", "title": "Bonding and molecular shape", "problems": [{"t": "mc", "lv": 1, "q": "What type of bonding is in magnesium oxide, MgO?", "o": ["covalent", "ionic", "metallic", "hydrogen"], "c": 1, "s": ["Metal plus non-metal: electron transfer."]}, {"t": "mc", "lv": 1, "q": "Why do metals conduct electricity?", "o": ["they contain ions only", "they have a sea of free electrons", "they are polar", "they have hydrogen bonds"], "c": 1, "s": ["Delocalised electrons can move."]}, {"t": "mc", "lv": 2, "q": "What is the shape of methane, CH₄?", "o": ["linear", "trigonal planar", "tetrahedral", "bent"], "c": 2, "s": ["Four bonding pairs, no lone pairs."]}, {"t": "mc", "lv": 2, "q": "CO₂ has polar bonds. Why is the molecule non-polar?", "o": ["it is linear, so the dipoles cancel", "carbon is not electronegative", "it has lone pairs", "it is ionic"], "c": 0, "s": ["Equal and opposite bond dipoles cancel."]}, {"t": "num", "lv": 2, "q": "How many electrons are shared in a double bond?", "a": 4, "s": ["Each bond is a pair; two bonds = 4 electrons."]}, {"t": "mc", "lv": 2, "q": "Which molecule can form hydrogen bonds with itself?", "o": ["CH₄", "H₂", "NH₃", "CO₂"], "c": 2, "s": ["H attached to N, with a lone pair on N."]}, {"t": "mc", "lv": 2, "q": "Sodium chloride conducts electricity", "o": ["as a solid", "when molten or dissolved", "never", "only as a gas"], "c": 1, "s": ["Ions must be free to move."]}, {"t": "show", "lv": 3, "q": "Explain why ice floats on water.", "a": "In ice, hydrogen bonds lock water molecules into an open hexagonal lattice with lots of space. In liquid water the hydrogen bonds keep breaking and reforming, so molecules pack closer together. Ice is therefore less dense than liquid water and floats.", "s": ["Compare how molecules are arranged in solid and liquid."]}], "quiz": [{"q": "A covalent bond is", "o": ["a transferred electron", "a shared pair of electrons", "an ion lattice", "a sea of electrons"], "c": 1}, {"q": "Water's shape is", "o": ["linear", "bent", "tetrahedral", "planar"], "c": 1}, {"q": "The strongest intermolecular force listed is", "o": ["dispersion", "hydrogen bonding", "polar–polar", "they are equal"], "c": 1}, {"q": "Lone pairs make bond angles", "o": ["larger", "smaller", "unchanged", "180°"], "c": 1}]}, {"id": "4.4", "title": "The mole and stoichiometry", "problems": [{"t": "num", "lv": 1, "q": "How many moles are in 44 g of carbon dioxide (M = 44 g/mol)?", "a": 1, "unit": "mol", "s": ["n = m/M = 44/44."]}, {"t": "num", "lv": 1, "q": "What is the molar mass of sulfuric acid, H₂SO₄? (H = 1, S = 32, O = 16)", "a": 98, "unit": "g/mol", "s": ["2(1) + 32 + 4(16) = 98."]}, {"t": "num", "lv": 2, "q": "How many molecules are in 9.0 g of water (M = 18 g/mol)?", "a": 3.01e+23, "s": ["n = 9/18 = 0.5 mol.", "N = 0.5 × 6.02 × 10²³ = 3.0 × 10²³."]}, {"t": "num", "lv": 2, "q": "Balance: __ H₂ + O₂ → __ H₂O. What coefficient goes in front of H₂?", "a": 2, "s": ["2H₂ + O₂ → 2H₂O balances 4 H and 2 O."]}, {"t": "num", "lv": 2, "q": "How many grams of oxygen are needed to burn 8.0 g of methane completely? (CH₄ = 16, O₂ = 32)", "a": 32, "unit": "g", "s": ["8 g CH₄ = 0.5 mol.", "Needs 2 × 0.5 = 1.0 mol O₂ = 32 g."]}, {"t": "num", "lv": 2, "q": "What is the concentration of 0.25 mol of NaCl dissolved to make 500 mL of solution?", "a": 0.5, "unit": "mol/L", "s": ["c = n/V = 0.25/0.500."]}, {"t": "num", "lv": 2, "q": "You need 100 mL of 0.20 M solution from a 1.0 M stock. What volume of stock do you use?", "a": 20, "unit": "mL", "s": ["c₁V₁ = c₂V₂: 1.0 × V₁ = 0.20 × 100."]}, {"t": "num", "lv": 3, "q": "A reaction should give 50 g of product but gives 42 g. What is the percentage yield?", "a": 84, "unit": "%", "s": ["42/50 × 100."]}], "quiz": [{"q": "One mole contains", "o": ["6.02 × 10²³ particles", "1000 particles", "22.4 particles", "one gram"], "c": 0}, {"q": "To balance an equation you change", "o": ["subscripts", "coefficients", "both", "neither"], "c": 1}, {"q": "The limiting reagent", "o": ["is in excess", "runs out first", "is a catalyst", "is the product"], "c": 1}, {"q": "Molarity is", "o": ["grams per litre", "moles per litre", "moles per gram", "litres per mole"], "c": 1}]}, {"id": "4.5", "title": "States of matter and gas laws", "problems": [{"t": "num", "lv": 1, "q": "A gas at 100 kPa occupies 6.0 L. It is compressed to 2.0 L at constant temperature. What is the new pressure?", "a": 300, "unit": "kPa", "s": ["P₁V₁ = P₂V₂.", "100 × 6 = P₂ × 2."]}, {"t": "num", "lv": 1, "q": "A balloon of 2.0 L at 300 K is heated to 450 K at constant pressure. What is its new volume?", "a": 3, "unit": "L", "s": ["V₂ = V₁ T₂/T₁ = 2 × 450/300."]}, {"t": "num", "lv": 2, "q": "What volume does 2.0 mol of gas occupy at 300 K and 100 000 Pa? Give your answer in litres.", "a": 49.884, "unit": "L", "s": ["V = nRT/P = 2 × 8.314 × 300 ÷ 100 000 m³.", "= 0.0499 m³ ≈ 49.9 L."]}, {"t": "num", "lv": 2, "q": "How many moles are in a 10 L cylinder at 500 kPa and 290 K?", "a": 2.073776679136977, "unit": "mol", "s": ["n = PV/RT = 500 000 × 0.010 ÷ (8.314 × 290).", "≈ 2.07 mol."]}, {"t": "mc", "lv": 2, "q": "Why must temperatures be in kelvin for gas laws?", "o": ["Celsius is less precise", "the laws are proportional relationships measured from absolute zero", "kelvin is larger", "by convention only"], "c": 1, "s": ["Doubling kelvin doubles volume; doubling °C does not."]}, {"t": "mc", "lv": 2, "q": "According to kinetic theory, heating a gas in a rigid container raises its pressure because", "o": ["particles get larger", "particles move faster and hit the walls harder and more often", "more particles form", "the container shrinks"], "c": 1, "s": ["Faster particles, more forceful and frequent collisions."]}, {"t": "num", "lv": 2, "q": "A tyre at 15 °C has a pressure of 240 kPa. After driving it is at 45 °C. Assuming fixed volume, what is the pressure?", "a": 265.0, "unit": "kPa", "s": ["P/T constant; use kelvin: 288 K and 318 K.", "240 × 318/288 ≈ 265 kPa."]}, {"t": "show", "lv": 3, "q": "Why do real gases deviate from the ideal gas law at high pressure and low temperature?", "a": "The ideal law assumes particles have no volume and no attractions. At high pressure, particles are packed close enough that their own volume is a significant fraction of the space. At low temperature, they move slowly enough that attractions between them matter. Both effects make real gases depart from PV = nRT, and eventually they condense.", "s": ["Which two assumptions of the ideal model fail?"]}], "quiz": [{"q": "At constant temperature, halving the volume of a gas", "o": ["halves pressure", "doubles pressure", "keeps pressure", "quadruples it"], "c": 1}, {"q": "Gas laws require temperature in", "o": ["°C", "°F", "K", "any unit"], "c": 2}, {"q": "In PV = nRT, n is", "o": ["number of molecules", "moles", "density", "Avogadro's number"], "c": 1}, {"q": "Particles in a liquid", "o": ["are fixed", "slide past each other", "are far apart", "do not move"], "c": 1}]}, {"id": "4.6", "title": "Energy, rates and equilibrium", "problems": [{"t": "mc", "lv": 1, "q": "An exothermic reaction", "o": ["absorbs heat", "releases heat", "has ΔH > 0", "needs a catalyst"], "c": 1, "s": ["Exo = out."]}, {"t": "mc", "lv": 1, "q": "A catalyst works by", "o": ["raising the temperature", "lowering the activation energy", "being used up", "changing ΔH"], "c": 1, "s": ["It provides an easier pathway."]}, {"t": "num", "lv": 2, "q": "Breaking bonds in a reaction needs 1370 kJ; making the new bonds releases 1652 kJ. What is ΔH?", "a": -282, "unit": "kJ", "s": ["ΔH = broken − made = 1370 − 1652."]}, {"t": "mc", "lv": 2, "q": "Powdered marble reacts faster with acid than marble chips because", "o": ["it is a different substance", "it has a larger surface area", "it is hotter", "it is a catalyst"], "c": 1, "s": ["More exposed particles, more collisions."]}, {"t": "mc", "lv": 2, "q": "For N₂ + 3H₂ ⇌ 2NH₃ (exothermic), raising the temperature shifts the equilibrium", "o": ["right, more ammonia", "left, less ammonia", "not at all", "right then left"], "c": 1, "s": ["Shifts in the endothermic direction, which is the reverse."]}, {"t": "mc", "lv": 2, "q": "For the same reaction, increasing pressure shifts it", "o": ["left", "right", "not at all", "randomly"], "c": 1, "s": ["4 gas molecules on the left, 2 on the right."]}, {"t": "num", "lv": 2, "q": "For A ⇌ B, at equilibrium [A] = 0.20 M and [B] = 0.80 M. What is K?", "a": 4, "s": ["K = [B]/[A] = 0.80/0.20."]}, {"t": "show", "lv": 3, "q": "Explain what 'dynamic' means in dynamic equilibrium.", "a": "At equilibrium the forward and reverse reactions are both still happening, at equal rates. Molecules are constantly converting in both directions, so on a molecular level the system is busy, but the overall concentrations stay constant.", "s": ["Are the reactions stopped or balanced?"]}], "quiz": [{"q": "At equilibrium, forward and reverse rates are", "o": ["zero", "equal", "increasing", "unequal"], "c": 1}, {"q": "Raising temperature generally makes reactions", "o": ["slower", "faster", "unchanged", "stop"], "c": 1}, {"q": "A large K means", "o": ["mostly reactants", "mostly products", "no reaction", "a slow reaction"], "c": 1}, {"q": "Endothermic reactions have ΔH", "o": ["negative", "positive", "zero", "undefined"], "c": 1}]}, {"id": "4.7", "title": "Acids, bases and redox", "problems": [{"t": "num", "lv": 1, "q": "What is the pH of a solution with [H⁺] = 10⁻⁴ M?", "a": 4, "s": ["pH = −log(10⁻⁴) = 4."]}, {"t": "num", "lv": 1, "q": "What is [H⁺] in mol/L for a solution of pH 3? Give a decimal.", "a": 0.001, "unit": "mol/L", "s": ["[H⁺] = 10⁻³."]}, {"t": "mc", "lv": 2, "q": "In Zn + Cu²⁺ → Zn²⁺ + Cu, which species is oxidised?", "o": ["Zn", "Cu²⁺", "Zn²⁺", "Cu"], "c": 0, "s": ["Zn loses two electrons."]}, {"t": "num", "lv": 2, "q": "25.0 mL of HCl is exactly neutralised by 20.0 mL of 0.100 M NaOH. What is the concentration of the HCl?", "a": 0.08, "unit": "mol/L", "s": ["Moles NaOH = 0.100 × 0.0200 = 0.00200.", "1:1 ratio; c = 0.00200/0.0250 = 0.080 M."]}, {"t": "mc", "lv": 2, "q": "A weak acid differs from a strong acid in that it", "o": ["is always dilute", "ionises only partially", "has no protons", "is a base"], "c": 1, "s": ["Strength is about extent of ionisation."]}, {"t": "num", "lv": 2, "q": "What is the pH of 0.01 M NaOH at 25 °C?", "a": 12, "s": ["[OH⁻] = 10⁻²; [H⁺] = 10⁻¹⁴/10⁻² = 10⁻¹².", "pH = 12."]}, {"t": "mc", "lv": 2, "q": "What are the products of an acid reacting with a metal hydroxide?", "o": ["salt and hydrogen", "salt and water", "oxide and water", "acid and base"], "c": 1, "s": ["Neutralisation."]}, {"t": "show", "lv": 3, "q": "Explain why a battery 'goes flat'.", "a": "A battery is a redox reaction separated into two halves. As it runs, the reactants are used up: the substance being oxidised and the one being reduced are converted to products. Once they are depleted, the electron 'push' between the two halves drops and the current stops. Recharging drives the reaction backwards with an external supply.", "s": ["What is being used up?"]}], "quiz": [{"q": "An acid is a proton", "o": ["acceptor", "donor", "neutraliser", "catalyst"], "c": 1}, {"q": "pH 2 compared with pH 4 is", "o": ["twice as acidic", "100 times as acidic", "less acidic", "the same"], "c": 1}, {"q": "Reduction is", "o": ["loss of electrons", "gain of electrons", "loss of protons", "gain of oxygen"], "c": 1}, {"q": "Neutral pH at 25 °C is", "o": ["0", "1", "7", "14"], "c": 2}]}, {"id": "4.8", "title": "Organic chemistry essentials", "problems": [{"t": "mc", "lv": 1, "q": "What is the formula of propane (3 carbons)?", "o": ["C₃H₆", "C₃H₈", "C₃H₁₀", "C₂H₆"], "c": 1, "s": ["CₙH₂ₙ₊₂ with n = 3."]}, {"t": "num", "lv": 1, "q": "Octane is an alkane with 8 carbon atoms. How many hydrogen atoms does it have?", "a": 18, "s": ["2(8) + 2 = 18."]}, {"t": "mc", "lv": 2, "q": "Which functional group identifies an alcohol?", "o": ["–COOH", "–OH", "–NH₂", "C=C"], "c": 1, "s": ["Hydroxyl group."]}, {"t": "mc", "lv": 2, "q": "Vinegar's ethanoic acid belongs to which family?", "o": ["alcohols", "esters", "carboxylic acids", "amines"], "c": 2, "s": ["–COOH group."]}, {"t": "mc", "lv": 2, "q": "Butane and methylpropane are", "o": ["the same compound", "isomers", "polymers", "isotopes"], "c": 1, "s": ["Same formula, C₄H₁₀; different structures."]}, {"t": "mc", "lv": 2, "q": "Proteins are polymers of", "o": ["glucose", "nucleotides", "amino acids", "fatty acids"], "c": 2, "s": ["Amino acids joined by peptide bonds."]}, {"t": "num", "lv": 2, "q": "What is the molar mass of ethanol, C₂H₅OH? (C = 12, H = 1, O = 16)", "a": 46, "unit": "g/mol", "s": ["2(12) + 6(1) + 16 = 46."]}, {"t": "show", "lv": 3, "q": "Why can carbon form far more compounds than any other element?", "a": "Carbon forms four strong covalent bonds, so each atom can connect in several directions. Carbon–carbon bonds are strong enough to build stable long chains, branches and rings. It also bonds well with H, O, N and other elements, and can form single, double and triple bonds. Together these allow an almost limitless variety of structures.", "s": ["Think about bond number, bond strength and chains."]}], "quiz": [{"q": "Carbon forms how many bonds?", "o": ["2", "3", "4", "6"], "c": 2}, {"q": "An ester forms from", "o": ["acid + alcohol", "two alkanes", "base + water", "two acids"], "c": 0}, {"q": "'But-' means how many carbons?", "o": ["2", "3", "4", "5"], "c": 2}, {"q": "Polyethylene is made from", "o": ["ethane", "ethene", "ethanol", "methane"], "c": 1}]}], "capstone": {"title": "Investigating an antacid tablet", "scenario": "An antacid tablet contains calcium carbonate, CaCO₃ (M = 100 g/mol), which neutralises stomach acid: CaCO₃ + 2HCl → CaCl₂ + H₂O + CO₂. A 1.00 g tablet is dropped into excess hydrochloric acid in the lab. Use moles, gas laws, pH and equilibrium thinking to analyse it.", "parts": [{"t": "num", "lv": 2, "q": "The tablet is 75% calcium carbonate by mass. How many moles of CaCO₃ does it contain?", "a": 0.0075, "unit": "mol", "s": ["0.75 g ÷ 100 g/mol."]}, {"t": "num", "lv": 2, "q": "How many moles of HCl can it neutralise?", "a": 0.015, "unit": "mol", "s": ["Ratio 1 CaCO₃ : 2 HCl.", "2 × 0.0075 = 0.015 mol."]}, {"t": "num", "lv": 2, "q": "What volume of CO₂ is released at 298 K and 101 300 Pa? Give mL.", "a": 183.43326752221128, "unit": "mL", "tol": 0.02, "s": ["n(CO₂) = 0.0075 mol.", "V = nRT/P = 0.0075 × 8.314 × 298 ÷ 101 300 m³ ≈ 1.83 × 10⁻⁴ m³ ≈ 183 mL."]}, {"t": "num", "lv": 2, "q": "Stomach acid is about 0.10 M HCl. What volume of it can one tablet neutralise, in mL?", "a": 150, "unit": "mL", "s": ["V = n/c = 0.015 ÷ 0.10 = 0.15 L."]}, {"t": "num", "lv": 2, "q": "What is the pH of 0.10 M HCl?", "a": 1, "s": ["Strong acid: [H⁺] = 0.10 = 10⁻¹.", "pH = 1."]}, {"t": "show", "lv": 3, "q": "Why would a powdered tablet relieve indigestion faster than a whole one, even though it neutralises the same total amount of acid?", "a": "Powder has a much larger surface area, so acid particles collide with calcium carbonate far more often and the reaction rate is higher. The total amount neutralised is set by the moles of CaCO₃, which is unchanged; only the speed differs.", "s": ["Which factor affects rate but not amount?"]}]}};
+const KEY = "sp-c" + D.n;
+const $ = s => document.querySelector(s);
+const el = (t, c, x) => { const e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; };
+function tex(node, src, display = true){
+  node.innerHTML = "";
+  if (window.MathJax && MathJax.tex2svg){ try { node.appendChild(MathJax.tex2svg(src, { display })); return; } catch(e){} }
+  node.appendChild(el("code", null, src));
+}
+let solved = {};
+try { solved = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch(e){}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(solved)); } catch(e){} };
+if (window.math){ try { math.import({ ln: x => math.log(x) }, { override:false }); } catch(e){} }
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random()*(i+1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+
+function parseNum(s){
+  s = s.trim().replace(/\s+/g, "").replace(/[−–]/g, "-").replace(/,/g, "");
+  s = s.replace(/[×x\*]10\^?\(?(-?\d+)\)?/i, "e$1").replace(/·10\^?(-?\d+)/, "e$1");
+  if (s.endsWith("%")) s = s.slice(0, -1);
+  const v = Number(s); return isFinite(v) && s !== "" ? v : NaN;
+}
+function fmtNum(x){ if (x === 0) return "0"; const a = Math.abs(x); return (a >= 1e5 || a < 1e-3) ? x.toExponential(3).replace(/\.?0+e/, "e") : String(+x.toPrecision(4)); }
+function checkExpr(p, input){
+  if (!window.math) return { ok:false, msg:"The checker didn't load. Compare with the worked solution." };
+  let node; try { node = math.parse(input.replace(/π/g, "pi").replace(/√/g, "sqrt").replace(/²/g, "^2").replace(/[×·]/g, "*").replace(/−/g, "-")); } catch(e){ return { ok:false, msg:"I couldn't read that. Check brackets and operators." }; }
+  const syms = new Set(node.filter(n => n.isSymbolNode).map(n => n.name));
+  if (syms.has(p.target)) return { ok:false, msg:"Your answer still contains " + p.target + "." };
+  const allowed = new Set([...p.vars, "pi", "e", "sqrt", "cbrt", "ln", "log", "log10", "exp"]);
+  const unk = [...syms].filter(s => !allowed.has(s)); if (unk.length) return { ok:false, msg:"Unknown symbol " + unk.join(", ") + ". Use: " + p.vars.join(", ") + "." };
+  const f = node.compile(), g = math.compile(p.ans); let n = 0;
+  for (let i = 0; i < 14 && n < 6; i++){
+    const sc = {}; p.vars.forEach(v => sc[v] = 0.6 + Math.random()*1.8);
+    if (p.dom) Object.entries(p.dom).forEach(([k, [a, b]]) => sc[k] = a + Math.random()*(b - a));
+    let w, gt; try { w = g.evaluate(sc); gt = f.evaluate(sc); } catch(e){ return { ok:false, msg:"That couldn't be evaluated." }; }
+    if (typeof w !== "number" || !isFinite(w)) continue; n++;
+    if (typeof gt !== "number" || Math.abs(gt - w) > 1e-7*Math.max(1, Math.abs(w))) return { ok:false, msg:"Not equivalent: substituting numbers gives a different value. Try the hint." };
+  }
+  return { ok:true };
+}
+
+function progress(){
+  let tot = 0, done = 0;
+  D.modules.forEach(m => { const d = m.problems.filter((_, i) => solved[m.id + "." + (i+1)]).length; tot += m.problems.length; done += d;
+    const n = document.getElementById("n-" + m.id); n.textContent = d + "/" + m.problems.length; n.classList.toggle("full", d === m.problems.length); });
+  $("#ov-t").textContent = done + " of " + tot + " problems solved"; $("#ov-b").style.width = (100*done/tot) + "%";
+}
+function solveMark(id, card){ if (!id) return; solved[id] = true; save(); card.classList.add("solved"); progress(); }
+
+function problemCard(p, label, id){
+  const c = el("article", "card" + (id && solved[id] ? " solved" : ""));
+  const h = el("div", "chead"); h.appendChild(el("span", "pid", label)); h.appendChild(el("span", "lvl", "●".repeat(p.lv || 2) + "○".repeat(3 - (p.lv || 2)))); c.appendChild(h);
+  c.appendChild(el("p", "q", p.q));
+  if (p.eq){ const e = el("div", "eq"); tex(e, p.eq); c.appendChild(e); }
+  const fb = el("div", "fb"); fb.setAttribute("aria-live", "polite");
+  if (p.t === "num"){
+    const r = el("div", "row"); const inp = el("input"); inp.type = "text"; inp.inputMode = "decimal"; inp.setAttribute("aria-label", "Your answer");
+    r.appendChild(inp); if (p.unit) r.appendChild(el("span", "unit", p.unit));
+    const b = el("button", null, "Check"); r.appendChild(b); c.appendChild(r);
+    const go = () => { const v = parseNum(inp.value); if (isNaN(v)){ fb.className = "fb bad"; fb.textContent = "Enter a number, for example 2.5 or 3e8."; return; }
+      const tol = p.tol || 0.02, ok = p.a === 0 ? Math.abs(v) < 1e-9 : Math.abs(v - p.a) / Math.abs(p.a) <= tol;
+      fb.className = "fb " + (ok ? "good" : "bad"); fb.textContent = ok ? "Correct: " + fmtNum(p.a) + (p.unit ? " " + p.unit : "") + "." : "Not quite. Check units, powers of ten and rounding, or open the hint.";
+      if (ok) solveMark(id, c); };
+    b.onclick = go; inp.addEventListener("keydown", e => { if (e.key === "Enter") go(); });
+  } else if (p.t === "mc"){
+    const box = el("div", "mc");
+    p.o.forEach((o, i) => { const b = el("button", null, o); b.onclick = () => {
+      if (i === p.c){ b.classList.add("right"); [...box.children].forEach(x => x.disabled = true); fb.className = "fb good"; fb.textContent = "Correct."; solveMark(id, c); }
+      else { b.classList.add("wrong"); b.disabled = true; fb.className = "fb bad"; fb.textContent = "Not that one. Try again, or open the worked solution."; } }; box.appendChild(b); });
+    c.appendChild(box);
+  } else if (p.t === "expr"){
+    const r = el("div", "row"); r.appendChild(el("span", "unit", p.target + " ="));
+    const inp = el("input", "wide"); inp.type = "text"; inp.spellcheck = false; inp.autocomplete = "off"; inp.setAttribute("aria-label", "Your expression");
+    r.appendChild(inp); const b = el("button", null, "Check"); r.appendChild(b); c.appendChild(r);
+    const pv = el("div", "preview"); c.appendChild(pv);
+    inp.addEventListener("input", () => { try { tex(pv, p.target + "=" + math.parse(inp.value).toTex({ parenthesis:"auto" }), false); } catch(e){ pv.textContent = ""; } });
+    const go = () => { const res = checkExpr(p, inp.value.trim()); fb.className = "fb " + (res.ok ? "good" : "bad"); fb.textContent = res.ok ? "Correct." : res.msg; if (res.ok) solveMark(id, c); };
+    b.onclick = go; inp.addEventListener("keydown", e => { if (e.key === "Enter") go(); });
+  } else {
+    const b = el("button", null, "I've written my answer: show the model"); const m = el("div", "model"); m.hidden = true; m.textContent = p.a;
+    b.onclick = () => { m.hidden = false; b.hidden = true; const ok = el("button", "ghost", "Mine matched"); ok.onclick = () => { solveMark(id, c); ok.disabled = true; ok.textContent = "Marked as done"; }; c.insertBefore(ok, fb); };
+    c.appendChild(b); c.appendChild(m);
+  }
+  c.appendChild(fb);
+  if (p.s && p.s.length){
+    const ex = el("div", "extras"); const hb = el("button", "ghost", "Hint"), sb = el("button", "ghost", "Worked solution"); ex.appendChild(hb); ex.appendChild(sb); c.appendChild(ex);
+    const hint = el("p", "fb"); hint.hidden = true; hint.style.color = "var(--mute)"; hint.textContent = "Start here: " + p.s[0]; c.appendChild(hint);
+    const sol = el("div", "sol"); sol.hidden = true; const ol = el("ol"); p.s.forEach(s => ol.appendChild(el("li", null, s))); sol.appendChild(ol); c.appendChild(sol);
+    hb.onclick = () => hint.hidden = !hint.hidden; sb.onclick = () => { sol.hidden = !sol.hidden; sb.textContent = sol.hidden ? "Worked solution" : "Hide solution"; };
+  }
+  return c;
+}
+function quizBox(m){
+  const q = el("div", "quiz"); q.appendChild(el("h3", null, "Quick check · Module " + m.id)); q.firstChild.style.marginTop = "0";
+  const sc = el("div", "score"); let right = 0, answered = 0;
+  const upd = () => sc.textContent = answered < m.quiz.length ? answered + " of " + m.quiz.length + " answered" : "Score " + right + " of " + m.quiz.length + (right === m.quiz.length ? ". Module complete." : ". Revisit the reader section for any you missed.");
+  m.quiz.forEach(item => {
+    q.appendChild(el("p", "qq", item.q)); const box = el("div", "mc"); const fb = el("div", "fb"); let first = true;
+    item.o.forEach((o, i) => { const b = el("button", null, o); b.onclick = () => {
+      if (first){ answered++; if (i === item.c) right++; first = false; upd(); }
+      if (i === item.c){ b.classList.add("right"); [...box.children].forEach(x => x.disabled = true); fb.className = "fb good"; fb.textContent = item.w || "Correct."; }
+      else { b.classList.add("wrong"); b.disabled = true; fb.className = "fb bad"; fb.textContent = "Not quite. Try another option."; } }; box.appendChild(b); });
+    q.appendChild(box); q.appendChild(fb);
+  });
+  upd(); q.appendChild(sc); return q;
+}
+function build(){
+  const idx = $("#index"), main = $("#main");
+  D.modules.forEach(m => {
+    const a = el("a"); a.href = "#m-" + m.id.replace(".", "-"); a.appendChild(el("span", null, m.id + " " + m.title)); const n = el("span", "n"); n.id = "n-" + m.id; a.appendChild(n); idx.appendChild(a);
+    const s = el("section", "mod"); s.id = "m-" + m.id.replace(".", "-");
+    const h = el("div", "modhead"); h.appendChild(el("span", "code", m.id)); h.appendChild(el("h2", null, m.title)); s.appendChild(h);
+    m.problems.forEach((p, i) => s.appendChild(problemCard(p, m.id + "." + (i+1), m.id + "." + (i+1))));
+    s.appendChild(quizBox(m)); main.appendChild(s);
+  });
+  // capstone
+  const ca = el("a"); ca.href = "#capstone"; ca.appendChild(el("span", null, "★ Capstone")); idx.appendChild(ca);
+  const cs = el("section", "mod"); cs.id = "capstone";
+  const ch = el("div", "modhead"); ch.appendChild(el("span", "code", "★")); ch.appendChild(el("h2", null, "Capstone: " + D.capstone.title)); cs.appendChild(ch);
+  cs.appendChild(el("p", null, D.capstone.scenario));
+  D.capstone.parts.forEach((p, i) => cs.appendChild(problemCard(p, "Part " + (i+1), null)));
+  main.appendChild(cs);
+  // mixed practice
+  const ma = el("a"); ma.href = "#mixed"; ma.appendChild(el("span", null, "↻ Mixed practice")); idx.appendChild(ma);
+  const ms = el("section", "mod"); ms.id = "mixed";
+  const mh = el("div", "modhead"); mh.appendChild(el("span", "code", "↻")); mh.appendChild(el("h2", null, "Mixed practice")); ms.appendChild(mh);
+  ms.appendChild(el("p", null, "Ten problems drawn at random from across the course. Mixing topics is harder than practising one at a time, and it is the best preparation for remembering long-term."));
+  const holder = el("div"); const gen = el("button", null, "Draw ten problems");
+  gen.onclick = () => { holder.innerHTML = ""; const pool = []; D.modules.forEach(m => m.problems.forEach((p, i) => { if (p.t !== "show") pool.push([p, m.id + "." + (i+1)]); }));
+    shuffle(pool).slice(0, 10).forEach(([p, lab]) => holder.appendChild(problemCard(p, "From " + lab, null))); gen.textContent = "Draw a fresh ten"; };
+  ms.appendChild(gen); ms.appendChild(holder); main.appendChild(ms);
+  const ov = el("div", "overall"); ov.innerHTML = '<span id="ov-t"></span><div class="bar"><i id="ov-b"></i></div>';
+  const rs = el("button", "ghost", "Clear progress"); rs.style.marginTop = "8px"; rs.style.fontSize = "13px";
+  rs.onclick = () => { solved = {}; save(); document.querySelectorAll(".card.solved").forEach(c => c.classList.remove("solved")); progress(); };
+  ov.appendChild(rs); idx.appendChild(ov); progress();
+}
+if (window.MathJax && MathJax.startup && MathJax.startup.promise) MathJax.startup.promise.then(build).catch(build); else build();
+</script>
+
+<script>if("serviceWorker" in navigator) navigator.serviceWorker.register("../sw.js");</script>
+</body>
+</html>
