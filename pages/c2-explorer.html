@@ -1,19 +1,18 @@
 <!doctype html>
-<html lang="en-AU">
+<html lang="en-AU" data-root="../" data-course="2" data-page="explorer">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#1F2B33">
 <link rel="manifest" href="../manifest.webmanifest">
 <link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
-<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
-body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}
-.sp-home{position:fixed;left:max(12px,env(safe-area-inset-left,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:50;
-font:500 14px "Bricolage Grotesque",system-ui,sans-serif;background:var(--ink,#1F2B33);color:var(--sheet,#fff);text-decoration:none;padding:9px 14px;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,.25)}
-</style>
+<link rel="icon" href="../icons/icon-192.png">
+<link rel="stylesheet" href="../assets/app.css">
+<style>body{font-size:17px} .index{top:calc(66px + env(safe-area-inset-top,0px))!important;max-height:calc(100vh - 82px)!important} section.mod,section.set,section[id]{scroll-margin-top:76px!important} .spbar{font-size:15px}
+:root{padding-top:0!important}</style>
+<script src="../assets/data.js"></script>
 </head>
 <body>
-<a class="sp-home" href="../index.html">← Hub</a>
 <title>Function Lab</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -243,6 +242,6 @@ window.addEventListener("hashchange", () => route(TABS));
 route(TABS);
 </script>
 
-<script>if("serviceWorker" in navigator) navigator.serviceWorker.register("../sw.js");</script>
+<script src="../assets/sp.js"></script>
 </body>
 </html>
